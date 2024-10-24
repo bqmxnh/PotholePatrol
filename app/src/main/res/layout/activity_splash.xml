@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
         android:background="@drawable/bottom_shadow" />
 
 
@@ -26,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="0dp"
         android:elevation="2dp"
-        android:fontFamily="@font/jockey_one_regular"
+        android:fontFamily="@font/jockey_one"
         android:lineSpacingExtra="-40sp"
         android:text="POTHOLE\nPATROL"
         android:textAlignment="viewStart"
