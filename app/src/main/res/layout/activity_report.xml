@@ -75,9 +75,6 @@
                 </LinearLayout>
             </RelativeLayout>
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/rtsyf2dslmae"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,9 +86,6 @@
                 android:elevation="10dp"
                 android:orientation="vertical">
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/r6f55culg8ff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,9 +111,6 @@
                         />
                 </LinearLayout>
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/rgbo9484q4nw"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -138,7 +129,6 @@
                         />
                 </LinearLayout>
             </LinearLayout>
-
             <Button
                 android:id="@+id/roduvdc3iiqe"
                 android:layout_width="match_parent"
