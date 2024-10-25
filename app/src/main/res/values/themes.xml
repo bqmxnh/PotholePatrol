@@ -1,12 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.PotholePatrol" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Status bar trong suốt -->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <!-- Icon status bar màu tối vì nền trắng -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Navigation bar màu trắng -->
+        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
     <style name="Theme.PotholePatrol" parent="Base.Theme.PotholePatrol" />
-
 </resources>
