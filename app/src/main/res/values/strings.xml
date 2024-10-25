@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- report_a_problem strings -->
+	<!-- privacy strings -->
 
 	<string name="app_name">Page 1</string>
 	<string name="ek_img_content">ExportKit Image</string>
-	<string name="report_a_problem_string">Report a problem</string>
-	<string name="time_ek1_string">9:41</string>
-	<string name="describe_your_problem_string">Describe your problem</string>
+	<string name="privacy_ek3_string">Privacy</string>
+	<string name="placeholder_string">On</string>
+	<string name="placeholder_ek1_string">Off</string>
+	<string name="data_sharing_options_string">Data Sharing Options</string>
 	<string name="button_ek1_string">Save</string>
-	<string name="write_something__string">Write something!</string>
 </resources>
