@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- terms___policies strings -->
+	<!-- report_a_problem strings -->
 
 	<string name="app_name">Page 1</string>
 	<string name="ek_img_content">ExportKit Image</string>
-	<string name="terms___policies_string">Terms &amp; Policies</string>
+	<string name="report_a_problem_string">Report a problem</string>
 	<string name="time_ek1_string">9:41</string>
-	<string name="by_using_pothole_patrol__you_agree_to_the_following__services__users_can_report_potholes_with_photos_and_gps_location_to_relevant_authorities__user_responsibilities__do_not_submit_false_information_or_illegal_content__personal_data__we_collect_personal_info__location__and_media_solely_for_processing_reports__data_may_be_shared_with_municipal_services__liability__we_are_not_responsible_for_delays_or_unresolved_reports__updates__terms_may_change__and_continued_use_implies_acceptance__string">By using Pothole Patrol, you agree to the following:Services: Users can report potholes with photos and GPS location to relevant authorities.User Responsibilities: Do not submit false information or illegal content.Personal Data: We collect personal info, location, and media solely for processing reports. Data may be shared with municipal services.Liability: We are not responsible for delays or unresolved reports.Updates: Terms may change, and continued use implies acceptance.</string>
+	<string name="describe_your_problem_string">Describe your problem</string>
+	<string name="button_ek1_string">Save</string>
+	<string name="write_something__string">Write something!</string>
 </resources>
