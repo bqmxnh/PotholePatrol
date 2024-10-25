@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+
+
+    <ImageView
+        android:id="@+id/ivIllustration"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/motorcycle_illustration" />
+
+
+
+    <TextView
+        android:id="@+id/tvCreateAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivIllustration"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Create Account"
+        android:textColor="#8EA98D"
+        android:textSize="26sp" />
+
+    <ImageView
+        android:id="@+id/icTick"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/tvCreateAccount"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_tick"
+        android:layout_marginTop="15dp"/>
+
+
+    <TextView
+        android:id="@+id/tvCongratulations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/icTick"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Congratulations"
+        android:textColor="#000000"
+        android:textSize="26sp" />
+
+    <TextView
+        android:id="@+id/tvYouHave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvCongratulations"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_light"
+        android:text="You have successfully registered an account"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:textSize="15sp" />
+
+
+
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGotoLoginScreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvYouHave"
+        android:layout_marginTop="45dp"
+        android:backgroundTint="#AFC7B1"
+        android:text="Go to the login screen"
+        android:textAllCaps="false"
+        app:cornerRadius="8dp" />
+
+
+
+</RelativeLayout>
