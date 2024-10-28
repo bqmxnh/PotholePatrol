@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- privacy strings -->
+	<!-- notifications strings -->
 
 	<string name="app_name">Page 1</string>
 	<string name="ek_img_content">ExportKit Image</string>
-	<string name="privacy_ek3_string">Privacy</string>
-	<string name="placeholder_string">On</string>
-	<string name="placeholder_ek1_string">Off</string>
-	<string name="data_sharing_options_string">Data Sharing Options</string>
+	<string name="notifications_ek3_string">Notifications</string>
+	<string name="time_ek1_string">9:41</string>
+	<string name="placeholder_string">Sound</string>
+	<string name="placeholder_ek1_string">Vibrate</string>
+	<string name="alert_preferences_string">Alert Preferences</string>
 	<string name="button_ek1_string">Save</string>
 </resources>
