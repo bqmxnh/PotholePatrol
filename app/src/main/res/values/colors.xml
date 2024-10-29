@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- terms___policies colors -->
+	<!-- notifications colors -->
 
 	<color name="colorPrimary">#008577</color>
 	<color name="colorPrimaryDark">#00574B</color>
@@ -13,9 +13,10 @@
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
 
-	<color name="_bg__terms___policies_color">#F5F5F5</color>
-	<color name="terms___policies_color">#0D1B34</color>
+	<color name="_bg__notifications_ek2_color">#F5F5F5</color>
+	<color name="notifications_ek3_color">#0D1B34</color>
 	<color name="time_ek1_color">#000000</color>
 	<color name="border_color">#ffffff</color>
 	<color name="rectangle_3_color">#FFFFFF</color>
+	<color name="placeholder_color">#616161</color>
 </resources>
