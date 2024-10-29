@@ -43,7 +43,7 @@
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_tick"
+        android:src="@mipmap/ic_tickk"
         android:layout_marginTop="15dp"/>
 
 
