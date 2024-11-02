@@ -12,11 +12,15 @@
 	<color name="teal_700">#FF018786</color>
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
-
 	<color name="_bg__notifications_ek2_color">#F5F5F5</color>
+	<color name="_bg__privacy_ek2_color">#F5F5F5</color>
+	<color name="_bg__report_a_problem_color">#F5F5F5</color>
+	<color name="_bg__terms___policies_color">#F5F5F5</color>
 	<color name="notifications_ek3_color">#0D1B34</color>
 	<color name="time_ek1_color">#000000</color>
 	<color name="border_color">#ffffff</color>
 	<color name="rectangle_3_color">#FFFFFF</color>
 	<color name="placeholder_color">#616161</color>
+	<color name="status_bar_dashboard">#AFC7B1</color>
+
 </resources>

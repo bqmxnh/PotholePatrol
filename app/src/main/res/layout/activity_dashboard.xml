@@ -5,18 +5,22 @@
     android:background="#FFFFFF"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+
     <ScrollView
         android:id="@+id/dashboard_screen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#F5F5F5">
-        <!-- Màn hình chính -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <!-- Thanh bên trên -->
             <LinearLayout
                 android:id="@+id/dashboard_green_bar"
@@ -30,13 +34,12 @@
                 android:clipToOutline="true"
                 android:elevation="1dp">
 
-                <!-- Cụm Dashboard -->
+                <!-- Dashboard Title -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/ic_report"
@@ -53,7 +56,8 @@
                         android:gravity="center"
                         android:text="Dashboard"
                         android:textColor="#0D1B34"
-                        android:textSize="28sp" />
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/ic_notification"
@@ -63,7 +67,8 @@
                         android:src="@mipmap/ic_notification" />
                 </LinearLayout>
             </LinearLayout>
-            <!-- Cum Welcome -->
+
+            <!-- Welcome Section -->
             <LinearLayout
                 android:id="@+id/welcome"
                 android:layout_width="match_parent"
@@ -71,21 +76,22 @@
                 android:layout_marginBottom="30dp"
                 android:layout_marginHorizontal="39dp"
                 android:orientation="horizontal">
+
                 <LinearLayout
                     android:id="@+id/welcome_title"
                     android:layout_width="108dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/hello"
-                        android:textColor="#8696BB"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:text="Hello,"
-                        />
+                        android:textColor="#8696BB"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/username"
@@ -96,34 +102,31 @@
                         android:textColor="#0D1B34"
                         android:textSize="20sp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/quotes"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:text="Have a nice day "
-                        />
+                        android:layout_height="wrap_content"
+                        android:text="Have a nice day"
+                        android:textColor="#000000"
+                        android:textSize="16sp" />
                 </LinearLayout>
+
                 <ImageView
                     android:id="@+id/ic_heart"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="46dp"
-                    android:src="@mipmap/ic_heart"
                     android:scaleType="fitXY"
-                    />
-                <!-- nay la khoang trang giua cum hi james va hinh user -->
+                    android:src="@mipmap/ic_heart" />
+
+                <!-- Space between title and user image -->
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/empty2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:orientation="vertical" />
 
                 <ImageView
                     android:id="@+id/ic_user"
@@ -133,11 +136,9 @@
                     android:scaleType="fitXY"
                     android:src="@mipmap/ic_user" />
             </LinearLayout>
-            <!-- Cum Potholes Detected -->
+
+            <!-- Potholes Detected Section -->
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/pothole_detected"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -148,48 +149,42 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginHorizontal="16dp"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:id="@+id/ic_potholes_detected"
                     android:layout_width="47dp"
                     android:layout_height="47dp"
                     android:layout_marginEnd="14dp"
-                    android:src="@mipmap/ic_pothole"
                     android:scaleType="fitXY"
-                    />
+                    android:src="@mipmap/ic_pothole" />
+
                 <TextView
                     android:id="@+id/pothole_detected_title"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Potholes Detected"
-                    />
-                <!-- Khoang trang giua Pothole Detected va so lieu -->
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <!-- Space between title and data -->
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/empty3"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-                </LinearLayout>
-                <!-- So lieu Potholes Detected-->
+                    android:orientation="vertical" />
+
                 <TextView
                     android:id="@+id/potholes_detected_analyst"
-                    android:textColor="#000000"
-                    android:textSize="24sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="69 "
-                    />
+                    android:layout_height="wrap_content"
+                    android:text="69"
+                    android:textColor="#000000"
+                    android:textSize="24sp" />
             </LinearLayout>
-            <!-- Cum Distance Traveled -->
+
+            <!-- Distance Traveled Section -->
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/distance_traveled"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -200,47 +195,42 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginHorizontal="17dp"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:id="@+id/ic_distance_traveled"
                     android:layout_width="47dp"
                     android:layout_height="47dp"
                     android:layout_marginEnd="13dp"
-                    android:src="@mipmap/ic_distance"
                     android:scaleType="fitXY"
-                    />
+                    android:src="@mipmap/ic_distance" />
+
                 <TextView
                     android:id="@+id/distance_traveled_title"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Distance Traveled"
-                    />
-                <!-- Khoang trang giua Distance Traveled va so lieu -->
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <!-- Space between title and data -->
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/empty4"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:orientation="vertical" />
+
                 <TextView
                     android:id="@+id/distance_traveled_analyst"
-                    android:textColor="#000000"
-                    android:textSize="24sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="6969 km"
-                    />
+                    android:textColor="#000000"
+                    android:textSize="24sp" />
             </LinearLayout>
-            <!-- Cum Falls -->
+
+            <!-- Falls Section -->
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/falls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -251,46 +241,42 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginHorizontal="17dp"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:id="@+id/ic_falls"
                     android:layout_width="47dp"
                     android:layout_height="47dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@mipmap/ic_falls"
                     android:scaleType="fitXY"
-                    />
+                    android:src="@mipmap/ic_falls" />
+
                 <TextView
                     android:id="@+id/falls_title"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Falls"
-                    />
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <!-- Space between title and data -->
                 <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/empty5"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:orientation="vertical" />
+
                 <TextView
                     android:id="@+id/falls_analyst"
-                    android:textColor="#000000"
-                    android:textSize="24sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="69 "
-                    />
+                    android:layout_height="wrap_content"
+                    android:text="69"
+                    android:textColor="#000000"
+                    android:textSize="24sp" />
             </LinearLayout>
-            <!-- Cum bieu do -->
+
+            <!-- Chart Section -->
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -300,123 +286,17 @@
                 android:layout_marginBottom="188dp"
                 android:layout_marginHorizontal="17dp"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/chart_title"
-                    android:textColor="#000000"
-                    android:textSize="20sp"
-                    android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:text="Distribution of Potholes \nby Severity Level"
-                    />
-            </LinearLayout>
-            <!-- Cum menu Dashboard, Map, Setting -->
-            <LinearLayout
-                android:id="@+id/menu_green_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bottom_rounded_background"
-                android:paddingVertical="14dp"
-                android:orientation="vertical">
-                <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/menu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginHorizontal="37dp"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:id="@+id/ic_dashboard"
-                        android:layout_width="47dp"
-                        android:layout_height="47dp"
-                        android:src="@mipmap/ic_dashboard"
-                        android:scaleType="fitXY"
-                        />
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        />
-                    <ImageView
-                        android:id="@+id/ic_map"
-                        android:layout_width="47dp"
-                        android:layout_height="47dp"
-                        android:src="@mipmap/ic_map"
-                        android:scaleType="fitXY"
-                        />
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        />
-                    <ImageView
-                        android:id="@+id/ic_setting"
-                        android:layout_width="47dp"
-                        android:layout_height="47dp"
-                        android:src="@mipmap/ic_setting"
-                        android:scaleType="fitXY"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/menu_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginHorizontal="24dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/menu_dashboard_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="91dp"
-                        android:text="Dashboard"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/menu_map_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Map"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:id="@+id/empty6"
-                        android:layout_width="105dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0"
-                        android:orientation="vertical"></LinearLayout>
-
-                    <TextView
-                        android:id="@+id/menu_setting_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Setting"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-                <LinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/underline"
-                    android:layout_width="55dp"
-                    android:layout_height="2dp"
-                    android:background="@drawable/ic_underline"
-                    android:layout_marginHorizontal="33dp"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+
 </LinearLayout>
