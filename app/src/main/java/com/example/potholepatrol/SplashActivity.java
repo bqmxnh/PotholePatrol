@@ -2,29 +2,47 @@ package com.example.potholepatrol;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.os.Handler;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Làm cho status bar và thanh điều hướng có màu trắng
+        Window window = getWindow();
+        window.getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        );
+        window.setStatusBarColor(getResources().getColor(android.R.color.white));
+        window.setNavigationBarColor(getResources().getColor(android.R.color.white));
+
         setContentView(R.layout.activity_splash);
 
-        // Find the Get Started button
-        Button getStartedButton = findViewById(R.id.getStartedButton);
+        // Tìm ImageView biểu tượng
+        ImageView logoIcon = findViewById(R.id.logoIcon);
 
-        // Set click listener for the button
-        getStartedButton.setOnClickListener(view -> {
-            // Create intent to navigate to LoginActivity
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+        // Tải và áp dụng các hoạt ảnh
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation zoomIn = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        logoIcon.startAnimation(fadeIn);
+        logoIcon.startAnimation(zoomIn);
+
+        // Hiển thị Splash Screen trong 2 giây (2000ms)
+        new Handler().postDelayed(() -> {
+            // Chuyển đến WelcomeActivity
+            Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
             startActivity(intent);
-
-            // Optional: Add animation transition
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
-            // Optional: Close splash activity so user can't go back
-            finish();
-        });
+            finish(); // Đóng SplashActivity để không quay lại
+        }, 2000); // Thời gian chờ 2000ms (2 giây)
     }
 }

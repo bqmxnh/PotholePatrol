@@ -11,6 +11,7 @@ import com.example.potholepatrol.Fragment.FragmentMap;
 import com.example.potholepatrol.Fragment.FragmentSetting;
 import com.example.potholepatrol.R;
 
+
 public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private FragmentDashboard fragmentDashboard;

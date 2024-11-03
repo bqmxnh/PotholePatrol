@@ -4,6 +4,8 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="buttonStyle">@style/CustomButtonStyle</item> <!-- Ghi đè style của nút -->
+
         <!-- Icon status bar màu tối vì nền trắng -->
         <item name="android:windowLightStatusBar">true</item>
 
@@ -11,6 +13,9 @@
         <item name="android:navigationBarColor">@android:color/white</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+    <style name="CustomButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@android:color/white</item> <!-- Màu nền bạn muốn -->
     </style>
 
     <style name="Theme.PotholePatrol" parent="Base.Theme.PotholePatrol" />
