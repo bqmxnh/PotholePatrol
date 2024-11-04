@@ -10,7 +10,7 @@
     android:clipChildren="false">
 
     <ScrollView
-        android:id="@+id/dashboard_screen"
+        android:id="@+id/dashboard_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -21,9 +21,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Thanh bên trên -->
+            <!-- Top Bar Section -->
             <LinearLayout
-                android:id="@+id/dashboard_green_bar"
+                android:id="@+id/top_bar_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="26dp"
@@ -42,14 +42,14 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/ic_report"
+                        android:id="@+id/icon_report"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:scaleType="fitXY"
                         android:src="@mipmap/ic_report" />
 
                     <TextView
-                        android:id="@+id/dashboard_title"
+                        android:id="@+id/text_dashboard_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -60,7 +60,7 @@
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:id="@+id/ic_notification"
+                        android:id="@+id/icon_notification"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:scaleType="fitXY"
@@ -70,7 +70,7 @@
 
             <!-- Welcome Section -->
             <LinearLayout
-                android:id="@+id/welcome"
+                android:id="@+id/welcome_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
@@ -78,14 +78,14 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/welcome_title"
+                    android:id="@+id/welcome_text_container"
                     android:layout_width="108dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/hello"
+                        android:id="@+id/text_hello"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
@@ -94,7 +94,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/username"
+                        android:id="@+id/text_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
@@ -104,7 +104,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/quotes"
+                        android:id="@+id/text_quotes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Have a nice day"
@@ -113,7 +113,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/ic_heart"
+                    android:id="@+id/icon_heart"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="46dp"
@@ -122,14 +122,14 @@
 
                 <!-- Space between title and user image -->
                 <LinearLayout
-                    android:id="@+id/empty2"
+                    android:id="@+id/space_between_welcome_and_image"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" />
 
                 <ImageView
-                    android:id="@+id/ic_user"
+                    android:id="@+id/icon_user_image"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="4dp"
@@ -139,7 +139,7 @@
 
             <!-- Potholes Detected Section -->
             <LinearLayout
-                android:id="@+id/pothole_detected"
+                android:id="@+id/potholes_detected_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -151,7 +151,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ic_potholes_detected"
+                    android:id="@+id/icon_potholes"
                     android:layout_width="47dp"
                     android:layout_height="47dp"
                     android:layout_marginEnd="14dp"
@@ -159,7 +159,7 @@
                     android:src="@mipmap/ic_pothole" />
 
                 <TextView
-                    android:id="@+id/pothole_detected_title"
+                    android:id="@+id/text_potholes_detected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Potholes Detected"
@@ -168,14 +168,14 @@
 
                 <!-- Space between title and data -->
                 <LinearLayout
-                    android:id="@+id/empty3"
+                    android:id="@+id/space_between_potholes_and_data"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" />
 
                 <TextView
-                    android:id="@+id/potholes_detected_analyst"
+                    android:id="@+id/text_potholes_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="69"
@@ -185,7 +185,7 @@
 
             <!-- Distance Traveled Section -->
             <LinearLayout
-                android:id="@+id/distance_traveled"
+                android:id="@+id/distance_traveled_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -197,7 +197,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ic_distance_traveled"
+                    android:id="@+id/icon_distance"
                     android:layout_width="47dp"
                     android:layout_height="47dp"
                     android:layout_marginEnd="13dp"
@@ -205,7 +205,7 @@
                     android:src="@mipmap/ic_distance" />
 
                 <TextView
-                    android:id="@+id/distance_traveled_title"
+                    android:id="@+id/text_distance_traveled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Distance Traveled"
@@ -214,14 +214,14 @@
 
                 <!-- Space between title and data -->
                 <LinearLayout
-                    android:id="@+id/empty4"
+                    android:id="@+id/space_between_distance_and_data"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" />
 
                 <TextView
-                    android:id="@+id/distance_traveled_analyst"
+                    android:id="@+id/text_distance_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="6969 km"
@@ -231,7 +231,7 @@
 
             <!-- Falls Section -->
             <LinearLayout
-                android:id="@+id/falls"
+                android:id="@+id/falls_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -243,7 +243,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ic_falls"
+                    android:id="@+id/icon_falls"
                     android:layout_width="47dp"
                     android:layout_height="47dp"
                     android:layout_marginEnd="16dp"
@@ -251,7 +251,7 @@
                     android:src="@mipmap/ic_falls" />
 
                 <TextView
-                    android:id="@+id/falls_title"
+                    android:id="@+id/text_falls"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Falls"
@@ -260,14 +260,14 @@
 
                 <!-- Space between title and data -->
                 <LinearLayout
-                    android:id="@+id/empty5"
+                    android:id="@+id/space_between_falls_and_data"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" />
 
                 <TextView
-                    android:id="@+id/falls_analyst"
+                    android:id="@+id/text_falls_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="69"
@@ -277,7 +277,7 @@
 
             <!-- Chart Section -->
             <LinearLayout
-                android:id="@+id/chart"
+                android:id="@+id/chart_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_rectangle_background"
@@ -288,7 +288,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/chart_title"
+                    android:id="@+id/text_chart_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Distribution of Potholes \nby Severity Level"
@@ -297,6 +297,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-
 </LinearLayout>
