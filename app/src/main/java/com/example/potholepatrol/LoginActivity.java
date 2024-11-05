@@ -1,6 +1,7 @@
 package com.example.potholepatrol;
 
 import android.os.Bundle;
+import android.content.Intent;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -54,11 +55,15 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         tvForgot.setOnClickListener(view -> {
-            // Handle forgot password
+            Intent intent = new Intent(LoginActivity.this, ForgotpasswordActivity.class);
+            startActivity(intent);
         });
 
         tvCreate.setOnClickListener(view -> {
-            // Handle create account
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
+
+
     }
 }
