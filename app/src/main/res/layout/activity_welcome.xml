@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mountain_road" />
+
+    <View
+        android:id="@+id/shadowOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/bottom_shadow" />
+
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/subtitleText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp"
+        android:elevation="2dp"
+        android:fontFamily="@font/jockey_one"
+        android:lineSpacingExtra="-40sp"
+        android:text="POTHOLE\nPATROL"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/white"
+        android:textSize="100sp"
+        android:textStyle="normal" />
+
+    <TextView
+        android:id="@+id/subtitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/getStartedButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="40dp"
+        android:elevation="4dp"
+        android:lineSpacingExtra="10sp"
+        android:text="Holes on the go?\nNow you'll know."
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/getStartedButton"
+        style="@style/CustomButtonStyle"
+        android:layout_width="341dp"
+        android:layout_height="68dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/rounded_button"
+        android:elevation="4dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="Get Started"
+        android:textColor="#637D4B"
+        android:textSize="20sp" />
+
+</RelativeLayout>

@@ -1,0 +1,183 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ic_close"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginHorizontal="182dp"
+        android:src="@mipmap/ic_close"
+        android:scaleType="fitXY" />
+
+    <LinearLayout
+        android:id="@+id/upload_image_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_search"
+        android:paddingTop="48dp"
+        android:paddingBottom="23dp"
+        android:paddingHorizontal="34dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_upload"
+            android:textColor="#0B0B0B"
+            android:textSize="18sp"
+            android:layout_marginBottom="8dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Media Upload" />
+
+        <TextView
+            android:id="@+id/title_description"
+            android:textColor="#6D6D6D"
+            android:textSize="14sp"
+            android:layout_marginBottom="18dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Add your documents here, and you can upload up to 5 files max" />
+
+        <LinearLayout
+            android:id="@+id/file_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_frame"
+            android:paddingVertical="24dp"
+            android:layout_marginBottom="23dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ic_upload_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="17dp"
+                android:layout_marginHorizontal="151dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical">
+
+
+
+
+                <ImageView
+                    android:id="@+id/ic_upload_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-1dp"
+                    android:src="@mipmap/ic_upload_image"
+                    android:scaleType="fitXY" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title_description_1"
+                android:textColor="#0B0B0B"
+                android:textSize="14sp"
+                android:layout_marginBottom="14dp"
+                android:layout_marginStart="59dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Drag your file(s) to start uploading" />
+
+            <LinearLayout
+                android:id="@+id/or_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="71dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/line_1"
+                    android:layout_width="80dp"
+                    android:layout_height="1dp"
+                    android:background="#E7E7E7"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:orientation="vertical" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/title_or"
+                    android:textColor="#6D6D6D"
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="OR" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:id="@+id/line_2"
+                    android:layout_width="80dp"
+                    android:layout_height="1dp"
+                    android:background="#E7E7E7"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/browse_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:background="@drawable/search_frame"
+                android:paddingVertical="9dp"
+                android:layout_marginHorizontal="124dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title_browse"
+                    android:textColor="#AFC7B1"
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Browse files" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/btn_frame"
+            android:paddingVertical="20dp"
+            android:layout_marginHorizontal="32dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
