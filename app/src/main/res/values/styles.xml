@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- notifications styles -->
-
 	<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 		<item name="colorAccent">@color/colorAccent</item>
 	</style>
-	<!-- res/values/styles.xml -->
 	<style name="Theme.PotholePatrol.Splash" parent="Theme.SplashScreen">
 		<item name="windowSplashScreenBackground">@color/white</item> <!-- Màu nền -->
 		<item name="windowSplashScreenAnimatedIcon">@mipmap/ic_logo_pothole</item> <!-- Biểu tượng của bạn -->
 		<item name="windowSplashScreenAnimationDuration">1000</item> <!-- Thời gian hiệu ứng: 1000ms -->
 		<item name="postSplashScreenTheme">@style/Theme.PotholePatrol</item> <!-- Chủ đề chính sau Splash Screen -->
 	</style>
-
+	<style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+		<item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+	</style>
+	<style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+		<item name="android:background">@android:color/transparent</item>
+	</style>
 </resources>
