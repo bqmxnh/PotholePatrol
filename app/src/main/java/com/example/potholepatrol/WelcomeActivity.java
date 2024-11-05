@@ -47,7 +47,7 @@ public class WelcomeActivity extends AppCompatActivity {
         // Thiết lập click listener cho nút
         getStartedButton.setOnClickListener(view -> {
             // Tạo intent để chuyển đến LoginActivity
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
 
             // Tùy chọn: Thêm chuyển đổi hiệu ứng animation
