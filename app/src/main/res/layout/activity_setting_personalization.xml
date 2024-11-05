@@ -132,7 +132,8 @@
                         android:layout_width="299dp"
                         android:layout_height="12dp"
                         android:background="@drawable/level_bar"
-                        android:layout_gravity="center" />
+                        android:layout_gravity="center"
+                        android:orientation="horizontal" />
 
                     <ImageView
                         android:id="@+id/ic_level"

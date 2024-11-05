@@ -23,7 +23,6 @@
         <activity android:name=".WelcomeActivity"/>
         <activity android:name=".LoginActivity"/>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".MapListActivity"/>
 
 
     </application>
