@@ -1,0 +1,217 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/notification_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F5F5F5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Top Bar -->
+            <LinearLayout
+                android:id="@+id/top_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="26dp"
+                android:background="@drawable/top_rounded_background"
+                android:orientation="vertical"
+                android:paddingHorizontal="25dp"
+                android:paddingVertical="13dp"
+                android:clipToOutline="true"
+                android:elevation="0dp">
+
+                <!-- Map Title Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ic_back"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/right_arrow" />
+
+                    <TextView
+                        android:id="@+id/text_notification_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Notification"
+                        android:textColor="#0D1B34"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/ic_notification"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/ic_notification" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Clear All Section -->
+            <TextView
+                android:id="@+id/title_clear_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="27dp"
+                android:layout_marginBottom="9dp"
+                android:text="Clear all"
+                android:textColor="#0D1B34"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <!-- Warning Notification -->
+            <LinearLayout
+                android:id="@+id/notification_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/search_frame"
+                android:paddingTop="18dp"
+                android:paddingBottom="7dp"
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="17dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ic_warning"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:layout_marginEnd="3dp"
+                    android:src="@mipmap/ic_warning"
+                    android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:id="@+id/warning_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="1dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/warning_title_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/title_warning"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Warning!!!"
+                            android:textColor="#000000"
+                            android:textSize="24sp" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/warning_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="31/12/2024"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/warning_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="1dp"
+                        android:text="You’ re close to a pothole!\nPlease be careful, pothole\n#69 was detected close to\nyour position! Slow down\nand keep your eyes open."
+                        android:textColor="#000000"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Thank You Notification -->
+            <LinearLayout
+                android:id="@+id/notification_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/search_frame"
+                android:paddingTop="18dp"
+                android:paddingBottom="6dp"
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="492dp"
+                android:layout_marginHorizontal="17dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ic_thank_you"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
+                    android:layout_marginEnd="3dp"
+                    android:src="@mipmap/ic_thankyou"
+                    android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:id="@+id/thank_you_detail_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="1dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/thank_you_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="7dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/title_thank_you"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Thank you!"
+                            android:textColor="#000000"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/thank_you_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="31/12/2024"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/thank_you_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Thank you for your contribution.\nWe have a gift for you, please\naccess this link to get a voucher.\nabcxyz.com"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
