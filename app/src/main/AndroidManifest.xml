@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -23,7 +24,13 @@
         <activity android:name=".WelcomeActivity"/>
         <activity android:name=".LoginActivity"/>
         <activity android:name=".MainActivity"/>
+        <meta-data
+            android:name="com.google.android.gms.client.id"
+            android:value="854216792154-caj2n5h6p40udrt4ihljoj9onqrvjup3.apps.googleusercontent.com" />
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 
