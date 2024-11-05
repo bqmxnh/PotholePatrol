@@ -56,7 +56,7 @@ public class FragmentSetting extends Fragment {
     private void showLogoutDialog() {
         // Create and show the logout confirmation dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_logout, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.setting_dialog_logout, null);
         builder.setView(dialogView);
 
         AlertDialog dialog = builder.create();

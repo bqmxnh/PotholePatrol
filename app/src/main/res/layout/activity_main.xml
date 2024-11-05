@@ -11,5 +11,5 @@
         android:layout_weight="1"/>
 
     <!-- Bottom Navigation -->
-    <include layout="@layout/bottom_navigation" />
+    <include layout="@layout/map_bottom_navigation" />
 </LinearLayout>
