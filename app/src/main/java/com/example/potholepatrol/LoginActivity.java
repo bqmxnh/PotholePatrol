@@ -1,12 +1,21 @@
 package com.example.potholepatrol;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -18,18 +27,28 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.example.potholepatrol.ForgetpasswordActivity;
+
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.example.potholepatrol.api.ApiClient;
+import com.example.potholepatrol.api.AuthService;
+import com.example.potholepatrol.model.LoginResponse;
+import com.example.potholepatrol.model.LoginRequest;
 
 import java.security.SecureRandom;
 
+
+
 public class LoginActivity extends AppCompatActivity {
+
     private static final String TAG = "LoginActivity";
     private static final String WEB_CLIENT_ID = "854216792154-kq826a1ugc767o9satue0tp9457lr4h1.apps.googleusercontent.com";
 
@@ -81,19 +100,41 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         btnLogin.setOnClickListener(view -> {
-            // Xử lý sự kiện click vào nút Login (thêm logic đăng nhập tại đây)
+            String email = etEmail.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+
+            // Kiểm tra xem email và password có hợp lệ không
+            if (email.isEmpty() || password.isEmpty()) {
+                // Hiển thị thông báo lỗi (nếu cần)
+                Log.e(TAG, "Email or password is empty");
+                return;
+            }
+
+            // Gọi hàm loginWithApi với email và password
+            loginWithApi(email, password);
         });
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             btnGoogle.setOnClickListener(view -> startGoogleSignIn());
         }
 
         tvForgot.setOnClickListener(view -> {
-            // Xử lý sự kiện quên mật khẩu
+            // Tạo Intent để mở ForgetPasswordActivity
+            Intent intent = new Intent(LoginActivity.this, ForgetpasswordActivity.class );
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // Mở ForgetPasswordActivity
+            startActivity(intent);
         });
 
+
+
         tvCreate.setOnClickListener(view -> {
-            // Xử lý sự kiện tạo tài khoản mới
+            // Tạo Intent để mở RegisterActivity
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            getIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // Mở RegisterActivity
+            startActivity(intent);
         });
     }
 
@@ -133,6 +174,53 @@ public class LoginActivity extends AppCompatActivity {
         new SecureRandom().nextBytes(nonce);
         return Base64.encodeToString(nonce, Base64.DEFAULT);
     }
+
+    private void loginWithApi(String email, String password) {
+        // Khởi tạo AuthService từ ApiClient
+        AuthService authService = ApiClient.getClient().create(AuthService.class);
+
+        // Tạo đối tượng LoginRequest để chứa email và password
+        LoginRequest loginRequest = new LoginRequest(email, password);
+
+        // Gọi API đăng nhập
+        authService.login(loginRequest).enqueue(new retrofit2.Callback<LoginResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Xử lý khi đăng nhập thành công
+                    LoginResponse loginResponse = response.body();
+                    String accessToken = loginResponse.getAccessToken();
+                    String refreshToken = loginResponse.getRefreshToken();
+
+                    // Lưu refreshToken vào SharedPreferences
+                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("refreshToken", refreshToken);
+                    editor.apply();
+
+                    Log.d(TAG, "Login successful. Access Token: " + accessToken);
+
+                    // Chuyển đến MainActivity sau khi đăng nhập thành công
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.e(TAG, "Login failed. Code: " + response.code());
+
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<LoginResponse> call, Throwable t) {
+                Log.e(TAG, "API call failed: " + t.getMessage());
+                // Xử lý lỗi khi gọi API thất bại
+            }
+        });
+    }
+
+
+
+
 
     private void handleSignIn(GetCredentialResponse result) {
         if (result == null || result.getCredential() == null) {
