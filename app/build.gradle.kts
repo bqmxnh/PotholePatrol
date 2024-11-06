@@ -38,6 +38,15 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.core.splashscreen)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+// Glide dependencies
+    implementation(libs.glide.core)
+    implementation(libs.credentials)
+    implementation(libs.googleid)
+    annotationProcessor(libs.glide.compiler)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
