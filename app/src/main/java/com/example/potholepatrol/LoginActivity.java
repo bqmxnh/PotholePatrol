@@ -99,31 +99,34 @@ public class LoginActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Kết quả trả về từ việc đăng nhập Google
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 if (account != null) {
-                    // Đăng nhập thành công, xử lý tài khoản
-                    Log.d("GoogleSignIn", "Đăng nhập thành công: " + account.getEmail());
+                    Log.d("GoogleSignIn", "Dang nhap thanh cong: " + account.getEmail());
 
-                    // Lấy email từ tài khoản đăng nhập Google
-                    String email = account.getEmail();
+                    String userName = account.getDisplayName();
 
-                    // Lưu email vào SharedPreferences
+                    // Get profile image URL
+                    String photoUrl = "";
+                    if (account.getPhotoUrl() != null) {
+                        photoUrl = account.getPhotoUrl().toString();
+                    }
+
+                    // Save user data to SharedPreferences
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("user_email", email);
+                    editor.putString("user_name", userName);
+                    editor.putString("profile_photo_url", photoUrl);
                     editor.apply();
 
-                    // Chuyển hướng đến MainActivity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-                    finish(); // Đóng LoginActivity
+                    finish();
                 }
             } catch (ApiException e) {
-                Log.w("GoogleSignIn", "Đăng nhập thất bại, mã lỗi: " + e.getStatusCode());
+                Log.w("GoogleSignIn", "Dang nhap that bai, ma loi: " + e.getStatusCode());
             }
         }
     }

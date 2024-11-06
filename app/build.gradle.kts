@@ -39,6 +39,9 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.core.splashscreen)
     implementation("com.google.android.gms:play-services-auth:21.2.0")
+// Glide dependencies
+    implementation(libs.glide.core)
+    annotationProcessor(libs.glide.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

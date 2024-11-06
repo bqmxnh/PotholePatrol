@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- notifications strings -->
-
-	<string name="app_name">Page 1</string>
+	<string name="app_name">Pothole Patrol</string>
 	<string name="ek_img_content">ExportKit Image</string>
 	<string name="notifications_ek3_string">Notifications</string>
 	<string name="time_ek1_string">9:41</string>
@@ -10,4 +9,5 @@
 	<string name="placeholder_ek1_string">Vibrate</string>
 	<string name="alert_preferences_string">Alert Preferences</string>
 	<string name="button_ek1_string">Save</string>
+	<string name="server_client_id">854216792154-caj2n5h6p40udrt4ihljoj9onqrvjup3.apps.googleusercontent.com</string>
 </resources>

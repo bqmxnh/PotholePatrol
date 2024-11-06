@@ -3,21 +3,27 @@ package com.example.potholepatrol.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.bumptech.glide.Glide;
 import com.example.potholepatrol.R;
 
 public class FragmentDashboard extends Fragment {
 
     private TextView textUsername;
+    private ImageView iconUserImage;
+
 
     @Nullable
     @Override
@@ -34,14 +40,33 @@ public class FragmentDashboard extends Fragment {
 
         // Khởi tạo textUsername
         textUsername = view.findViewById(R.id.text_username);
+        iconUserImage = view.findViewById(R.id.icon_user_image);
 
-        // Lấy email từ SharedPreferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        String email = preferences.getString("user_email", "User");
+        String username = preferences.getString("user_name", "User");
+        String photoUrl = preferences.getString("profile_photo_url", "");
 
-        // Hiển thị email trong text_username
-        textUsername.setText(email);
+        textUsername.setText(username);
+
+        // Load profile image
+        if (!photoUrl.isEmpty()) {
+            loadProfileImage(photoUrl);
+        }
 
         return view;
+    }
+    private void loadProfileImage(String photoUrl) {
+        try {
+            // Add Glide dependency in build.gradle if not already added:
+            // implementation 'com.github.bumptech.glide:glide:4.12.0'
+            Glide.with(requireContext())
+                    .load(photoUrl)
+                    .circleCrop() // Makes the image circular
+                    .placeholder(R.mipmap.ic_user) // Show default image while loading
+                    .error(R.mipmap.ic_user) // Show default image on error
+                    .into(iconUserImage);
+        } catch (Exception e) {
+            Log.e("ProfileImage", "Error loading profile image: " + e.getMessage());
+        }
     }
 }
