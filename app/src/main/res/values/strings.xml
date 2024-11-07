@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- notifications strings -->
-
-    <string name="app_name">Page 1</string>
+    <string name="app_name">Pothole Patrol</string>
     <string name="ek_img_content">ExportKit Image</string>
     <string name="notifications_ek3_string">Notifications</string>
     <string name="time_ek1_string">9:41</string>
