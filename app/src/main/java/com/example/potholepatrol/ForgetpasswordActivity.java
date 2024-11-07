@@ -2,7 +2,9 @@ package com.example.potholepatrol;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -60,6 +62,10 @@ public class ForgetpasswordActivity extends AppCompatActivity {
             // Kiểm tra và xử lý dữ liệu email nhập vào
             String email = etEmail.getText().toString().trim();
             requestOTP(email);
+//            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putString("email", email);
+//            editor.apply();
         });
 
 
@@ -83,7 +89,8 @@ public class ForgetpasswordActivity extends AppCompatActivity {
                     Toast.makeText(ForgetpasswordActivity.this, "OTP sent successfully. Check your email.", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ForgetpasswordActivity.this, EnterotpActivity.class );
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    // Mở ForgetPasswordActivity
+                    String email = etEmail.getText().toString().trim();
+                    intent.putExtra("email", email);
                     startActivity(intent);
 
                 } else {

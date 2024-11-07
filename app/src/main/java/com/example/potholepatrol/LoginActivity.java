@@ -1,5 +1,7 @@
 package com.example.potholepatrol;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +12,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -196,15 +199,22 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("refreshToken", refreshToken);
+                    String email = etEmail.getText().toString().trim();
                     editor.apply();
 
                     Log.d(TAG, "Login successful. Access Token: " + accessToken);
+                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
 
                     // Chuyển đến MainActivity sau khi đăng nhập thành công
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
-                } else {
+                }
+                if (response.code() == 401) {
+                    Log.e(TAG, "Login failed: Incorrect username or password.");
+                    Toast.makeText(LoginActivity.this, "Login failed: Incorrect username or password", Toast.LENGTH_SHORT).show();
+                }
+                else {
                     Log.e(TAG, "Login failed. Code: " + response.code());
 
                 }
@@ -215,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e(TAG, "API call failed: " + t.getMessage());
                 // Xử lý lỗi khi gọi API thất bại
             }
+
         });
     }
 

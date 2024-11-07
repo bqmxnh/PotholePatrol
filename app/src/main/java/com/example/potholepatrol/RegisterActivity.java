@@ -108,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
                     String message = registerResponse.getMessage();
 
                     Log.d(TAG, "Registration successful: " + message);
-
+                    Toast.makeText(RegisterActivity.this, "Register Successfully", Toast.LENGTH_SHORT).show();
                     // Chuyển đến màn hình đăng nhập sau khi đăng ký thành công
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(intent);
@@ -116,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
                 } else {
                     // Kiểm tra nếu mã lỗi là 409 (email đã được sử dụng)
                     if (response.code() == 409) {
-                        Log.e(TAG, "Email is already in use.");
+                        Log.e(TAG, "Registration failed: Email is already in use");
                         Toast.makeText(RegisterActivity.this, "Email is already in use.", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e(TAG, "Registration failed. Code: " + response.code());

@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PotholePatrol"
         tools:targetApi="31">
         <activity
+            android:name=".EnternewpasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".EnterotpActivity"
             android:exported="false" />
         <activity

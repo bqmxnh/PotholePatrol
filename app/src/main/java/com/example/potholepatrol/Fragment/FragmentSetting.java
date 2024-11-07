@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.potholepatrol.MainActivity;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.api.ApiClient;
@@ -121,10 +122,13 @@ public class FragmentSetting extends Fragment {
                     // Xử lý khi đăng xuất thành công
                     Log.d(TAG, "Logout successful.");
 
+                    // Lỗi ở cái đoạn này nè
+                    Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                    requireActivity().startActivity(intent);
 
-                    clearUserSession();
 
-                    // Chuyển đến màn hình đăng nhập
+
+
 
 
 
@@ -136,8 +140,19 @@ public class FragmentSetting extends Fragment {
                 }
             }
 
+
+
             private void clearUserSession() {
+                // Xóa thông tin người dùng đã lưu trong SharedPreferences
+                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+
             }
+
+
+
 
             @Override
             public void onFailure(Call<LogoutResponse> call, Throwable t) {
@@ -147,5 +162,8 @@ public class FragmentSetting extends Fragment {
             }
         });
     }
+
+
+
 
 }
