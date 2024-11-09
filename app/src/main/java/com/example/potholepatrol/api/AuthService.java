@@ -13,6 +13,8 @@ import com.example.potholepatrol.model.RegisterResponse;
 import com.example.potholepatrol.model.VerifyOTPRequest;
 import com.example.potholepatrol.model.VerifyOTPResponse;
 
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -50,6 +52,11 @@ public interface AuthService {
     @Headers("Content-Type: application/json")
     @POST("auth/reset-password")
     Call<NewPasswordResponse> newPassword(@Body NewPasswordRequest newPasswordRequest);
+
+    // Đăng nhập bằng Google
+    @Headers("Content-Type: application/json")
+    @POST("auth/google")
+    Call<LoginResponse> googleSignIn(@Body Map<String, String> body);
 
 
 }

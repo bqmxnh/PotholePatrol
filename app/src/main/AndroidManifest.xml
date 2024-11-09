@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -41,10 +44,11 @@
 
         <meta-data
             android:name="com.google.android.gms.client.id"
-            android:value="854216792154-caj2n5h6p40udrt4ihljoj9onqrvjup3.apps.googleusercontent.com" />
+            android:value="378423130551-5knlk4hpg305j6hvbh4pkedrilno8b15.apps.googleusercontent.com" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

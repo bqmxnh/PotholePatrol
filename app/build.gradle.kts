@@ -43,9 +43,11 @@ dependencies {
     implementation(libs.glide.core)
     implementation(libs.credentials)
     implementation(libs.googleid)
+    implementation(libs.play.services.maps)
     annotationProcessor(libs.glide.compiler)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation (libs.osmdroid.wms)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

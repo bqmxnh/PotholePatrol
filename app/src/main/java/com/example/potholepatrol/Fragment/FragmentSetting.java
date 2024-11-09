@@ -15,26 +15,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.example.potholepatrol.MainActivity;
+import com.example.potholepatrol.LoginActivity;
 import com.example.potholepatrol.R;
-import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.api.ApiClient;
+import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.LogoutRequest;
 import com.example.potholepatrol.model.LogoutResponse;
-import com.example.potholepatrol.model.LoginResponse;
-import com.example.potholepatrol.LoginActivity;
 
-
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FragmentSetting extends Fragment {
     private int originalStatusBarColor;
@@ -92,13 +86,10 @@ public class FragmentSetting extends Fragment {
         LinearLayout btnCancel = dialogView.findViewById(R.id.btn_cancel);
 
         btnLogout.setOnClickListener(v -> {
-            // Perform logout action
             dialog.dismiss();
-            // Lấy refreshToken từ SharedPreferences
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             String refreshToken = sharedPreferences.getString("refreshToken", null);
             logoutWithApi(refreshToken);
-
         });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
@@ -106,64 +97,40 @@ public class FragmentSetting extends Fragment {
         dialog.show();
     }
 
-    // Cập nhật API để gọi logout
     private void logoutWithApi(String refreshToken) {
-        // Khởi tạo AuthService từ ApiClient
         AuthService authService = ApiClient.getClient().create(AuthService.class);
 
-        // Tạo đối tượng LogoutRequest với refreshToken
         LogoutRequest logoutRequest = new LogoutRequest(refreshToken);
 
-        // Gọi API đăng xuất
         authService.logout(logoutRequest).enqueue(new Callback<LogoutResponse>() {
             @Override
             public void onResponse(Call<LogoutResponse> call, Response<LogoutResponse> response) {
                 if (response.isSuccessful()) {
-                    // Xử lý khi đăng xuất thành công
                     Log.d(TAG, "Logout successful.");
+                    clearUserSession();
 
-                    // Lỗi ở cái đoạn này nè
-                    Intent intent = new Intent(requireActivity(), LoginActivity.class);
-                    requireActivity().startActivity(intent);
-
-
-
-
-
-
-
-
+                    // Start LoginActivity
+                    requireActivity().runOnUiThread(() -> {
+                        Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        requireActivity().startActivity(intent);
+                    });
                 } else {
-                    // Xử lý khi API trả về lỗi
                     Log.e(TAG, "Logout failed. Code: " + response.code());
-
                 }
             }
 
-
-
-            private void clearUserSession() {
-                // Xóa thông tin người dùng đã lưu trong SharedPreferences
-                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.apply();
-
-            }
-
-
-
-
             @Override
             public void onFailure(Call<LogoutResponse> call, Throwable t) {
-                // Xử lý khi có lỗi kết nối API
                 Log.e(TAG, "API call failed: " + t.getMessage());
-
             }
         });
     }
 
-
-
-
+    private void clearUserSession() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
 }

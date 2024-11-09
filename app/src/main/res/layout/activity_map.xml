@@ -15,11 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="917dp">
 
-            <ImageView
-                android:id="@+id/map_image"
+            <!-- MapView để hiển thị bản đồ -->
+            <org.osmdroid.views.MapView
+                android:id="@+id/mapView"
                 android:layout_width="match_parent"
-                android:layout_height="917dp"
-                android:scaleType="fitXY" />
+                android:layout_height="917dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
