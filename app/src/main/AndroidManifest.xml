@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.potholepatrol">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PotholePatrol"
         tools:targetApi="31">
+
         <activity
             android:name=".EnternewpasswordActivity"
             android:exported="false" />
@@ -34,7 +35,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,10 +44,7 @@
 
         <meta-data
             android:name="com.google.android.gms.client.id"
-            android:value="378423130551-5knlk4hpg305j6hvbh4pkedrilno8b15.apps.googleusercontent.com" />
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="957598380339-dltfuurcmj4kdd9qpnid1as21hh387hp.apps.googleusercontent.com" />
 
     </application>
 

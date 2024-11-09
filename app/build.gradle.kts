@@ -38,7 +38,16 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.core.splashscreen)
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("androidx.credentials:credentials:1.2.0")
+    implementation ("androidx.credentials:credentials-play-services-auth:1.2.0")
+    implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+    implementation ("com.google.android.gms:play-services-auth:20.3.0")
+    implementation ("com.google.android.gms:play-services-auth:21.1.0")
+
+
+
+
+
 // Glide dependencies
     implementation(libs.glide.core)
     implementation(libs.credentials)

@@ -22,8 +22,11 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.button.MaterialButton;
@@ -45,11 +48,11 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String WEB_CLIENT_ID = "378423130551-5knlk4hpg305j6hvbh4pkedrilno8b15.apps.googleusercontent.com";
+    private static final String WEB_CLIENT_ID = "957598380339-dltfuurcmj4kdd9qpnid1as21hh387hp.apps.googleusercontent.com";
 
     private CredentialManager credentialManager;
     private GoogleSignInClient mGoogleSignInClient;
-
+    private static final int RC_SIGN_IN = 9001;
     private TextInputLayout tilEmail, tilPassword;
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin, btnGoogle;
@@ -103,51 +106,37 @@ public class LoginActivity extends AppCompatActivity {
             loginWithApi(email, password);
         });
 
-        btnGoogle.setOnClickListener(view -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                startGoogleSignIn();
-            } else {
-                Toast.makeText(this, "Google Sign-In is not supported on your device version.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnGoogle.setOnClickListener(view -> signInWithGoogle());
+    }
+    private void signInWithGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Kết quả trả về từ Google Sign-In
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+
+        } catch (ApiException e) {
+            int statusCode = e.getStatusCode();
+            Log.w(TAG, "Google sign in failed with code: " + statusCode);
+            Toast.makeText(this, "Google sign in failed. Please try again. Code: " + statusCode, Toast.LENGTH_SHORT).show();
+        }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    private void startGoogleSignIn() {
-        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(WEB_CLIENT_ID)
-                .setNonce(generateNonce())
-                .build();
 
-        GetCredentialRequest request = new GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .build();
 
-        credentialManager.getCredentialAsync(
-                this,
-                request,
-                null,
-                getMainExecutor(),
-                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
-                    @Override
-                    public void onResult(GetCredentialResponse result) {
-                        handleSignIn(result);
-                    }
 
-                    @Override
-                    public void onError(@NonNull GetCredentialException e) {
-                        Log.e(TAG, "Error getting credential", e);
-                        Toast.makeText(LoginActivity.this, "Google Sign-In failed. Please try again.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private String generateNonce() {
-        byte[] nonce = new byte[32];
-        new SecureRandom().nextBytes(nonce);
-        return Base64.encodeToString(nonce, Base64.DEFAULT);
-    }
 
     private void loginWithApi(String email, String password) {
         AuthService authService = ApiClient.getClient().create(AuthService.class);
@@ -187,63 +176,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void handleSignIn(GetCredentialResponse result) {
-        if (result == null || result.getCredential() == null) {
-            Log.e(TAG, "No credential received");
-            return;
-        }
 
-        if (result.getCredential() instanceof CustomCredential) {
-            CustomCredential credential = (CustomCredential) result.getCredential();
 
-            if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
-                GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.getData());
-                String idToken = googleIdTokenCredential.getIdToken();
 
-                Log.d(TAG, "Received ID Token from Google: " + idToken);
-
-                sendGoogleTokenToServer(idToken);
-            }
-        } else {
-            Log.e(TAG, "Unexpected credential type");
-        }
-    }
-
-    private void sendGoogleTokenToServer(String idToken) {
-        AuthService authService = ApiClient.getClient().create(AuthService.class);
-
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("credential", idToken);
-
-        authService.googleSignIn(requestBody).enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    LoginResponse loginResponse = response.body();
-                    String accessToken = loginResponse.getAccessToken();
-                    String refreshToken = loginResponse.getRefreshToken();
-
-                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("refreshToken", refreshToken);
-                    editor.apply();
-
-                    Log.d(TAG, "Google Sign-In successful. Access Token: " + accessToken);
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Log.e(TAG, "Google Sign-In failed. Code: " + response.code());
-                    Toast.makeText(LoginActivity.this, "Google Sign-In failed. Please try again.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-                Log.e(TAG, "Failed to send token to server: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "Unable to connect to server. Please try again later.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 }
