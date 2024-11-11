@@ -48,6 +48,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation (libs.osmdroid.wms)
+    implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
