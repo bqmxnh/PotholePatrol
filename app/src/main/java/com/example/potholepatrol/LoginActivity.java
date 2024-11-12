@@ -20,9 +20,7 @@ import retrofit2.Call;
 
 
 
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.credentials.CredentialManager;
@@ -33,16 +31,11 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.example.potholepatrol.ForgetpasswordActivity;
 
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.button.MaterialButton;
@@ -61,10 +54,11 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    private static final String WEB_CLIENT_ID = "185818297216-sbdq7a4kdr2fk9ui32mut9h9h0jhhrig.apps.googleusercontent.com";
 
+    private CredentialManager credentialManager;
+    private GoogleSignInClient mGoogleSignInClient;
 
-    private SignInClient oneTapClient;
-    private BeginSignInRequest signInRequest;
     private TextInputLayout tilEmail, tilPassword;
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin, btnGoogle;
@@ -81,7 +75,8 @@ public class LoginActivity extends AppCompatActivity {
         // Cấu hình Google Sign-In
         setupGoogleSignIn();
 
-
+        // Thiết lập Credential Manager
+        credentialManager = CredentialManager.create(this);
 
         // Thiết lập các sự kiện click
         setupClickListeners();
@@ -100,23 +95,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupGoogleSignIn() {
-        String webClientId = getString(R.string.google_auth_web_client_id);
-
-        // Khởi tạo SignInClient
-        oneTapClient = Identity.getSignInClient(this);
-
-        // Cấu hình yêu cầu đăng nhập
-        signInRequest = new BeginSignInRequest.Builder()
-                .setGoogleIdTokenRequestOptions(
-                        BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                                .setSupported(true)
-                                .setServerClientId(webClientId)
-                                .setFilterByAuthorizedAccounts(false)
-                                .build())
-                .setAutoSelectEnabled(false)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(WEB_CLIENT_ID)
+                .requestEmail()
                 .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
-
 
     private void setupClickListeners() {
         btnLogin.setOnClickListener(view -> {
@@ -160,33 +144,40 @@ public class LoginActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     private void startGoogleSignIn() {
-        oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener(this, result -> {
-                    try {
-                        startIntentSenderForResult(
-                                result.getPendingIntent().getIntentSender(),
-                                1001,
-                                null,
-                                0,
-                                0,
-                                0
-                        );
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error starting Google Sign-In: " + e.getMessage(), e);
+        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(WEB_CLIENT_ID)
+                .setNonce(generateNonce())
+                .build();
+
+        GetCredentialRequest request = new GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build();
+
+        credentialManager.getCredentialAsync(
+                this,
+                request,
+                null,
+                getMainExecutor(),
+                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                    @Override
+                    public void onResult(GetCredentialResponse result) {
+                        handleSignIn(result);
                     }
-                })
-                .addOnFailureListener(this, e -> {
-                    Log.e(TAG, "Google Sign-In failed: " + e.getMessage(), e);
-                    Toast.makeText(this, "Google Sign-In failed. Please try again.", Toast.LENGTH_SHORT).show();
+
+                    @Override
+                    public void onError(@NonNull GetCredentialException e) {
+                        Log.e(TAG, "Error getting credential", e);
+                        //statusText.setText("Sign in failed: " + e.getMessage());
+                    }
                 });
     }
 
     private String generateNonce() {
-        byte[] nonce = new byte[32]; // Tạo mảng byte 32 ký tự
-        new SecureRandom().nextBytes(nonce); // Sinh giá trị ngẫu nhiên
-        return Base64.encodeToString(nonce, Base64.DEFAULT).trim(); // Chuyển thành chuỗi Base64
+        byte[] nonce = new byte[32];
+        new SecureRandom().nextBytes(nonce);
+        return Base64.encodeToString(nonce, Base64.DEFAULT);
     }
-
 
     private void loginWithApi(String email, String password) {
         // Khởi tạo AuthService từ ApiClient
@@ -240,24 +231,31 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1001) {
-            try {
-                SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
-                String idToken = credential.getGoogleIdToken();
 
-                if (idToken != null) {
-                    Log.d(TAG, "Google ID Token: " + idToken);
-                    sendGoogleTokenToServer(idToken);
-                }
-            } catch (ApiException e) {
-                Log.e(TAG, "Error retrieving Google Sign-In credential: " + e.getMessage(), e);
+
+    private void handleSignIn(GetCredentialResponse result) {
+        if (result == null || result.getCredential() == null) {
+            Log.e(TAG, "No credential received");
+            return;
+        }
+
+        if (result.getCredential() instanceof CustomCredential) {
+            CustomCredential credential = (CustomCredential) result.getCredential();
+
+            if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+                GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.getData());
+                String idToken = googleIdTokenCredential.getIdToken();
+
+                Log.d(TAG, "Received ID Token from Google: " + idToken);
+
+                sendGoogleTokenToServer(idToken);
             }
+        } else {
+            Log.e(TAG, "Unexpected credential type");
         }
     }
+
 
     private void sendGoogleTokenToServer(String idToken) {
         AuthService authService = ApiClient.getClient().create(AuthService.class);
@@ -267,16 +265,18 @@ public class LoginActivity extends AppCompatActivity {
 
         authService.googleSignIn(requestBody).enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse loginResponse = response.body();
+                    String accessToken = loginResponse.getAccessToken();
+                    String refreshToken = loginResponse.getRefreshToken();
 
                     SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("refreshToken", loginResponse.getRefreshToken());
+                    editor.putString("refreshToken", refreshToken);
                     editor.apply();
 
-                    Log.d(TAG, "Google Sign-In successful. Access Token: " + loginResponse.getAccessToken());
+                    Log.d(TAG, "Google Sign-In successful. Access Token: " + accessToken);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -288,8 +288,9 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
                 Log.e(TAG, "Failed to send token to server: " + t.getMessage());
+                Toast.makeText(LoginActivity.this, "Unable to connect to server. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
     }
