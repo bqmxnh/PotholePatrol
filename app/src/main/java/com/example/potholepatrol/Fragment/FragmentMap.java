@@ -79,6 +79,20 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         ImageView fabLocation = rootView.findViewById(R.id.icon_location);
         fabLocation.setOnClickListener(v -> centerMapOnMyLocation());
+        ImageView buttonZoomIn = rootView.findViewById(R.id.button_zoom_in);
+        ImageView buttonZoomOut = rootView.findViewById(R.id.button_zoom_out);
+
+        buttonZoomIn.setOnClickListener(v -> {
+            if (mapView.getZoomLevelDouble() < mapView.getMaxZoomLevel()) {
+                mapView.getController().zoomIn();
+            }
+        });
+
+        buttonZoomOut.setOnClickListener(v -> {
+            if (mapView.getZoomLevelDouble() > mapView.getMinZoomLevel()) {
+                mapView.getController().zoomOut();
+            }
+        });
 
         return rootView;
     }
