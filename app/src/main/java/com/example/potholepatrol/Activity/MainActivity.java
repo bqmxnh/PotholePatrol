@@ -1,4 +1,4 @@
-package com.example.potholepatrol;
+package com.example.potholepatrol.Activity;
 
 import android.graphics.Typeface;
 import android.os.Bundle;

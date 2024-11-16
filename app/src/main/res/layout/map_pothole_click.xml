@@ -6,53 +6,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Centered image with margin -->
-    <ImageView
-        android:id="@+id/ic_close"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="9dp"
-        android:layout_marginHorizontal="173dp"
-        android:src="@mipmap/ic_close"
-        android:scaleType="fitXY" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:id="@+id/ic_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/ic_close"
+            android:scaleType="fitXY" />
+    </RelativeLayout>
 
     <!-- Details Container -->
     <LinearLayout
         android:id="@+id/details_container"
-        android:layout_width="352dp"
-        android:layout_height="179dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:maxHeight="200dp"
         android:background="@drawable/search_frame"
-        android:paddingHorizontal="13dp"
-        android:layout_marginBottom="33dp"
-        android:layout_marginHorizontal="17dp"
-        android:elevation="250dp"
-        android:orientation="vertical">
+        android:padding="6dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="8dp"
+        android:elevation="4dp">
 
-        <LinearLayout
+
+    <LinearLayout
             android:id="@+id/details_title_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="29dp"
-            android:paddingHorizontal="19dp"
-            android:layout_marginTop="17dp"
+            android:paddingVertical="20dp"
+            android:paddingHorizontal="20dp"
+            android:layout_marginTop="0dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="UIT"
-                android:textColor="#000000"
-                android:textSize="36sp" />
+        <TextView
+            android:id="@+id/title_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="Pothole Information"
+            android:textColor="#000000"
+            android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/title_address_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Khu phố 6, Phường Linh Trung, Thành phố Thủ Đức"
-                android:textColor="#000000"
-                android:textSize="20sp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/title_address_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:layout_marginTop="2dp"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>

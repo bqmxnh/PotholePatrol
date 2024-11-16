@@ -47,10 +47,10 @@ dependencies {
     annotationProcessor(libs.glide.compiler)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation (libs.osmdroid.wms)
     implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.0")
-    implementation ("com.google.code.gson:gson:2.8.9")
-
+    implementation("org.osmdroid:osmdroid-android:6.1.16")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.google.code.gson:gson:2.10.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -1,8 +1,7 @@
-package com.example.potholepatrol;
+package com.example.potholepatrol.Activity;
 
 import static android.content.ContentValues.TAG;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,13 +10,12 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.VerifyOTPRequest;
 import com.example.potholepatrol.model.VerifyOTPResponse;
-import com.example.potholepatrol.LoginActivity;
-import android.content.SharedPreferences;
-
 
 
 public class EnterotpActivity extends AppCompatActivity {

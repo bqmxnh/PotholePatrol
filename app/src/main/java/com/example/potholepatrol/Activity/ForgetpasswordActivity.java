@@ -1,10 +1,8 @@
-package com.example.potholepatrol;
+package com.example.potholepatrol.Activity;
 
 import static android.content.ContentValues.TAG;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -14,21 +12,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.ForgetPasswordRequest;
-import com.google.android.gms.common.api.Response;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.button.MaterialButton;
-import com.example.potholepatrol.api.ApiClient;
-import com.example.potholepatrol.api.AuthService;
-import com.example.potholepatrol.model.LoginResponse;
-import com.example.potholepatrol.model.LoginRequest;
 import com.example.potholepatrol.model.ForgetPasswordResponse;
-import com.example.potholepatrol.model.ForgetPasswordRequest;
-import com.example.potholepatrol.RegisterActivity;
-
-import javax.security.auth.callback.Callback;
 
 import retrofit2.Call;
 

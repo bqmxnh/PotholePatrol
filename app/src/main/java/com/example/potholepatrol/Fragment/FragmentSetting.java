@@ -23,16 +23,11 @@ import retrofit2.Response;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.example.potholepatrol.MainActivity;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.api.ApiClient;
-import com.example.potholepatrol.model.LogoutRequest;
-import com.example.potholepatrol.model.LogoutResponse;
-import com.example.potholepatrol.model.LoginResponse;
-import com.example.potholepatrol.LoginActivity;
+import com.example.potholepatrol.Activity.LoginActivity;
 
 import java.util.HashMap;
 import java.util.Map;

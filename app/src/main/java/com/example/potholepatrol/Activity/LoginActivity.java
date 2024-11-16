@@ -1,6 +1,4 @@
-package com.example.potholepatrol;
-
-import static android.content.ContentValues.TAG;
+package com.example.potholepatrol.Activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,10 +28,10 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
 
+import com.example.potholepatrol.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.example.potholepatrol.ForgetpasswordActivity;
 
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;

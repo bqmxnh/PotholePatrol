@@ -1,13 +1,11 @@
-package com.example.potholepatrol;
+package com.example.potholepatrol.Activity;
 
 import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.potholepatrol.model.LoginRequest;
+import com.example.potholepatrol.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;

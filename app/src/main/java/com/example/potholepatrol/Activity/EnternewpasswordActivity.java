@@ -1,4 +1,4 @@
-package com.example.potholepatrol;
+package com.example.potholepatrol.Activity;
 
 import static android.content.ContentValues.TAG;
 
@@ -11,18 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.potholepatrol.api.ApiClient;
-import com.example.potholepatrol.api.AuthService;
-import com.example.potholepatrol.model.VerifyOTPRequest;
+
 import com.example.potholepatrol.model.NewPasswordRequest;
 import com.example.potholepatrol.model.NewPasswordResponse;
-import com.example.potholepatrol.EnterotpActivity;
 
 public class EnternewpasswordActivity extends AppCompatActivity {
 
