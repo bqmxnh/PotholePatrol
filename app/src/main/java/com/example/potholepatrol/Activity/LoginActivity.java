@@ -197,6 +197,7 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("refreshToken", refreshToken);
+                    editor.putString("accessToken", accessToken);
                     String email = etEmail.getText().toString().trim();
                     editor.apply();
 

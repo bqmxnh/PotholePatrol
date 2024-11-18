@@ -2,6 +2,8 @@ package com.example.potholepatrol.Fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -23,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.potholepatrol.Activity.LoginActivity;
 import com.example.potholepatrol.PotholeDetails.Pothole;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.UICustom.ViewOverlayInfoWindow;
@@ -58,11 +61,24 @@ public class FragmentMap extends Fragment implements LocationListener {
     private MapView mapView;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
-    private String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MzE3NDQ1ODEsImV4cCI6MTczMTgzMDk4MSwiYXVkIjoiNjcyNWQzZTNmMGZiM2NmZDg2MDA4Y2Y3IiwiaXNzIjoiMjI1MjAxMjBAZ20udWl0LmVkdS52biJ9.l_P0sohNnVmTk2oaG_ttG3PYYxlMFsKe5VV6JsRLziw";
+    private String accessToken;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_map, container, false);
+
+        // Get access token from SharedPreferences
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        accessToken = sharedPreferences.getString("accessToken", "");
+
+        if (accessToken.isEmpty()) {
+            Log.e(TAG, "Access token not found");
+            Toast.makeText(requireContext(), "Authentication error. Please login again.", Toast.LENGTH_LONG).show();
+            // Optionally redirect to login
+            startActivity(new Intent(requireContext(), LoginActivity.class));
+            requireActivity().finish();
+            return rootView;
+        }
 
         // Initialize osmdroid configuration
         Context ctx = requireContext().getApplicationContext();
@@ -97,7 +113,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         return rootView;
     }
 
-
     private void setupMap() {
         // Định nghĩa bounds cho ĐHQG-HCM
         final double MIN_LAT = 10.8593387269177;
@@ -123,7 +138,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                 if (isTileInBounds(x, y, zoom)) {
                     String url = BASE_URL + "/map/tiles/" + zoom + "/" + x + "/" + tmsY + ".png";
                     Log.d(TAG, "Requesting tile in bounds: " + url);
-                    return url + "?Authorization=Bearer " + token;
+                    return url + "?Authorization=Bearer " + accessToken;
                 } else {
                     Log.d(TAG, "Tile out of bounds: z=" + zoom + " x=" + x + " y=" + y);
                     return null;
@@ -133,23 +148,21 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         Configuration.getInstance().getAdditionalHttpRequestProperties().put(
                 "Authorization",
-                "Bearer " + token
+                "Bearer " + accessToken
         );
 
-        // Setup map view
+        // Rest of the setupMap method remains the same...
         mapView.setTileSource(tileSource);
         mapView.setMultiTouchControls(true);
         mapView.setHorizontalMapRepetitionEnabled(false);
         mapView.setVerticalMapRepetitionEnabled(false);
 
-        // Set bounds giới hạn
         BoundingBox bounds = new BoundingBox(
-                MAX_LAT, MAX_LON,  // North, East
-                MIN_LAT, MIN_LON   // South, West
+                MAX_LAT, MAX_LON,
+                MIN_LAT, MIN_LON
         );
         mapView.setScrollableAreaLimitDouble(bounds);
 
-        // Set zoom và center
         mapView.getController().setZoom(15.0);
         GeoPoint center = new GeoPoint(
                 (MIN_LAT + MAX_LAT) / 2,
@@ -159,6 +172,7 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         loadPotholes();
     }
+
     // Helper method để kiểm tra tile có nằm trong bounds không
     private boolean isTileInBounds(int x, int y, int zoom) {
         // Convert tile coordinates to lat/lon
@@ -263,13 +277,16 @@ public class FragmentMap extends Fragment implements LocationListener {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(BASE_URL + "/map/getAllPothole")
-                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Authorization", "Bearer " + accessToken)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "Error loading potholes", e);
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), "Failed to load pothole data", Toast.LENGTH_SHORT).show()
+                );
             }
 
             @Override
@@ -284,7 +301,17 @@ public class FragmentMap extends Fragment implements LocationListener {
                         requireActivity().runOnUiThread(() -> displayPotholes(potholes));
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing pothole data", e);
+                        requireActivity().runOnUiThread(() ->
+                                Toast.makeText(requireContext(), "Error processing pothole data", Toast.LENGTH_SHORT).show()
+                        );
                     }
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "Unauthorized access");
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(requireContext(), LoginActivity.class));
+                        requireActivity().finish();
+                    });
                 }
             }
         });
