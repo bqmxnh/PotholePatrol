@@ -120,10 +120,10 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void setupMap() {
-        final double MIN_LAT = 10.8593387269177;
-        final double MIN_LON = 106.734790771361;
-        final double MAX_LAT = 10.89728831078;
-        final double MAX_LON = 106.8587615275;
+        final double MIN_LAT = 10.75; // Reduced minimum latitude
+        final double MIN_LON = 106.65; // Reduced minimum longitude
+        final double MAX_LAT = 11.0; // Increased maximum latitude
+        final double MAX_LON = 107.0; // Increased maximum longitude
 
         XYTileSource tileSource = new XYTileSource(
                 "CustomMBTiles",
@@ -162,7 +162,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         );
         mapView.setScrollableAreaLimitDouble(bounds);
 
-        mapView.getController().setZoom(15.0);
+        mapView.getController().setZoom(14);
         GeoPoint center = new GeoPoint(
                 (MIN_LAT + MAX_LAT) / 2,
                 (MIN_LON + MAX_LON) / 2
