@@ -25,7 +25,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.potholepatrol.R;
+import com.example.potholepatrol.Settings.EditSettingActivity;
 import com.example.potholepatrol.Settings.NotificationSettingActivity;
+import com.example.potholepatrol.Settings.PersonalizationSettingActivity;
+import com.example.potholepatrol.Settings.PrivacySettingActivity;
+import com.example.potholepatrol.Settings.ReportSettingActivity;
+import com.example.potholepatrol.Settings.TermSettingActivity;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.Activity.LoginActivity;
@@ -57,12 +62,14 @@ public class FragmentSetting extends Fragment {
 
         View editOption = view.findViewById(R.id.option_edit_profile);
         editOption.setOnClickListener(v -> {
-            // Handle language option click
+            Intent intent = new Intent(getActivity(), EditSettingActivity.class);
+            startActivity(intent);
         });
 
-        View personaliztionOption = view.findViewById(R.id.option_personalization);
-        personaliztionOption.setOnClickListener(v -> {
-            // Handle language option click
+        View personalizationOption = view.findViewById(R.id.option_personalization);
+        personalizationOption.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PersonalizationSettingActivity.class);
+            startActivity(intent);
         });
 
         View notificationOption = view.findViewById(R.id.option_notifications);
@@ -73,17 +80,20 @@ public class FragmentSetting extends Fragment {
 
         View privacyOption = view.findViewById(R.id.option_privacy);
         privacyOption.setOnClickListener(v -> {
-            // Handle privacy option click
+            Intent intent = new Intent(getActivity(), PrivacySettingActivity.class);
+            startActivity(intent);
         });
 
         View reportOption = view.findViewById(R.id.option_report_problem);
         reportOption.setOnClickListener(v -> {
-            // Handle help option click
+            Intent intent = new Intent(getActivity(), ReportSettingActivity.class);
+            startActivity(intent);
         });
 
         View termOption = view.findViewById(R.id.option_terms_policies);
         termOption.setOnClickListener(v -> {
-            // Handle help option click
+            Intent intent = new Intent(getActivity(), TermSettingActivity.class);
+            startActivity(intent);
         });
 
         // Find the logout button
