@@ -17,4 +17,9 @@
 	<style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
 		<item name="android:background">@android:color/transparent</item>
 	</style>
+	<style name="TopDialog" parent="Theme.AppCompat.Light.Dialog">
+		<item name="android:windowIsFloating">false</item>
+		<item name="android:windowSoftInputMode">adjustResize</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+	</style>
 </resources>

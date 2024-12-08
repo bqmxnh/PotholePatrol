@@ -1,12 +1,20 @@
 package com.example.potholepatrol.Activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             if (email.isEmpty() || password.isEmpty()) {
                 // Hiển thị thông báo lỗi (nếu cần)
                 Log.e(TAG, "Email or password is empty");
+                showLoginStatusDialog(false, "Failed");
                 return;
             }
 
@@ -115,10 +124,6 @@ public class LoginActivity extends AppCompatActivity {
             loginWithApi(email, password);
         });
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            btnGoogle.setOnClickListener(view -> startGoogleSignIn());
-        }
 
         tvForgot.setOnClickListener(view -> {
             // Tạo Intent để mở ForgetPasswordActivity
@@ -139,129 +144,56 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    private void startGoogleSignIn() {
-        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(WEB_CLIENT_ID)
-                .setNonce(generateNonce())
-                .build();
 
-        GetCredentialRequest request = new GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .build();
+    private void showLoginStatusDialog(boolean isSuccess, String message) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_login_status);
 
-        credentialManager.getCredentialAsync(
-                this,
-                request,
-                null,
-                getMainExecutor(),
-                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
-                    @Override
-                    public void onResult(GetCredentialResponse result) {
-                        handleSignIn(result);
-                    }
+        // Set dialog window attributes
+        Window window = dialog.getWindow();
+        if (window != null) {
+            // Make dialog full width
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(window.getAttributes());
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-                    @Override
-                    public void onError(@NonNull GetCredentialException e) {
-                        Log.e(TAG, "Error getting credential", e);
-                        //statusText.setText("Sign in failed: " + e.getMessage());
-                    }
-                });
-    }
+            // Set position and background
+            layoutParams.gravity = Gravity.TOP;
+            layoutParams.dimAmount = 0.5f;
+            layoutParams.y = 0;
+            window.setAttributes(layoutParams);
+           // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
 
-    private String generateNonce() {
-        byte[] nonce = new byte[32];
-        new SecureRandom().nextBytes(nonce);
-        return Base64.encodeToString(nonce, Base64.DEFAULT);
-    }
+        ImageView ivStatus = dialog.findViewById(R.id.ivStatus);
+        TextView tvLoginStatus = dialog.findViewById(R.id.tvLoginStatus);
+        TextView tvStatusMessage = dialog.findViewById(R.id.tvStatusMessage);
 
-    private void loginWithApi(String email, String password) {
-        // Khởi tạo AuthService từ ApiClient
-        AuthService authService = ApiClient.getClient().create(AuthService.class);
+        ivStatus.setImageResource(isSuccess ? R.mipmap.tick : R.mipmap.error);
+        tvLoginStatus.setText("Login");
+        tvStatusMessage.setText(isSuccess ? "Successful" : message);
 
-        // Tạo đối tượng LoginRequest để chứa email và password
-        LoginRequest loginRequest = new LoginRequest(email, password);
+        dialog.show();
 
-        // Gọi API đăng nhập
-        authService.login(loginRequest).enqueue(new retrofit2.Callback<LoginResponse>() {
-            @Override
-            public void onResponse(retrofit2.Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // Xử lý khi đăng nhập thành công
-                    LoginResponse loginResponse = response.body();
-                    String accessToken = loginResponse.getAccessToken();
-                    String refreshToken = loginResponse.getRefreshToken();
-
-                    // Lưu refreshToken vào SharedPreferences
-                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("refreshToken", refreshToken);
-                    editor.putString("accessToken", accessToken);
-                    String email = etEmail.getText().toString().trim();
-                    editor.apply();
-
-                    Log.d(TAG, "Login successful. Access Token: " + accessToken);
-                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
-                    // Chuyển đến MainActivity sau khi đăng nhập thành công
+        new Handler().postDelayed(() -> {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+                if (isSuccess) {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
-                if (response.code() == 401) {
-                    Log.e(TAG, "Login failed: Incorrect username or password.");
-                    Toast.makeText(LoginActivity.this, "Login failed: Incorrect username or password", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.e(TAG, "Login failed. Code: " + response.code());
-
-                }
             }
-
-            @Override
-            public void onFailure(retrofit2.Call<LoginResponse> call, Throwable t) {
-                Log.e(TAG, "API call failed: " + t.getMessage());
-                // Xử lý lỗi khi gọi API thất bại
-            }
-
-        });
+        }, 2000);
     }
 
-
-
-
-
-    private void handleSignIn(GetCredentialResponse result) {
-        if (result == null || result.getCredential() == null) {
-            Log.e(TAG, "No credential received");
-            return;
-        }
-
-        if (result.getCredential() instanceof CustomCredential) {
-            CustomCredential credential = (CustomCredential) result.getCredential();
-
-            if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
-                GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.getData());
-                String idToken = googleIdTokenCredential.getIdToken();
-
-                Log.d(TAG, "Received ID Token from Google: " + idToken);
-
-                sendGoogleTokenToServer(idToken);
-            }
-        } else {
-            Log.e(TAG, "Unexpected credential type");
-        }
-    }
-
-
-    private void sendGoogleTokenToServer(String idToken) {
+    private void loginWithApi(String email, String password) {
         AuthService authService = ApiClient.getClient().create(AuthService.class);
+        LoginRequest loginRequest = new LoginRequest(email, password);
 
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("credential", idToken);
-
-        authService.googleSignIn(requestBody).enqueue(new Callback<LoginResponse>() {
+        authService.login(loginRequest).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -272,23 +204,24 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("refreshToken", refreshToken);
+                    editor.putString("accessToken", accessToken);
                     editor.apply();
 
-                    Log.d(TAG, "Google Sign-In successful. Access Token: " + accessToken);
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    Log.d(TAG, "Login successful. Access Token: " + accessToken);
+                    showLoginStatusDialog(true, "Successful");
+                } else if (response.code() == 401) {
+                    Log.e(TAG, "Login failed: Incorrect username or password.");
+                    showLoginStatusDialog(false, "Failed");
                 } else {
-                    Log.e(TAG, "Google Sign-In failed. Code: " + response.code());
-                    Toast.makeText(LoginActivity.this, "Google Sign-In failed. Please try again.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Login failed. Code: " + response.code());
+                    showLoginStatusDialog(false, "Failed");
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                Log.e(TAG, "Failed to send token to server: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "Unable to connect to server. Please try again later.", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "API call failed: " + t.getMessage());
+                showLoginStatusDialog(false, "Connection failed");
             }
         });
     }
