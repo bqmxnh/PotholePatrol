@@ -6,34 +6,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Call;
 
 
-
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.credentials.CredentialManager;
-import androidx.credentials.CredentialManagerCallback;
-import androidx.credentials.CustomCredential;
-import androidx.credentials.GetCredentialRequest;
-import androidx.credentials.GetCredentialResponse;
-import androidx.credentials.exceptions.GetCredentialException;
 
 
 import com.example.potholepatrol.R;
@@ -41,8 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -50,10 +36,6 @@ import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.LoginResponse;
 import com.example.potholepatrol.model.LoginRequest;
-
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -147,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginStatusDialog(boolean isSuccess, String message) {
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_login_status);
+        dialog.setContentView(R.layout.dialog_status);
 
         // Set dialog window attributes
         Window window = dialog.getWindow();
