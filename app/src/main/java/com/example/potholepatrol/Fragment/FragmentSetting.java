@@ -54,11 +54,38 @@ public class FragmentSetting extends Fragment {
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
         View view = inflater.inflate(R.layout.activity_setting, container, false);
+
+        View editOption = view.findViewById(R.id.option_edit_profile);
+        editOption.setOnClickListener(v -> {
+            // Handle language option click
+        });
+
+        View personaliztionOption = view.findViewById(R.id.option_personalization);
+        personaliztionOption.setOnClickListener(v -> {
+            // Handle language option click
+        });
+
         View notificationOption = view.findViewById(R.id.option_notifications);
         notificationOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), NotificationSettingActivity.class);
             startActivity(intent);
         });
+
+        View privacyOption = view.findViewById(R.id.option_privacy);
+        privacyOption.setOnClickListener(v -> {
+            // Handle privacy option click
+        });
+
+        View reportOption = view.findViewById(R.id.option_report_problem);
+        reportOption.setOnClickListener(v -> {
+            // Handle help option click
+        });
+
+        View termOption = view.findViewById(R.id.option_terms_policies);
+        termOption.setOnClickListener(v -> {
+            // Handle help option click
+        });
+
         // Find the logout button
         View logoutFrame = view.findViewById(R.id.option_logout);
         logoutFrame.setOnClickListener(v -> showLogoutDialog());
