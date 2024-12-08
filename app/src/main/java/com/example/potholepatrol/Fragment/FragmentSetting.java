@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.potholepatrol.R;
+import com.example.potholepatrol.Settings.NotificationSettingActivity;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.Activity.LoginActivity;
@@ -53,7 +54,11 @@ public class FragmentSetting extends Fragment {
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
         View view = inflater.inflate(R.layout.activity_setting, container, false);
-
+        View notificationOption = view.findViewById(R.id.option_notifications);
+        notificationOption.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), NotificationSettingActivity.class);
+            startActivity(intent);
+        });
         // Find the logout button
         View logoutFrame = view.findViewById(R.id.option_logout);
         logoutFrame.setOnClickListener(v -> showLogoutDialog());

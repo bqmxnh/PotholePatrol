@@ -47,6 +47,9 @@
 
 
         <activity android:name=".Activity.MainActivity" />
+        <activity
+            android:name=".Settings.NotificationSettingActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.client.id"
