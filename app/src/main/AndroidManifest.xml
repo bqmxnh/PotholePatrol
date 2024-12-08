@@ -48,9 +48,23 @@
 
         <activity android:name=".Activity.MainActivity" />
         <activity
+            android:name=".Settings.EditSettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".Settings.NotificationSettingActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".Settings.PersonalizationSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Settings.PrivacySettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Settings.ReportSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Settings.TermSettingActivity"
+            android:exported="false" />
         <meta-data
             android:name="com.google.android.gms.client.id"
             android:value="378423130551-5knlk4hpg305j6hvbh4pkedrilno8b15.apps.googleusercontent.com" />

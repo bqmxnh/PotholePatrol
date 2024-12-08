@@ -1,4 +1,16 @@
 package com.example.potholepatrol.Settings;
+import android.os.Bundle;
 
-public class PersonalizationSettingActivity {
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.potholepatrol.R;
+
+public class PersonalizationSettingActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting_personalization);
+    }
 }
