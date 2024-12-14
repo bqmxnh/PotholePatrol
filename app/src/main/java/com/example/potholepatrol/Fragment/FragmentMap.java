@@ -268,8 +268,10 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Modify the displayPotholes method signature to accept only the List<Pothole>
     private void displayPotholes(List<Pothole> potholes) {
+        // Xóa các overlay cũ là Marker hoặc Polyline
         mapView.getOverlays().removeIf(overlay -> overlay instanceof Marker || overlay instanceof Polyline);
 
+        // Hiển thị các marker nếu danh sách potholes >= 2
         if (potholes.size() >= 2) {
             Pothole startPoint = potholes.get(0);
             Pothole endPoint = potholes.get(1);
@@ -281,30 +283,52 @@ public class FragmentMap extends Fragment implements LocationListener {
             mapView.getOverlays().add(endMarker);
         }
 
-        double universityLat = 10.87784895286197;
-        double universityLon = 106.79067835296621;
+        // Lấy giá trị lat và lon từ SharedPreferences
+        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+        String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
+        String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
+        Log.d("SharedPreferences", "Lat: " + lonString + ", Lon: " + lonString);
 
-        // Lấy vị trí hiện tại từ LocationManager
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }
+        // Kiểm tra nếu lat và lon đã được lưu
+        if (latString != null && lonString != null) {
+            try {
+                // Chuyển đổi từ String sang double
+                double savedLat = Double.parseDouble(latString);
+                double savedLon = Double.parseDouble(lonString);
 
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                // Kiểm tra quyền truy cập vị trí
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return;
+                }
 
-        if (lastKnownLocation != null) {
-            GeoPoint myPosition = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                // Lấy vị trí hiện tại
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+                if (lastKnownLocation != null) {
+                    // Vẽ đường giữa vị trí hiện tại và vị trí đã lưu
+                    double currentLat = lastKnownLocation.getLatitude();
+                    double currentLon = lastKnownLocation.getLongitude();
+
+                    drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
+                } else {
+                    Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
+                Toast.makeText(getActivity(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
+            // Không có dữ liệu lat/lon trong SharedPreferences
+            Toast.makeText(getActivity(), "No saved location data", Toast.LENGTH_SHORT).show();
         }
-        drawRouteBetweenPoints(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude(),universityLat,universityLon);
-        getTurnByTurnDirections(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude(),universityLat,universityLon);
-        mapView.invalidate();
 
+        // Cập nhật bản đồ
+        mapView.invalidate();
     }
+
 
 
 

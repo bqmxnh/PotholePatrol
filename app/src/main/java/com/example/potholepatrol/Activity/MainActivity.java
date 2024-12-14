@@ -1,5 +1,6 @@
 package com.example.potholepatrol.Activity;
 
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         icMap.setOnClickListener(v -> {
+
+
             fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentMap).commit();
             resizeSelectedIcon(icMap);
             setBoldTitle(navMapTitle);
