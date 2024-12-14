@@ -47,9 +47,7 @@
 
 
         <activity android:name=".Activity.MainActivity" />
-        <activity
-            android:name=".Activity.RoutingScreen1Activity"
-            android:exported="false" />
+
         <activity
             android:name=".Settings.EditSettingActivity"
             android:exported="false" />
