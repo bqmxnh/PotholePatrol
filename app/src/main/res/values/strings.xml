@@ -10,5 +10,7 @@
     <string name="alert_preferences_string">Alert Preferences</string>
     <string name="button_ek1_string">Save</string>
     <string name="google_auth_web_client_id">378423130551-5knlk4hpg305j6hvbh4pkedrilno8b15.apps.googleusercontent.com</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

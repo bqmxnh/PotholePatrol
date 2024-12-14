@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.potholepatrol.Activity.LoginActivity;
+import com.example.potholepatrol.Activity.RegisterActivity;
 import com.example.potholepatrol.PotholeDetails.Pothole;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.UICustom.ViewOverlayInfoWindow;
@@ -66,7 +67,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     private static final String TAG = "FragmentMap";
     private static final String BASE_URL = "http://47.129.31.47:3000";
     private static final int PERMISSION_REQUEST_CODE = 1;
-
+    private ImageView searchLocation;
     private MapView mapView;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
@@ -99,8 +100,24 @@ public class FragmentMap extends Fragment implements LocationListener {
         setupMap();
         setupLocation();
         setupMapControls(rootView);
+        searchLocation = rootView.findViewById(R.id.icon_search);
+        searchLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                LocationFragment locationFragment = new LocationFragment();
+
+
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, locationFragment) // Use the correct container ID
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
 
         return rootView;
+
+
     }
 
     private void setupMapControls(View rootView) {
@@ -284,6 +301,7 @@ public class FragmentMap extends Fragment implements LocationListener {
             Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
         }
         drawRouteBetweenPoints(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude(),universityLat,universityLon);
+        getTurnByTurnDirections(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude(),universityLat,universityLon);
         mapView.invalidate();
 
     }
@@ -310,6 +328,51 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         return marker;
     }
+    private void getTurnByTurnDirections(double startLat, double startLon, double endLat, double endLon) {
+        String url = String.format(Locale.US,
+                "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?steps=true",
+                startLon, startLat, endLon, endLat);
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String jsonData = response.body().string();
+                    try {
+                        JSONObject json = new JSONObject(jsonData);
+                        JSONArray steps = json.getJSONArray("routes").getJSONObject(0).getJSONArray("legs")
+                                .getJSONObject(0).getJSONArray("steps");
+
+                        for (int i = 0; i < steps.length(); i++) {
+                            JSONObject step = steps.getJSONObject(i);
+                            String instruction = step.getString("instruction");
+                            double distance = step.getDouble("distance");
+                            double duration = step.getDouble("duration");
+
+                            // Hiển thị chỉ dẫn cho người dùng hoặc vẽ lên bản đồ
+                            String routeInfo = String.format(Locale.US,
+                                    "Instruction: %s\nDistance: %.1f m\nDuration: %.0f sec",
+                                    instruction, distance, duration);
+                            Log.d("OSRM Directions", routeInfo);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
 
     private void drawRouteBetweenPoints(double startLat, double startLon, double endLat, double endLon) {
         String url = String.format(Locale.US,
