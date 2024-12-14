@@ -20,6 +20,7 @@ import androidx.cardview.widget.CardView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.potholepatrol.Adapter.LocationAdapter;
 import com.example.potholepatrol.R;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -41,8 +42,8 @@ public class LocationFragment extends Fragment {
     private EditText etSearch;
     private Button btnSearch;
     private ListView lvLocationResults;
+    private LocationAdapter locationAdapter;
 
-    private ArrayAdapter<NominatimResult> locationAdapter;
     private List<NominatimResult> locationList;
 
     public LocationFragment() {
@@ -69,23 +70,9 @@ public class LocationFragment extends Fragment {
         btnSearch = rootView.findViewById(R.id.btnSearch);
         lvLocationResults = rootView.findViewById(R.id.lvLocationResults);
 
-        // Initialize the location list and adapter
+        // Khởi tạo adapter mới
         locationList = new ArrayList<>();
-        locationAdapter = new ArrayAdapter<NominatimResult>(getContext(), android.R.layout.simple_list_item_1, locationList) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                NominatimResult result = getItem(position);
-
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
-                }
-
-                TextView textView = convertView.findViewById(android.R.id.text1);
-                textView.setText(result.getDisplay_name());
-
-                return convertView;
-            }
-        };
+        locationAdapter = new LocationAdapter(getContext(), locationList);
         lvLocationResults.setAdapter(locationAdapter);
 
         // Back button event
@@ -109,30 +96,47 @@ public class LocationFragment extends Fragment {
 
         // ListView item click event
         lvLocationResults.setOnItemClickListener((parent, view, position, id) -> {
-            NominatimResult selectedResult = locationList.get(position); // Get the NominatimResult object
+            NominatimResult selectedResult = locationList.get(position); // Lấy địa điểm được chọn
 
-            // Show confirmation dialog
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Routing")
-                    .setMessage("Do you want to route to this location: " + selectedResult.getDisplay_name() + "?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        // Close the current fragment
-                        getActivity().getSupportFragmentManager().popBackStack();
+            // Tạo dialog với layout tùy chỉnh
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_route_confirmation, null);
+            builder.setView(dialogView);
 
-                        // Save lat and lon to SharedPreferences
-                        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("lat", selectedResult.getLat());  // Lưu lat dưới dạng String
-                        editor.putString("lon", selectedResult.getLon());  // Lưu lon dưới dạng String
-                        editor.apply();
+            AlertDialog dialog = builder.create();
+            // Loại bỏ viền vuông mặc định
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+            // Gán dữ liệu vào layout
+            TextView tvTitle = dialogView.findViewById(R.id.tvTitle);
+            TextView tvLocationName = dialogView.findViewById(R.id.tvLocationName);
+            Button btnYes = dialogView.findViewById(R.id.btnYes);
+            Button btnNo = dialogView.findViewById(R.id.btnNo);
 
+            tvTitle.setText("Route to this location?");
+            tvLocationName.setText(selectedResult.getDisplay_name());
 
-                        // Go back to the previous fragment
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+            // Xử lý nút Yes
+            btnYes.setOnClickListener(v -> {
+                // Lưu dữ liệu vào SharedPreferences
+                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("lat", selectedResult.getLat());
+                editor.putString("lon", selectedResult.getLon());
+                editor.apply();
+
+                dialog.dismiss();
+                getActivity().getSupportFragmentManager().popBackStack();
+            });
+
+            // Xử lý nút No
+            btnNo.setOnClickListener(v -> dialog.dismiss());
+
+            // Hiển thị dialog
+            dialog.show();
         });
+
 
         return rootView;
     }
@@ -155,15 +159,10 @@ public class LocationFragment extends Fragment {
                     List<NominatimResult> results = response.body();
 
                     if (!results.isEmpty()) {
-                        locationList.clear();  // Clear previous list
-                        int maxResults = Math.min(5, results.size());  // Limit to 5 results
-                        for (int i = 0; i < maxResults; i++) {
-                            NominatimResult result = results.get(i);
-                            // In ra lat và lon để kiểm tra
-                            Log.d("Location", "Lat: " + result.getLat() + ", Lon: " + result.getLon());
-                            locationList.add(result);
-                        }
-                        locationAdapter.notifyDataSetChanged();  // Update the ListView
+                        locationList.clear();
+                        int maxResults = Math.min(5, results.size());
+                        locationList.addAll(results.subList(0, maxResults));
+                        locationAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getContext(), "No results found", Toast.LENGTH_SHORT).show();
                     }
