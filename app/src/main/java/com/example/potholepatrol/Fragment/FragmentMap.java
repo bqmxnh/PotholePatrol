@@ -1,5 +1,7 @@
 package com.example.potholepatrol.Fragment;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -247,14 +249,13 @@ public class FragmentMap extends Fragment implements LocationListener {
         });
     }
 
+    // Modify the displayPotholes method signature to accept only the List<Pothole>
     private void displayPotholes(List<Pothole> potholes) {
         mapView.getOverlays().removeIf(overlay -> overlay instanceof Marker || overlay instanceof Polyline);
 
         if (potholes.size() >= 2) {
             Pothole startPoint = potholes.get(0);
             Pothole endPoint = potholes.get(1);
-
-            drawRouteBetweenPoints(startPoint, endPoint);
 
             Marker startMarker = createMarker(startPoint, R.drawable.marker_red);
             Marker endMarker = createMarker(endPoint, R.drawable.marker_red);
@@ -263,8 +264,33 @@ public class FragmentMap extends Fragment implements LocationListener {
             mapView.getOverlays().add(endMarker);
         }
 
+        double universityLat = 10.87784895286197;
+        double universityLon = 106.79067835296621;
+
+        // Lấy vị trí hiện tại từ LocationManager
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if (lastKnownLocation != null) {
+            GeoPoint myPosition = new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+        } else {
+            Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
+        }
+        drawRouteBetweenPoints(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude(),universityLat,universityLon);
         mapView.invalidate();
+
     }
+
+
+
+
 
 
     private Marker createMarker(Pothole pothole, int iconRes) {
@@ -285,14 +311,10 @@ public class FragmentMap extends Fragment implements LocationListener {
         return marker;
     }
 
-    private void drawRouteBetweenPoints(Pothole start, Pothole end) {
+    private void drawRouteBetweenPoints(double startLat, double startLon, double endLat, double endLon) {
         String url = String.format(Locale.US,
                 "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
-                start.getLocation().getCoordinates().getLongitude(),
-                start.getLocation().getCoordinates().getLatitude(),
-                end.getLocation().getCoordinates().getLongitude(),
-                end.getLocation().getCoordinates().getLatitude()
-        );
+                startLon, startLat, endLon, endLat);
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -302,7 +324,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                requireActivity().runOnUiThread(() -> drawDirectLine(start, end));
+                // Xử lý lỗi nếu cần
             }
 
             @Override
@@ -313,36 +335,62 @@ public class FragmentMap extends Fragment implements LocationListener {
                         JSONObject json = new JSONObject(jsonData);
                         JSONArray routes = json.getJSONArray("routes");
                         if (routes.length() > 0) {
-                            JSONObject route = routes.getJSONObject(0);
-                            String geometry = route.getString("geometry");
-                            double distance = route.getDouble("distance");
-                            double duration = route.getDouble("duration");
+                            JSONObject shortestRoute = null;
+                            double minDistance = Double.MAX_VALUE;
 
-                            List<GeoPoint> points = decodePolyline(geometry);
+                            // Duyệt qua tất cả các tuyến đường và chọn tuyến ngắn nhất
+                            for (int i = 0; i < routes.length(); i++) {
+                                JSONObject route = routes.getJSONObject(i);
+                                double distance = route.getDouble("distance");
 
-                            requireActivity().runOnUiThread(() -> {
-                                Polyline routeLine = new Polyline(mapView);
-                                routeLine.setColor(Color.BLUE);
-                                routeLine.setWidth(10f);
-                                routeLine.setPoints(points);
-                                mapView.getOverlays().add(routeLine);
-                                mapView.invalidate();
+                                // Nếu tìm thấy tuyến đường ngắn hơn, cập nhật
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                    shortestRoute = route;
+                                } else if (distance == minDistance) {
+                                    // Nếu khoảng cách bằng nhau, giữ lại tuyến đầu tiên gặp phải
+                                    // (tuyến đầu tiên đã được chọn do cách so sánh)
+                                    break;
+                                }
+                            }
 
-                                String routeInfo = String.format(Locale.US,
-                                        "Distance: %.1f km\nEstimated time: %.0f min",
-                                        distance / 1000.0, duration / 60.0);
-                                Toast.makeText(requireContext(), routeInfo, Toast.LENGTH_LONG).show();
-                            });
+                            if (shortestRoute != null) {
+                                String geometry = shortestRoute.getString("geometry");
+                                double distance = shortestRoute.getDouble("distance");
+                                double duration = shortestRoute.getDouble("duration");
+
+                                List<GeoPoint> points = decodePolyline(geometry);
+
+                                requireActivity().runOnUiThread(() -> {
+                                    //mapView.getOverlays().clear();
+
+                                    // Vẽ tuyến đường ngắn nhất
+                                    Polyline routeLine = new Polyline(mapView);
+                                    routeLine.setColor(Color.BLUE);
+                                    routeLine.setWidth(10f);
+                                    routeLine.setPoints(points);
+                                    mapView.getOverlays().add(routeLine);
+                                    mapView.invalidate();
+
+                                    String routeInfo = String.format(Locale.US,
+                                            "Distance: %.1f km\nEstimated time: %.0f min",
+                                            distance / 1000.0, duration / 60.0);
+                                    Toast.makeText(requireContext(), routeInfo, Toast.LENGTH_LONG).show();
+                                });
+                            }
                         }
                     } catch (JSONException e) {
-                        requireActivity().runOnUiThread(() -> drawDirectLine(start, end));
+                        e.printStackTrace();
                     }
                 } else {
-                    requireActivity().runOnUiThread(() -> drawDirectLine(start, end));
+                    // Xử lý khi API trả về thất bại
                 }
             }
+
         });
     }
+
+
     private List<GeoPoint> decodePolyline(String encoded) {
         List<GeoPoint> points = new ArrayList<>();
         int index = 0;
@@ -377,39 +425,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         return points;
     }
 
-    private void drawDirectLine(Pothole start, Pothole end) {
-        GeoPoint startPoint = new GeoPoint(
-                start.getLocation().getCoordinates().getLatitude(),
-                start.getLocation().getCoordinates().getLongitude()
-        );
 
-        GeoPoint endPoint = new GeoPoint(
-                end.getLocation().getCoordinates().getLatitude(),
-                end.getLocation().getCoordinates().getLongitude()
-        );
-
-        Polyline line = new Polyline(mapView);
-        line.setColor(Color.BLUE);
-        line.setWidth(10f);
-
-        List<GeoPoint> points = new ArrayList<>();
-        points.add(startPoint);
-        points.add(endPoint);
-        line.setPoints(points);
-
-        mapView.getOverlays().add(line);
-        mapView.invalidate();
-
-        float[] results = new float[1];
-        Location.distanceBetween(
-                startPoint.getLatitude(), startPoint.getLongitude(),
-                endPoint.getLatitude(), endPoint.getLongitude(),
-                results
-        );
-
-        String distance = String.format(Locale.US, "Distance: %.1f m", results[0]);
-        Toast.makeText(requireContext(), distance, Toast.LENGTH_LONG).show();
-    }
 
 
 
