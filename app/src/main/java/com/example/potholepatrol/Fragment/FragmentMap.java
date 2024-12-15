@@ -356,24 +356,30 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void displayPotholes(List<Pothole> potholes) {
+        // Xóa các overlay cũ là Marker hoặc Polyline
         mapView.getOverlays().removeIf(overlay -> overlay instanceof Marker || overlay instanceof Polyline);
 
-        if (potholes.size() >= 2) {
-            Pothole startPoint = potholes.get(0);
-            Pothole endPoint = potholes.get(1);
+        // Hiển thị tất cả các hố ga
+        for (Pothole pothole : potholes) {
+            // Kiểm tra nếu đối tượng Pothole có thông tin vị trí
+            if (pothole.getLocation() != null && pothole.getLocation().getCoordinates() != null) {
+                double lat = pothole.getLocation().getCoordinates().getLatitude();
+                double lon = pothole.getLocation().getCoordinates().getLongitude();
+                GeoPoint point = new GeoPoint(lat, lon);
 
-            Marker startMarker = createMarker(startPoint, R.drawable.marker_red);
-            Marker endMarker = createMarker(endPoint, R.drawable.marker_red);
-
-            mapView.getOverlays().add(startMarker);
-            mapView.getOverlays().add(endMarker);
+                // Tạo marker và thêm vào bản đồ
+                Marker marker = createMarker(point, R.drawable.marker_red);
+                mapView.getOverlays().add(marker);
+            }
         }
 
-        // Call the new method to check and draw route if needed
+        // Kiểm tra và vẽ tuyến đường nếu cần
         checkAndDrawRoute();
 
+        // Cập nhật bản đồ
         mapView.invalidate();
     }
+
 
 
     private Marker createMarker(Pothole pothole, int iconRes) {
@@ -873,24 +879,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         } else {
             requestPermissions();
         }
-    }
-    private void clearAllLocationData() {
-        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // Xóa tất cả dữ liệu location
-        editor.remove("lat");
-        editor.remove("lon");
-        editor.remove("shouldDrawRoute");
-        // Hoặc có thể dùng clear() để xóa tất cả
-        // editor.clear();
-        editor.apply();
-
-        // Xóa các overlay trên map
-        mapView.getOverlays().removeIf(overlay ->
-                overlay instanceof Polyline ||
-                        (overlay instanceof Marker && ((Marker) overlay).getIcon() != null)
-        );
-        mapView.invalidate();
     }
 
     @Override
