@@ -124,6 +124,8 @@ public class LocationFragment extends Fragment {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("lat", selectedResult.getLat());
                 editor.putString("lon", selectedResult.getLon());
+                // Thêm flag để chỉ định rằng nên vẽ route
+                editor.putBoolean("shouldDrawRoute", true);
                 editor.apply();
 
                 dialog.dismiss();

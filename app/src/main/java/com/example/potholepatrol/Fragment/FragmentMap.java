@@ -355,12 +355,9 @@ public class FragmentMap extends Fragment implements LocationListener {
         return marker;
     }
 
-    // Modify the displayPotholes method signature to accept only the List<Pothole>
     private void displayPotholes(List<Pothole> potholes) {
-        // Xóa các overlay cũ là Marker hoặc Polyline
         mapView.getOverlays().removeIf(overlay -> overlay instanceof Marker || overlay instanceof Polyline);
 
-        // Hiển thị các marker nếu danh sách potholes >= 2
         if (potholes.size() >= 2) {
             Pothole startPoint = potholes.get(0);
             Pothole endPoint = potholes.get(1);
@@ -372,60 +369,11 @@ public class FragmentMap extends Fragment implements LocationListener {
             mapView.getOverlays().add(endMarker);
         }
 
-        // Lấy giá trị lat và lon từ SharedPreferences
-        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-        String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
-        String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
-        Log.d("SharedPreferences", "Lat: " + lonString + ", Lon: " + lonString);
+        // Call the new method to check and draw route if needed
+        checkAndDrawRoute();
 
-        // Kiểm tra nếu lat và lon đã được lưu
-        if (latString != null && lonString != null) {
-            try {
-                // Chuyển đổi từ String sang double
-                double savedLat = Double.parseDouble(latString);
-                double savedLon = Double.parseDouble(lonString);
-                GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
-                Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
-
-                mapView.getOverlays().add(savedLocationMarker);
-
-                // Kiểm tra quyền truy cập vị trí
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                    return;
-                }
-
-                // Lấy vị trí hiện tại
-                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                if (lastKnownLocation != null) {
-                    // Vẽ đường giữa vị trí hiện tại và vị trí đã lưu
-                    double currentLat = lastKnownLocation.getLatitude();
-                    double currentLon = lastKnownLocation.getLongitude();
-
-                    drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
-                } else {
-                    Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
-                }
-            } catch (NumberFormatException e) {
-                // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
-                Toast.makeText(getActivity(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            // Không có dữ liệu lat/lon trong SharedPreferences
-            // Toast.makeText(getActivity(), "No saved location data", Toast.LENGTH_SHORT).show();
-        }
-
-        // Cập nhật bản đồ
         mapView.invalidate();
     }
-
-
-
-
-
 
 
     private Marker createMarker(Pothole pothole, int iconRes) {
@@ -447,7 +395,46 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
 
+    private void checkAndDrawRoute() {
+        // Lấy giá trị lat và lon từ SharedPreferences
+        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+        String latString = preferences.getString("lat", null);
+        String lonString = preferences.getString("lon", null);
 
+        // Thêm một flag để kiểm tra xem có nên vẽ route hay không
+        boolean shouldDrawRoute = preferences.getBoolean("shouldDrawRoute", false);
+
+        if (latString != null && lonString != null && shouldDrawRoute) {
+            try {
+                double savedLat = Double.parseDouble(latString);
+                double savedLon = Double.parseDouble(lonString);
+                GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
+                Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
+
+                mapView.getOverlays().add(savedLocationMarker);
+
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return;
+                }
+
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if (lastKnownLocation != null) {
+                    double currentLat = lastKnownLocation.getLatitude();
+                    double currentLon = lastKnownLocation.getLongitude();
+
+                    drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
+                } else {
+                    Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(getActivity(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void drawRouteBetweenPoints(double startLat, double startLon, double endLat, double endLon) {
         String url = String.format(Locale.US,
                 "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
@@ -887,6 +874,24 @@ public class FragmentMap extends Fragment implements LocationListener {
             requestPermissions();
         }
     }
+    private void clearAllLocationData() {
+        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        // Xóa tất cả dữ liệu location
+        editor.remove("lat");
+        editor.remove("lon");
+        editor.remove("shouldDrawRoute");
+        // Hoặc có thể dùng clear() để xóa tất cả
+        // editor.clear();
+        editor.apply();
+
+        // Xóa các overlay trên map
+        mapView.getOverlays().removeIf(overlay ->
+                overlay instanceof Polyline ||
+                        (overlay instanceof Marker && ((Marker) overlay).getIcon() != null)
+        );
+        mapView.invalidate();
+    }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
@@ -920,6 +925,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         if (checkLocationPermission()) {
             startLocationUpdates();
         }
+
     }
 
     @Override
@@ -928,4 +934,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         mapView.onPause();
         locationManager.removeUpdates(this);
     }
+
+
 }
