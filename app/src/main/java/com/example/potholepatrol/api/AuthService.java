@@ -6,6 +6,7 @@ import com.example.potholepatrol.model.LoginRequest;
 import com.example.potholepatrol.model.LoginResponse;
 import com.example.potholepatrol.model.NewPasswordRequest;
 import com.example.potholepatrol.model.NewPasswordResponse;
+import com.example.potholepatrol.model.PotholeRequest;
 import com.example.potholepatrol.model.RegisterRequest;
 import com.example.potholepatrol.model.RegisterResponse;
 import com.example.potholepatrol.model.VerifyOTPRequest;
@@ -16,6 +17,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.HTTP;
@@ -57,5 +59,11 @@ public interface AuthService {
     @POST("auth/google")
     Call<LoginResponse> googleSignIn(@Body Map<String, String> body);
 
+    @Headers("Content-Type: application/json")
+    @POST("map/addPothole")
+    Call<Void> addPothole(
+            @Header("Authorization") String token,
+            @Body PotholeRequest potholeRequest
+    );
 
 }

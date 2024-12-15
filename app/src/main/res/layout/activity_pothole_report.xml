@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header with back button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="38dp"
+                android:layout_height="27dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/right_arrow" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Add a pothole"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Location Input -->
+        <EditText
+            android:id="@+id/et_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type location"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/setting_frame"
+            android:elevation="5dp"
+            android:padding="15dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp"/>
+
+        <TextView
+            android:id="@+id/tv_gps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="GPS"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:background="@drawable/setting_frame"
+            android:elevation="5dp"
+            android:padding="15dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp"/>
+
+        <!-- Dimension -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_frame"
+            android:orientation="vertical"
+            android:padding="13dp"
+            android:elevation="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dimension"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/btn_compact"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Compact"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_average"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Average"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_large"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Large"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Depth -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_frame"
+            android:orientation="vertical"
+            android:padding="13dp"
+            android:elevation="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Depth"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/btn_shallow"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Shallow"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_noticeable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Noticeable"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_deep"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Deep"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Shape -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_frame"
+            android:orientation="vertical"
+            android:padding="13dp"
+            android:elevation="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shape"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/btn_uniform"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Uniform"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_uneven"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Uneven"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_jagged"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Jagged"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Severity Level -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_frame"
+            android:orientation="vertical"
+            android:padding="13dp"
+            android:elevation="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Severity level"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/btn_low"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Low"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_medium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Medium"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+
+                <TextView
+                    android:id="@+id/btn_high"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="High"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="@drawable/setting_frame"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Damage Switch -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_frame"
+            android:padding="16dp"
+            android:elevation="5dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Do pothole damaged you?"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <Switch
+                android:id="@+id/switch_damage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!-- Confirm Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm"
+            android:textStyle="bold"
+            android:textColor="#AFC7B1"
+            android:textAllCaps="false"
+            android:textSize="23sp"
+            android:elevation="60dp"
+            android:backgroundTint="#AFC7B1"
+            android:background="@drawable/setting_frame"
+            android:padding="16dp"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp"/>
+    </LinearLayout>
+</ScrollView>

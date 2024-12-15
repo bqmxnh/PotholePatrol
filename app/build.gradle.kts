@@ -51,6 +51,8 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.16")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation ("com.google.android.gms:play-services-location:18.0.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

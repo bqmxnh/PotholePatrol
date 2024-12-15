@@ -23,7 +23,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="757dp"
                 android:orientation="vertical">
 
                 <!-- Top Bar -->
@@ -33,11 +33,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="26dp"
                     android:background="@drawable/top_rounded_background"
+                    android:clipToOutline="true"
+                    android:elevation="0dp"
                     android:orientation="vertical"
                     android:paddingHorizontal="25dp"
-                    android:paddingVertical="13dp"
-                    android:clipToOutline="true"
-                    android:elevation="0dp">
+                    android:paddingVertical="13dp">
 
                     <!-- Map Title Bar -->
                     <LinearLayout
@@ -70,9 +70,22 @@
                             android:layout_height="30dp"
                             android:scaleType="fitXY"
                             android:src="@mipmap/ic_report" />
+
                     </LinearLayout>
                 </LinearLayout>
-                <!-- Search Bar -->
+
+                <!-- New TextView dưới top_bar -->
+                <TextView
+                    android:id="@+id/text_under_top_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="New TextView Below Top Bar"
+                    android:textColor="#0D1B34"
+                    android:textSize="18sp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:textStyle="italic" />
 
 
                 <!-- Function Section -->
@@ -84,6 +97,7 @@
                     android:layout_marginTop="490dp"
                     android:orientation="horizontal">
 
+                    <!-- Zoom Controls -->
                     <LinearLayout
                         android:id="@+id/zoom_controls"
                         android:layout_width="46dp"
@@ -121,11 +135,61 @@
                             android:src="@mipmap/ic_zoomout" />
                     </LinearLayout>
 
+                    <!-- Spacer -->
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_weight="1" />
 
+                    <!-- New Button Section -->
+                    <LinearLayout
+                        android:id="@+id/new_button_section"
+                        android:layout_width="71dp"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <Button
+                            android:id="@+id/button_exit"
+                            android:layout_width="100dp"
+                            android:layout_height="34dp"
+                            android:background="#6200EE"
+                            android:text="New Button"
+                            android:textColor="#FFFFFF"
+                            android:visibility="gone" />
+
+                        <Button
+                            android:id="@+id/button_turnbyturn"
+                            android:layout_width="100dp"
+                            android:layout_height="34dp"
+                            android:background="#6200EE"
+                            android:text="New Button"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
+                    <!-- New Button next to zoom_controls and button_turnbyturn -->
+                    <LinearLayout
+                        android:id="@+id/new_button_side"
+                        android:layout_width="71dp"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="24dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <Button
+                            android:id="@+id/button_new_side"
+                            android:layout_width="100dp"
+                            android:layout_height="34dp"
+                            android:background="#6200EE"
+                            android:text="Side Button"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
+                    <!-- Location Button -->
                     <LinearLayout
                         android:id="@+id/location_button"
                         android:layout_width="100dp"
@@ -145,7 +209,9 @@
                             android:scaleType="centerInside"
                             android:src="@mipmap/ic_your_location" />
                     </LinearLayout>
+
                 </LinearLayout>
+
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

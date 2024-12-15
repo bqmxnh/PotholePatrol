@@ -13,14 +13,26 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.potholepatrol.Activity.AddPotholeActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +62,7 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -62,16 +75,25 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
 public class FragmentMap extends Fragment implements LocationListener {
 
     private static final String TAG = "FragmentMap";
     private static final String BASE_URL = "http://47.129.31.47:3000";
     private static final int PERMISSION_REQUEST_CODE = 1;
     private ImageView searchLocation;
+    private ImageView reportPothole;
+
     private MapView mapView;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
     private String accessToken;
+    private Button button_turnbyturn;
+    private Button button_exit;
+    final double MIN_LAT = 10.8593387269177;
+    final double MAX_LAT = 10.89728831078;
+    final double MIN_LON = 106.734790771361;
+    final double MAX_LON = 106.8587615275;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -115,6 +137,69 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         });
 
+        button_turnbyturn = rootView.findViewById(R.id.button_turnbyturn);
+        button_turnbyturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
+                String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
+                Log.d("SharedPreferences", "Lat: " + lonString + ", Lon: " + lonString);
+
+                // Kiểm tra nếu lat và lon đã được lưu
+                if (latString != null && lonString != null) {
+                    try {
+                        // Chuyển đổi từ String sang double
+                        double savedLat = Double.parseDouble(latString);
+                        double savedLon = Double.parseDouble(lonString);
+                        GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
+                        Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
+
+                        mapView.getOverlays().add(savedLocationMarker);
+
+                        // Kiểm tra quyền truy cập vị trí
+                        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                            return;
+                        }
+
+                        // Lấy vị trí hiện tại
+                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                        if (lastKnownLocation != null) {
+                            // Vẽ đường giữa vị trí hiện tại và vị trí đã lưu
+                            double currentLat = lastKnownLocation.getLatitude();
+                            double currentLon = lastKnownLocation.getLongitude();
+
+                            drawTurnByTurnRoute(currentLat, currentLon, savedLat, savedLon);
+                        } else {
+                            Toast.makeText(getActivity(), "Finding your location...", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (NumberFormatException e) {
+                        // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
+                        Toast.makeText(getActivity(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Không có dữ liệu lat/lon trong SharedPreferences
+                    Toast.makeText(getActivity(), "No saved location data", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        reportPothole = rootView.findViewById(R.id.icon_report);
+        reportPothole.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Tạo Intent để chuyển sang AddPotholeActivity
+                Intent intent = new Intent(getActivity(), AddPotholeActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         return rootView;
 
 
@@ -124,6 +209,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         ImageView fabLocation = rootView.findViewById(R.id.icon_location);
         ImageView buttonZoomIn = rootView.findViewById(R.id.button_zoom_in);
         ImageView buttonZoomOut = rootView.findViewById(R.id.button_zoom_out);
+
 
         fabLocation.setOnClickListener(v -> centerMapOnMyLocation());
         buttonZoomIn.setOnClickListener(v -> {
@@ -139,11 +225,6 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void setupMap() {
-        final double MIN_LAT = 10.75; // Reduced minimum latitude
-        final double MIN_LON = 106.65; // Reduced minimum longitude
-        final double MAX_LAT = 11.0; // Increased maximum latitude
-        final double MAX_LON = 107.0; // Increased maximum longitude
-
         XYTileSource tileSource = new XYTileSource(
                 "CustomMBTiles",
                 8, 18,
@@ -181,7 +262,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         );
         mapView.setScrollableAreaLimitDouble(bounds);
 
-        mapView.getController().setZoom(14);
+        mapView.getController().setZoom(16.0);
         GeoPoint center = new GeoPoint(
                 (MIN_LAT + MAX_LAT) / 2,
                 (MIN_LON + MAX_LON) / 2
@@ -197,10 +278,10 @@ public class FragmentMap extends Fragment implements LocationListener {
         double west = tile2lon(x, zoom);
         double east = tile2lon(x + 1, zoom);
 
-        return !(east < 106.734790771361 ||
-                west > 106.8587615275 ||
-                south > 10.89728831078 ||
-                north < 10.8593387269177);
+        return !(east < MIN_LON ||
+                west > MAX_LON ||
+                south > MAX_LAT ||
+                north < MIN_LAT);
     }
 
     private static double tile2lat(int y, int z) {
@@ -266,6 +347,14 @@ public class FragmentMap extends Fragment implements LocationListener {
         });
     }
 
+    private Marker createMarker(GeoPoint point, int resourceId) {
+        Marker marker = new Marker(mapView);
+        marker.setPosition(point);
+        marker.setIcon(getResources().getDrawable(resourceId));
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        return marker;
+    }
+
     // Modify the displayPotholes method signature to accept only the List<Pothole>
     private void displayPotholes(List<Pothole> potholes) {
         // Xóa các overlay cũ là Marker hoặc Polyline
@@ -295,6 +384,10 @@ public class FragmentMap extends Fragment implements LocationListener {
                 // Chuyển đổi từ String sang double
                 double savedLat = Double.parseDouble(latString);
                 double savedLon = Double.parseDouble(lonString);
+                GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
+                Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
+
+                mapView.getOverlays().add(savedLocationMarker);
 
                 // Kiểm tra quyền truy cập vị trí
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -322,7 +415,7 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         } else {
             // Không có dữ liệu lat/lon trong SharedPreferences
-            Toast.makeText(getActivity(), "No saved location data", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getActivity(), "No saved location data", Toast.LENGTH_SHORT).show();
         }
 
         // Cập nhật bản đồ
@@ -352,50 +445,7 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         return marker;
     }
-    private void getTurnByTurnDirections(double startLat, double startLon, double endLat, double endLon) {
-        String url = String.format(Locale.US,
-                "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?steps=true",
-                startLon, startLat, endLon, endLat);
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful() && response.body() != null) {
-                    String jsonData = response.body().string();
-                    try {
-                        JSONObject json = new JSONObject(jsonData);
-                        JSONArray steps = json.getJSONArray("routes").getJSONObject(0).getJSONArray("legs")
-                                .getJSONObject(0).getJSONArray("steps");
-
-                        for (int i = 0; i < steps.length(); i++) {
-                            JSONObject step = steps.getJSONObject(i);
-                            String instruction = step.getString("instruction");
-                            double distance = step.getDouble("distance");
-                            double duration = step.getDouble("duration");
-
-                            // Hiển thị chỉ dẫn cho người dùng hoặc vẽ lên bản đồ
-                            String routeInfo = String.format(Locale.US,
-                                    "Instruction: %s\nDistance: %.1f m\nDuration: %.0f sec",
-                                    instruction, distance, duration);
-                            Log.d("OSRM Directions", routeInfo);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
 
 
     private void drawRouteBetweenPoints(double startLat, double startLon, double endLat, double endLon) {
@@ -435,8 +485,6 @@ public class FragmentMap extends Fragment implements LocationListener {
                                     minDistance = distance;
                                     shortestRoute = route;
                                 } else if (distance == minDistance) {
-                                    // Nếu khoảng cách bằng nhau, giữ lại tuyến đầu tiên gặp phải
-                                    // (tuyến đầu tiên đã được chọn do cách so sánh)
                                     break;
                                 }
                             }
@@ -449,16 +497,20 @@ public class FragmentMap extends Fragment implements LocationListener {
                                 List<GeoPoint> points = decodePolyline(geometry);
 
                                 requireActivity().runOnUiThread(() -> {
-                                    //mapView.getOverlays().clear();
-
                                     // Vẽ tuyến đường ngắn nhất
                                     Polyline routeLine = new Polyline(mapView);
                                     routeLine.setColor(Color.BLUE);
                                     routeLine.setWidth(10f);
                                     routeLine.setPoints(points);
                                     mapView.getOverlays().add(routeLine);
-                                    mapView.invalidate();
 
+                                    // Tính toán bounding box (phạm vi của đoạn đường)
+                                    BoundingBox boundingBox = calculateBoundingBox(points);
+
+                                    // Điều chỉnh bản đồ để bao gồm toàn bộ đoạn đường
+                                    mapView.zoomToBoundingBox(boundingBox, true);
+
+                                    // Hiển thị thông tin về tuyến đường
                                     String routeInfo = String.format(Locale.US,
                                             "Distance: %.1f km\nEstimated time: %.0f min",
                                             distance / 1000.0, duration / 60.0);
@@ -469,13 +521,248 @@ public class FragmentMap extends Fragment implements LocationListener {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else {
-                    // Xử lý khi API trả về thất bại
                 }
             }
-
         });
     }
+
+    // FusedLocationProviderClient để lấy vị trí GPS
+    private FusedLocationProviderClient fusedLocationClient;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        startRealTimeLocationUpdates();
+
+    }
+
+    private void drawTurnByTurnRoute(double startLat, double startLon, double endLat, double endLon) {
+        // Tạo URL để lấy dữ liệu chỉ dẫn từ OSRM
+        String url = String.format(Locale.US,
+                "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&steps=true",
+                startLon, startLat, endLon, endLat);
+
+        Log.d(TAG, "Requesting route from OSRM: " + url); // Log the URL being requested
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "Error fetching route", e); // Log the error on failure
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Error fetching route. Please try again.", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String jsonData = response.body().string();
+                    Log.d(TAG, "Response data: " + jsonData);
+
+                    try {
+                        JSONObject json = new JSONObject(jsonData);
+                        JSONArray routes = json.getJSONArray("routes");
+
+                        if (routes.length() > 0) {
+                            JSONObject route = routes.getJSONObject(0); // Get the first route
+                            JSONArray legs = route.getJSONArray("legs");
+
+                            if (legs.length() > 0) {
+                                JSONObject leg = legs.getJSONObject(0);  // Get the first leg
+                                steps = leg.getJSONArray("steps");  // Get the list of steps
+
+                                // Display the first step
+                                showStep(currentStepIndex);
+
+                                // Gọi hàm để bắt đầu cập nhật vị trí và kiểm tra từng bước
+                                startRealTimeLocationUpdates();  // Bắt đầu theo dõi vị trí người dùng
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing route data", e);
+                    }
+                } else {
+                    Log.d(TAG, "Response was not successful or body was null.");
+                }
+            }
+        });
+    }
+
+    private void startRealTimeLocationUpdates() {
+        // Tạo LocationRequest để yêu cầu cập nhật vị trí
+        LocationRequest locationRequest = new LocationRequest()
+                .setInterval(1000)  // Cập nhật mỗi giây
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Kiểm tra quyền truy cập vị trí
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Nếu quyền chưa được cấp, không thực hiện gì
+            return;
+        }
+
+        // Bắt đầu nhận cập nhật vị trí
+        fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult != null && locationResult.getLastLocation() != null) {
+                    Location location = locationResult.getLastLocation();
+                    double currentLat = location.getLatitude();
+                    double currentLon = location.getLongitude();
+                    Log.d(TAG, "Current location: " + currentLat + ", " + currentLon);
+
+                    // Kiểm tra bước hiện tại và xem người dùng đã đến chưa
+                    if (steps != null && currentStepIndex < steps.length()) {
+                        try {
+                            JSONObject currentStep = steps.getJSONObject(currentStepIndex);
+
+                            // Lấy vị trí của bước tiếp theo
+                            try {
+                                // Lấy đối tượng maneuver từ currentStep
+                                JSONObject maneuver = currentStep.getJSONObject("maneuver");
+
+                                // Kiểm tra xem có trường "location" không
+                                if (maneuver.has("location")) {
+                                    // Lấy mảng location
+                                    JSONArray locationArray = maneuver.getJSONArray("location");
+
+                                    // Lấy longitude và latitude từ mảng location
+                                    double stepLon = locationArray.getDouble(0);  // longitude
+                                    double stepLat = locationArray.getDouble(1);   // latitude
+
+                                    // Log ra tọa độ của bước
+                                    Log.d(TAG, "Maneuver Location: Latitude = " + stepLat + ", Longitude = " + stepLon);
+
+                                    // Tính khoảng cách từ vị trí hiện tại đến bước tiếp theo
+                                    float[] results = new float[1];
+                                    Location.distanceBetween(currentLat, currentLon, stepLat, stepLon, results);
+                                    float distanceToStep = results[0];  // Khoảng cách tính bằng mét
+
+                                    if (distanceToStep <= thresholdDistance) {
+                                        // Người dùng đã đến bước tiếp theo, hiển thị bước này
+                                        showStep(currentStepIndex);
+
+                                        // Chuyển đến bước tiếp theo
+                                        currentStepIndex++;
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                Log.e(TAG, "Error parsing maneuver data", e);
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Error parsing step data", e);
+                        }
+                    }
+                }
+            }
+        }, Looper.getMainLooper());
+    }
+
+
+
+
+
+
+
+    // Start location updates
+
+
+    private int currentStepIndex = 0;  // Track the current step
+    private JSONArray steps = null;    // The list of steps from the route
+    private double thresholdDistance = 10.0; // Threshold distance (10 meters) to move to the next step
+
+
+
+    private void showStep(int stepIndex) {
+        if (steps != null && steps.length() > stepIndex) {
+            try {
+                JSONObject step = steps.getJSONObject(stepIndex);
+
+                // Get step details
+                String modifier = "No modifier";
+                if (step.has("maneuver")) {
+                    JSONObject maneuver = step.getJSONObject("maneuver");
+                    modifier = maneuver.has("modifier") ? maneuver.getString("modifier") : "No modifier";
+                }
+                double stepDistance = step.has("distance") ? step.getDouble("distance") : 0;
+                String streetName = step.has("name") ? step.getString("name") : "Unknown";
+
+                // Build the step description
+                String stepDescription = String.format("Step %d:\nDistance: %.2f meters\nModifier: %s\nStreet Name: %s\n",
+                        stepIndex + 1, stepDistance, modifier, streetName);
+
+                // Display the current step on the TextView
+                requireActivity().runOnUiThread(() -> {
+                    TextView directionsTextView = requireActivity().findViewById(R.id.text_under_top_bar);
+                    directionsTextView.setText(stepDescription);
+                });
+
+                // Optional: You can add any actions (e.g., voice instructions) here to guide the user
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error getting step data", e);
+            }
+        }
+    }
+
+
+
+
+
+    private BoundingBox calculateBoundingBox(List<GeoPoint> points) {
+        double minLat = Double.MAX_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLon = Double.MIN_VALUE;
+
+        // Tính toán giới hạn min/max cho vĩ độ và kinh độ
+        for (GeoPoint point : points) {
+            minLat = Math.min(minLat, point.getLatitude());
+            maxLat = Math.max(maxLat, point.getLatitude());
+            minLon = Math.min(minLon, point.getLongitude());
+            maxLon = Math.max(maxLon, point.getLongitude());
+        }
+
+
+        double latDifference = maxLat - minLat;
+        double lonDifference = maxLon - minLon;
+
+        double paddingLat = latDifference * 0.1;  // 10% padding cho vĩ độ
+        double paddingLon = lonDifference * 0.1;  // 10% padding cho kinh độ
+
+        minLat -= paddingLat;
+        maxLat += paddingLat;
+        minLon -= paddingLon;
+        maxLon += paddingLon;
+
+        return new BoundingBox(maxLat, maxLon, minLat, minLon);
+    }
+
+
+
+    // Trong Activity hoặc Fragment của bạn, sử dụng phương thức onDestroy để xóa SharedPreferences
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Xóa dữ liệu lat và lon khi Fragment bị hủy
+        SharedPreferences preferences = getActivity().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("lat"); // Xóa dữ liệu lat
+        editor.remove("lon"); // Xóa dữ liệu lon
+        editor.apply();
+    }
+
+
+
+
 
 
     private List<GeoPoint> decodePolyline(String encoded) {
