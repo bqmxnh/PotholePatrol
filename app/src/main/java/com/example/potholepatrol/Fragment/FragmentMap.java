@@ -356,27 +356,27 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void displayPotholes(List<Pothole> potholes) {
-        // Xóa các overlay cũ là Marker hoặc Polyline
-        mapView.getOverlays().removeIf(overlay -> overlay instanceof Marker || overlay instanceof Polyline);
+        mapView.getOverlays().removeIf(overlay -> overlay instanceof Marker);
 
-        // Hiển thị tất cả các hố ga
         for (Pothole pothole : potholes) {
-            // Kiểm tra nếu đối tượng Pothole có thông tin vị trí
-            if (pothole.getLocation() != null && pothole.getLocation().getCoordinates() != null) {
-                double lat = pothole.getLocation().getCoordinates().getLatitude();
-                double lon = pothole.getLocation().getCoordinates().getLongitude();
-                GeoPoint point = new GeoPoint(lat, lon);
+            Marker marker = new Marker(mapView);
+            marker.setPosition(new GeoPoint(
+                    pothole.getLocation().getCoordinates().getLatitude(),
+                    pothole.getLocation().getCoordinates().getLongitude()
+            ));
 
-                // Tạo marker và thêm vào bản đồ
-                Marker marker = createMarker(point, R.drawable.marker_red);
-                mapView.getOverlays().add(marker);
-            }
+            Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.marker_red);
+            marker.setIcon(icon);
+
+            marker.setOnMarkerClickListener((m, map) -> {
+                showPotholeDetails(pothole, marker); // Hiển thị layout tùy chỉnh
+                return true;
+            });
+
+            mapView.getOverlays().add(marker);
         }
 
-        // Kiểm tra và vẽ tuyến đường nếu cần
         checkAndDrawRoute();
-
-        // Cập nhật bản đồ
         mapView.invalidate();
     }
 

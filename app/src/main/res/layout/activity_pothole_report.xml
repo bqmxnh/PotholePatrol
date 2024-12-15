@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <LinearLayout
@@ -98,6 +99,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Compact"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -112,6 +115,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Average"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -126,6 +131,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Large"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -167,6 +174,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Shallow"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -181,6 +190,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Noticeable"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -195,6 +206,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Deep"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -236,6 +249,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Uniform"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -250,6 +265,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Uneven"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -264,6 +281,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Jagged"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -305,6 +324,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Low"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -319,6 +340,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Medium"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -333,6 +356,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="High"
+                    android:textStyle="bold"
+
                     android:gravity="center"
                     android:padding="8dp"
                     android:elevation="5dp"
@@ -369,22 +394,23 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <!-- Confirm Button -->
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Confirm"
             android:textStyle="bold"
-            android:textColor="#AFC7B1"
+            android:textColor="@android:color/white"
             android:textAllCaps="false"
-            android:textSize="23sp"
-            android:elevation="60dp"
-            android:backgroundTint="#AFC7B1"
-            android:background="@drawable/setting_frame"
+            android:textSize="20sp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp"
+            app:backgroundTint="@color/colorPrimary"
+            app:cornerRadius="20dp"
             android:padding="16dp"
             android:gravity="center"
-            android:layout_marginBottom="10dp"
-            android:layout_marginHorizontal="10dp"/>
+            android:elevation="5dp" />
+
     </LinearLayout>
 </ScrollView>
