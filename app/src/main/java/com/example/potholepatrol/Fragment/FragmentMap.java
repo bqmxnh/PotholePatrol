@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -59,6 +60,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -84,17 +86,23 @@ public class FragmentMap extends Fragment implements LocationListener {
     private static final int PERMISSION_REQUEST_CODE = 1;
     private ImageView searchLocation;
     private ImageView reportPothole;
-
+    private Marker myLocationMarker;
     private MapView mapView;
+    private FusedLocationProviderClient fusedLocationClient;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
     private String accessToken;
     private Button button_turnbyturn;
+    private Button button_negative;
+    private Handler handler = new Handler();
+    private Runnable updateRouteRunnable;
     private Button button_exit;
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
     final double MIN_LON = 106.734790771361;
     final double MAX_LON = 106.8587615275;
+    private List<Overlay> previousOverlays = new ArrayList<>();
+    private Polyline currentRouteLine;
     private double currentLat = 0.0;
     private double currentLon = 0.0;
 
@@ -140,11 +148,42 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         });
 
+        Runnable updateRouteRunnable = new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
+                String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
+                double savedLat = Double.parseDouble(latString);
+                double savedLon = Double.parseDouble(lonString);
+                // Gọi hàm vẽ tuyến đường
+                drawRouteBetweenPointsAuto(currentLat, currentLon, savedLat, savedLon);
+                handler.postDelayed(this, 1000);  // Lặp lại sau mỗi giây
+            }
+        };
+
+
+
+
+        button_negative = rootView.findViewById(R.id.button_new_side);
+        button_negative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Log ra thông tin khi nút được nhấn
+                Log.d("negative", "Button negative clicked");
+
+                // Bắt đầu vẽ tự động khi bấm nút
+                handler.post(updateRouteRunnable);
+            }
+        });
+
+
+
         button_turnbyturn = rootView.findViewById(R.id.button_turnbyturn);
         button_turnbyturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.e("negative", "cobam");
                 SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
                 String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
                 String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
@@ -193,6 +232,13 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     }
 
+
+
+
+
+
+
+
     private void setupMapControls(View rootView) {
         ImageView fabLocation = rootView.findViewById(R.id.icon_location);
         ImageView buttonZoomIn = rootView.findViewById(R.id.button_zoom_in);
@@ -218,7 +264,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                 8, 18,
                 256,
                 ".png",
-                new String[]{ BASE_URL + "/map/tiles/" }
+                new String[]{BASE_URL + "/map/tiles/"}
         ) {
             @Override
             public String getTileURLString(long pMapTileIndex) {
@@ -227,8 +273,8 @@ public class FragmentMap extends Fragment implements LocationListener {
                 int y = MapTileIndex.getY(pMapTileIndex);
                 int tmsY = (int) (Math.pow(2, zoom) - 1 - y);
                 if (isTileInBounds(x, y, zoom)) {
-                    String url = BASE_URL + "/map/tiles/" + zoom + "/" + x + "/" + tmsY + ".png";
-                    return url + "?Authorization=Bearer " + accessToken;
+                    return BASE_URL + "/map/tiles/" + zoom + "/" + x + "/" + tmsY + ".png"
+                            + "?Authorization=Bearer " + accessToken;
                 }
                 return null;
             }
@@ -249,16 +295,14 @@ public class FragmentMap extends Fragment implements LocationListener {
                 MIN_LAT, MIN_LON
         );
         mapView.setScrollableAreaLimitDouble(bounds);
+        centerMapOnMyLocation();
+        // Gọi hàm cập nhật vị trí theo thời gian thực
+        startRealTimeLocationUpdates();
 
-        mapView.getController().setZoom(16.0);
-        GeoPoint center = new GeoPoint(
-                (MIN_LAT + MAX_LAT) / 2,
-                (MIN_LON + MAX_LON) / 2
-        );
-        mapView.getController().setCenter(center);
-
+        // Tải dữ liệu khác (ví dụ: potholes)
         loadPotholes();
     }
+
 
     private boolean isTileInBounds(int x, int y, int zoom) {
         double north = tile2lat(y, zoom);
@@ -291,6 +335,13 @@ public class FragmentMap extends Fragment implements LocationListener {
             startLocationUpdates();
         }
     }
+
+
+
+
+
+
+
 
     private void loadPotholes() {
         OkHttpClient client = new OkHttpClient();
@@ -370,23 +421,6 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
 
-    private Marker createMarker(Pothole pothole, int iconRes) {
-        Marker marker = new Marker(mapView);
-        marker.setPosition(new GeoPoint(
-                pothole.getLocation().getCoordinates().getLatitude(),
-                pothole.getLocation().getCoordinates().getLongitude()
-        ));
-
-        Drawable icon = ContextCompat.getDrawable(requireContext(), iconRes);
-        marker.setIcon(icon);
-
-        marker.setOnMarkerClickListener((m, map) -> {
-            showPotholeDetails(pothole, marker);
-            return true;
-        });
-
-        return marker;
-    }
 
 
     private void checkAndDrawRoute() {
@@ -471,13 +505,16 @@ public class FragmentMap extends Fragment implements LocationListener {
                                 List<GeoPoint> points = decodePolyline(geometry);
 
                                 requireActivity().runOnUiThread(() -> {
-                                    // Vẽ tuyến đường ngắn nhất
-                                    Polyline routeLine = new Polyline(mapView);
-                                    routeLine.setColor(Color.BLUE);
-                                    routeLine.setWidth(10f);
-                                    routeLine.setPoints(points);
-                                    mapView.getOverlays().add(routeLine);
 
+                                    if (currentRouteLine != null) {
+                                        mapView.getOverlays().remove(currentRouteLine);
+                                    }
+                                    // Vẽ tuyến đường ngắn nhất
+                                    currentRouteLine = new Polyline(mapView);
+                                    currentRouteLine.setColor(Color.BLUE);
+                                    currentRouteLine.setWidth(10f);
+                                    currentRouteLine.setPoints(points);
+                                    mapView.getOverlays().add(currentRouteLine);
                                     // Tính toán bounding box (phạm vi của đoạn đường)
                                     BoundingBox boundingBox = calculateBoundingBox(points);
 
@@ -500,8 +537,80 @@ public class FragmentMap extends Fragment implements LocationListener {
         });
     }
 
-    // FusedLocationProviderClient để lấy vị trí GPS
-    private FusedLocationProviderClient fusedLocationClient;
+    private void drawRouteBetweenPointsAuto(double startLat, double startLon, double endLat, double endLon) {
+        String url = String.format(Locale.US,
+                "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
+                startLon, startLat, endLon, endLat);
+        Log.d("negative", "Request URL: " + url);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Log.d("negative", "call");
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("negative", "Request failed", e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String jsonData = response.body().string();
+                    try {
+                        JSONObject json = new JSONObject(jsonData);
+                        JSONArray routes = json.getJSONArray("routes");
+                        if (routes.length() > 0) {
+                            JSONObject shortestRoute = null;
+                            double minDistance = Double.MAX_VALUE;
+
+                            // Duyệt qua tất cả các tuyến đường và chọn tuyến ngắn nhất
+                            for (int i = 0; i < routes.length(); i++) {
+                                JSONObject route = routes.getJSONObject(i);
+                                double distance = route.getDouble("distance");
+
+                                // Nếu tìm thấy tuyến đường ngắn hơn, cập nhật
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                    shortestRoute = route;
+                                } else if (distance == minDistance) {
+                                    break;
+                                }
+                            }
+
+                            if (shortestRoute != null) {
+                                String geometry = shortestRoute.getString("geometry");
+                                List<GeoPoint> points = decodePolyline(geometry);
+
+                                requireActivity().runOnUiThread(() -> {
+                                    // Xóa tuyến đường cũ nếu tồn tại
+                                    if (currentRouteLine != null) {
+                                        mapView.getOverlays().remove(currentRouteLine);
+                                    }
+                                    GeoPoint myPosition = new GeoPoint(startLat, startLon);
+                                    mapView.getController().animateTo(myPosition);  // Di chuyển đến vị trí người dùng
+                                    mapView.getController().setZoom(16.0);  // Đặt mức zoom
+
+                                    // Vẽ tuyến đường mới
+                                    currentRouteLine = new Polyline(mapView);
+                                    currentRouteLine.setColor(Color.BLUE);
+                                    currentRouteLine.setWidth(10f);
+                                    currentRouteLine.setPoints(points);
+                                    mapView.getOverlays().add(currentRouteLine);
+
+
+
+                                });
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -548,13 +657,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                             JSONArray legs = route.getJSONArray("legs");
 
                             if (legs.length() > 0) {
-                                JSONObject leg = legs.getJSONObject(0);  // Get the first leg
-                                steps = leg.getJSONArray("steps");  // Get the list of steps
 
-                                // Display the first step
-                                showStep(currentStepIndex);
-
-                                // Gọi hàm để bắt đầu cập nhật vị trí và kiểm tra từng bước
                                 startRealTimeLocationUpdates();  // Bắt đầu theo dõi vị trí người dùng
                             }
                         }
@@ -591,32 +694,9 @@ public class FragmentMap extends Fragment implements LocationListener {
                     currentLon = location.getLongitude();
                     Log.d(TAG, "Current location: " + currentLat + ", " + currentLon);
 
-                    // Kiểm tra bước hiện tại và xem người dùng đã đến chưa
-                    if (steps != null && currentStepIndex < steps.length()) {
-                        try {
-                            JSONObject currentStep = steps.getJSONObject(currentStepIndex);
 
-                            // Lấy vị trí của bước tiếp theo
-                            JSONArray locationArray = currentStep.getJSONArray("maneuver").getJSONArray(Integer.parseInt("location"));
-                            double stepLon = locationArray.getDouble(0);  // longitude
-                            double stepLat = locationArray.getDouble(1);  // latitude
 
-                            // Tính khoảng cách từ vị trí hiện tại đến bước tiếp theo
-                            float[] results = new float[1];
-                            Location.distanceBetween(currentLat, currentLon, stepLat, stepLon, results);
-                            float distanceToStep = results[0];  // Khoảng cách tính bằng mét
 
-                            if (distanceToStep <= thresholdDistance) {
-                                // Người dùng đã đến bước tiếp theo, hiển thị bước này
-                                showStep(currentStepIndex);
-
-                                // Chuyển đến bước tiếp theo
-                                currentStepIndex++;
-                            }
-                        } catch (JSONException e) {
-                            Log.e(TAG, "Error parsing step data", e);
-                        }
-                    }
                 }
             }
         }, Looper.getMainLooper());
@@ -624,63 +704,6 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
 
-
-
-
-
-    // Start location updates
-
-
-    private int currentStepIndex = 0;  // Track the current step
-    private JSONArray steps = null;    // The list of steps from the route
-    private double thresholdDistance = 10.0; // Threshold distance (10 meters) to move to the next step
-
-
-
-    private void showStep(int stepIndex) {
-        if (steps != null && steps.length() > stepIndex) {
-            try {
-                JSONObject step = steps.getJSONObject(stepIndex);
-
-                // Get step details
-                String modifier = "No modifier";
-                if (step.has("maneuver")) {
-                    JSONObject maneuver = step.getJSONObject("maneuver");
-                    modifier = maneuver.has("modifier") ? maneuver.getString("modifier") : "No modifier";
-                }
-                double stepDistance = step.has("distance") ? step.getDouble("distance") : 0;
-                String streetName = step.has("name") ? step.getString("name") : "Unknown";
-
-                // Build the step description
-                String stepDescription = String.format("Step %d:\nDistance: %.2f meters\nModifier: %s\nStreet Name: %s\n",
-                        stepIndex + 1, stepDistance, modifier, streetName);
-
-                // Display the current step on the TextView
-                requireActivity().runOnUiThread(() -> {
-                    TextView directionsTextView = requireActivity().findViewById(R.id.text_under_top_bar);
-                    directionsTextView.setText(stepDescription);
-                });
-
-                // Optional: You can add any actions (e.g., voice instructions) here to guide the user
-
-            } catch (JSONException e) {
-                Log.e(TAG, "Error getting step data", e);
-            }
-        }
-    }
-
-    private LocationCallback locationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-            if (locationResult != null && locationResult.getLocations() != null) {
-                for (Location location : locationResult.getLocations()) {
-                    // Gọi hàm onLocationChanged khi có vị trí mới
-                    onLocationChanged(location);
-                }
-            }
-        }
-    };
 
 
 
@@ -842,8 +865,6 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void centerMapOnMyLocation() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
-
         // Kiểm tra quyền truy cập vị trí
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation()
@@ -853,7 +874,22 @@ public class FragmentMap extends Fragment implements LocationListener {
                             if (location != null) {
                                 // Cập nhật vị trí trên bản đồ
                                 GeoPoint myPosition = new GeoPoint(location.getLatitude(), location.getLongitude());
-                                mapView.getController().animateTo(myPosition);
+                                mapView.getController().animateTo(myPosition);  // Di chuyển đến vị trí người dùng
+                                mapView.getController().setZoom(16.0);  // Đặt mức zoom
+
+                                // Nếu marker cũ đã tồn tại, xóa nó
+                                if (myLocationMarker != null) {
+                                    mapView.getOverlays().remove(myLocationMarker);
+                                }
+
+                                // Tạo marker mới tại vị trí của người dùng
+                                myLocationMarker = new Marker(mapView);
+                                myLocationMarker.setPosition(myPosition);
+                                myLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                                myLocationMarker.setTitle("You're here");
+
+                                // Thêm marker vào overlays của mapView
+                                mapView.getOverlays().add(myLocationMarker);
                             } else {
                                 Toast.makeText(requireContext(), "Finding your location...", Toast.LENGTH_SHORT).show();
                             }
@@ -863,6 +899,7 @@ public class FragmentMap extends Fragment implements LocationListener {
             requestPermissions();  // Yêu cầu quyền truy cập vị trí nếu chưa cấp
         }
     }
+
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
