@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -484,14 +486,31 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     private void setupLocation() {
         locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+
+        // Tạo custom person icon từ mipmap
+        Bitmap personIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_navigation);
+
+        // Tạo MyLocationNewOverlay với custom icon
         myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), mapView);
+        myLocationOverlay.setPersonIcon(personIcon);
+        myLocationOverlay.setDirectionArrow(personIcon, personIcon); // Nếu muốn thay đổi cả mũi tên chỉ hướng
+
         myLocationOverlay.enableMyLocation();
-        mapView.getOverlays().add(myLocationOverlay);
+        myLocationOverlay.setDrawAccuracyEnabled(true);
+
+        // Đảm bảo overlay vị trí được thêm sau cùng
+        mapView.getOverlays().remove(myLocationOverlay); // Xóa overlay nếu đã tồn tại
+        mapView.getOverlays().add(myLocationOverlay);    // Thêm vào cuối danh sách overlay
+
+        mapView.invalidate(); // Làm mới bản đồ
 
         if (checkLocationPermission()) {
             startLocationUpdates();
         }
     }
+
+
+
 
 
 
@@ -1045,15 +1064,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                                 if (myLocationMarker != null) {
                                     mapView.getOverlays().remove(myLocationMarker);
                                 }
-
-                                // Tạo marker mới tại vị trí của người dùng
-                                myLocationMarker = new Marker(mapView);
-                                myLocationMarker.setPosition(myPosition);
-                                myLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                                myLocationMarker.setTitle("You're here");
-
-                                // Thêm marker vào overlays của mapView
-                                mapView.getOverlays().add(myLocationMarker);
+                                setupLocation();
                             } else {
                                 Toast.makeText(requireContext(), "Finding your location...", Toast.LENGTH_SHORT).show();
                             }
