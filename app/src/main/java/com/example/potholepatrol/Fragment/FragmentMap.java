@@ -95,6 +95,8 @@ public class FragmentMap extends Fragment implements LocationListener {
     private Button button_turnbyturn;
     private Button button_negative;
     private Handler handler = new Handler();
+    private boolean isRouteUpdating = false;
+    private List<Pothole> potholes = new ArrayList<>();
 
     private Button button_exit;
     final double MIN_LAT = 10.8593387269177;
@@ -158,6 +160,7 @@ public class FragmentMap extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 Log.d("negative", "Button negative clicked");
+                isRouteUpdating = true;
                 handler.post(updateRouteRunnable); // Bắt đầu vẽ tuyến đường
             }
         });
@@ -304,9 +307,61 @@ public class FragmentMap extends Fragment implements LocationListener {
                 south > MAX_LAT ||
                 north < MIN_LAT);
     }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        // Bán kính trái đất (đơn vị mét)
+        final double EARTH_RADIUS = 6371000;
+
+        // Chuyển đổi độ sang radian
+        double lat1Rad = Math.toRadians(lat1);
+        double lon1Rad = Math.toRadians(lon1);
+        double lat2Rad = Math.toRadians(lat2);
+        double lon2Rad = Math.toRadians(lon2);
+
+        // Tính sự chênh lệch giữa vĩ độ và kinh độ
+        double deltaLat = lat2Rad - lat1Rad;
+        double deltaLon = lon2Rad - lon1Rad;
+
+        // Áp dụng công thức Haversine
+        double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                        Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Tính khoảng cách (trả về đơn vị mét)
+        return EARTH_RADIUS * c;
+    }
+
+
+    private void checkProximityAndAlert(double currentLat, double currentLon, List<Pothole> potholes) {
+        for (Pothole pothole : potholes) {
+            double potholeLat = pothole.getLocation().getCoordinates().getLatitude();
+            double potholeLon = pothole.getLocation().getCoordinates().getLongitude();
+
+            double distance = calculateDistance(currentLat, currentLon, potholeLat, potholeLon);
+
+            if (distance <= 50) { // Nếu khoảng cách nhỏ hơn hoặc bằng 50m
+                // Phát cảnh báo
+                stopUpdatingRoute();
+                Log.d("ProximityAlert", "You are near a pothole! Distance: " + distance + " meters");
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), "Warning: Pothole detected nearby!", Toast.LENGTH_LONG).show()
+                );
+
+
+                // Dừng kiểm tra nếu đã tìm thấy ổ gà gần
+                break;
+            }
+        }
+    }
+
+
     private Runnable updateRouteRunnable = new Runnable() {
         @Override
         public void run() {
+            if (!isRouteUpdating) {
+                return;  // Nếu không cần cập nhật nữa, dừng lại
+            }
             // Đọc tọa độ từ SharedPreferences
             SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
             String latString = preferences.getString("lat", null);
@@ -318,6 +373,9 @@ public class FragmentMap extends Fragment implements LocationListener {
                 double savedLon = Double.parseDouble(lonString);
                 drawRouteBetweenPointsAuto(currentLat, currentLon, savedLat, savedLon);
             }
+
+            // Kiểm tra khoảng cách với các ổ gà gần
+            checkProximityAndAlert(currentLat, currentLon, potholes);
 
             Log.d("Route", "Updating route...");
             handler.postDelayed(this, 1000);  // Lặp lại sau mỗi giây
@@ -374,7 +432,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                     try {
                         Gson gson = new Gson();
                         Type type = new TypeToken<List<Pothole>>() {}.getType();
-                        List<Pothole> potholes = gson.fromJson(json, type);
+                        potholes = gson.fromJson(json, type);
                         requireActivity().runOnUiThread(() -> displayPotholes(potholes));
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing pothole data", e);
@@ -547,7 +605,7 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     private void stopUpdatingRoute() {
         handler.removeCallbacks(updateRouteRunnable); // Xóa callback của Runnable
-        Log.d("Route", "Route updating stopped.");
+        isRouteUpdating = false;
     }
 
     private void drawRouteBetweenPointsAuto(double startLat, double startLon, double endLat, double endLon) {
