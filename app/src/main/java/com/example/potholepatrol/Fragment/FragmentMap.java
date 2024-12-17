@@ -296,7 +296,7 @@ public class FragmentMap extends Fragment implements LocationListener {
 
                 // Di chuyển và cập nhật bản đồ
                 mapView.getController().animateTo(currentLocation);
-                mapView.getController().setZoom(15.0);
+                mapView.getController().setZoom(17.0);
             } else {
                 Log.e("Map", "Không tìm thấy vị trí hiện tại");
             }
@@ -548,7 +548,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                                 // Cập nhật vị trí trên bản đồ
                                 GeoPoint myPosition = new GeoPoint(location.getLatitude(), location.getLongitude());
                                 mapView.getController().animateTo(myPosition);  // Di chuyển đến vị trí người dùng
-                                mapView.getController().setZoom(15.0);  // Đặt mức zoom
+                                mapView.getController().setZoom(17.0);  // Đặt mức zoom
 
                                 // Nếu marker cũ đã tồn tại, xóa nó
                                 if (myLocationMarker != null) {
@@ -916,7 +916,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                                     }
                                     GeoPoint myPosition = new GeoPoint(startLat, startLon);
                                     mapView.getController().animateTo(myPosition);  // Di chuyển đến vị trí người dùng
-                                    mapView.getController().setZoom(15.0);  // Đặt mức zoom
+                                    mapView.getController().setZoom(17.0);  // Đặt mức zoom
 
                                     // Vẽ tuyến đường mới
                                     currentRouteLine = new Polyline(mapView);
