@@ -166,7 +166,7 @@
                             android:layout_width="100dp"
                             android:layout_height="34dp"
                             android:background="#6200EE"
-                            android:text="New Button"
+                            android:text="exit"
                             android:textColor="#FFFFFF" />
                     </LinearLayout>
 
@@ -185,7 +185,7 @@
                             android:layout_width="100dp"
                             android:layout_height="34dp"
                             android:background="#6200EE"
-                            android:text="Side Button"
+                            android:text="negative"
                             android:textColor="#FFFFFF" />
                     </LinearLayout>
 

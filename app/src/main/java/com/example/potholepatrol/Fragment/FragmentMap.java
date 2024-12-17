@@ -95,7 +95,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     private Button button_turnbyturn;
     private Button button_negative;
     private Handler handler = new Handler();
-    private Runnable updateRouteRunnable;
+
     private Button button_exit;
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
@@ -148,19 +148,7 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         });
 
-        Runnable updateRouteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-                String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
-                String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
-                double savedLat = Double.parseDouble(latString);
-                double savedLon = Double.parseDouble(lonString);
-                // Gọi hàm vẽ tuyến đường
-                drawRouteBetweenPointsAuto(currentLat, currentLon, savedLat, savedLon);
-                handler.postDelayed(this, 1000);  // Lặp lại sau mỗi giây
-            }
-        };
+
 
 
 
@@ -169,11 +157,8 @@ public class FragmentMap extends Fragment implements LocationListener {
         button_negative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Log ra thông tin khi nút được nhấn
                 Log.d("negative", "Button negative clicked");
-
-                // Bắt đầu vẽ tự động khi bấm nút
-                handler.post(updateRouteRunnable);
+                handler.post(updateRouteRunnable); // Bắt đầu vẽ tuyến đường
             }
         });
 
@@ -183,13 +168,16 @@ public class FragmentMap extends Fragment implements LocationListener {
         button_turnbyturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("negative", "cobam");
-                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-                String latString = preferences.getString("lat", null); // Lấy lat dưới dạng chuỗi
-                String lonString = preferences.getString("lon", null); // Lấy lon dưới dạng chuỗi
-                Log.d("SharedPreferences", "Lat: " + lonString + ", Lon: " + lonString);
+                // Log ra thông tin khi nút được nhấn
+                Log.d("stop", "Button stop clicked");
 
-                // Kiểm tra nếu lat và lon đã được lưu
+
+                stopUpdatingRoute();
+                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                String latString = preferences.getString("lat", null);
+                String lonString = preferences.getString("lon", null);
+
+
                 if (latString != null && lonString != null) {
                     try {
                         // Chuyển đổi từ String sang double
@@ -201,7 +189,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                         mapView.getOverlays().add(savedLocationMarker);
 
                         // Vẽ tuyến đường giữa vị trí hiện tại và vị trí đã lưu
-                        drawTurnByTurnRoute(currentLat, currentLon, savedLat, savedLon);
+                        drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
 
                         // Cập nhật bản đồ
                         mapView.invalidate();
@@ -213,6 +201,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                     // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
                     Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
@@ -315,6 +304,25 @@ public class FragmentMap extends Fragment implements LocationListener {
                 south > MAX_LAT ||
                 north < MIN_LAT);
     }
+    private Runnable updateRouteRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // Đọc tọa độ từ SharedPreferences
+            SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+            String latString = preferences.getString("lat", null);
+            String lonString = preferences.getString("lon", null);
+
+            // Nếu tọa độ không null, thực hiện vẽ
+            if (latString != null && lonString != null) {
+                double savedLat = Double.parseDouble(latString);
+                double savedLon = Double.parseDouble(lonString);
+                drawRouteBetweenPointsAuto(currentLat, currentLon, savedLat, savedLon);
+            }
+
+            Log.d("Route", "Updating route...");
+            handler.postDelayed(this, 1000);  // Lặp lại sau mỗi giây
+        }
+    };
 
     private static double tile2lat(int y, int z) {
         double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, z);
@@ -537,6 +545,11 @@ public class FragmentMap extends Fragment implements LocationListener {
         });
     }
 
+    private void stopUpdatingRoute() {
+        handler.removeCallbacks(updateRouteRunnable); // Xóa callback của Runnable
+        Log.d("Route", "Route updating stopped.");
+    }
+
     private void drawRouteBetweenPointsAuto(double startLat, double startLon, double endLat, double endLon) {
         String url = String.format(Locale.US,
                 "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
@@ -589,7 +602,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                                     }
                                     GeoPoint myPosition = new GeoPoint(startLat, startLon);
                                     mapView.getController().animateTo(myPosition);  // Di chuyển đến vị trí người dùng
-                                    mapView.getController().setZoom(16.0);  // Đặt mức zoom
+                                    mapView.getController().setZoom(18.0);  // Đặt mức zoom
 
                                     // Vẽ tuyến đường mới
                                     currentRouteLine = new Polyline(mapView);
