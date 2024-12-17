@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="917dp">
 
-            <!-- MapView để hiển thị bản đồ -->
             <org.osmdroid.views.MapView
                 android:id="@+id/mapView"
                 android:layout_width="match_parent"
@@ -26,7 +25,7 @@
                 android:layout_height="757dp"
                 android:orientation="vertical">
 
-                <!-- Top Bar -->
+                <!-- Top Bar section remains the same -->
                 <LinearLayout
                     android:id="@+id/top_bar"
                     android:layout_width="match_parent"
@@ -39,7 +38,6 @@
                     android:paddingHorizontal="25dp"
                     android:paddingVertical="13dp">
 
-                    <!-- Map Title Bar -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -70,23 +68,53 @@
                             android:layout_height="30dp"
                             android:scaleType="fitXY"
                             android:src="@mipmap/ic_report" />
-
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- New TextView dưới top_bar -->
-                <TextView
-                    android:id="@+id/text_under_top_bar"
+                <!-- Navigation Info Panel -->
+                <LinearLayout
+                    android:id="@+id/navigation_info_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="New TextView Below Top Bar"
-                    android:textColor="#0D1B34"
-                    android:textSize="18sp"
-                    android:background="#FFFFFF"
-                    android:gravity="center"
-                    android:textStyle="italic" />
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="400dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/dialog_frame"
+                    android:padding="16dp">
 
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_estimated_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 hour 16 minutes"
+                            android:textColor="#000000"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/text_distance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="33 km"
+                            android:textColor="#666666"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btn_start_navigation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/btn_frame"
+                        android:text="Navigate"
+                        android:textColor="#FFFFFF"
+                        android:paddingHorizontal="20dp"/>
+                </LinearLayout>
 
                 <!-- Function Section -->
                 <LinearLayout
@@ -94,10 +122,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="490dp"
+                    android:layout_marginTop="40dp"
                     android:orientation="horizontal">
 
-                    <!-- Zoom Controls -->
+                    <!-- Existing zoom controls section -->
                     <LinearLayout
                         android:id="@+id/zoom_controls"
                         android:layout_width="46dp"
@@ -107,7 +135,6 @@
                         android:paddingHorizontal="15dp"
                         android:paddingVertical="12dp">
 
-                        <!-- Zoom In Button -->
                         <ImageView
                             android:id="@+id/button_zoom_in"
                             android:layout_width="match_parent"
@@ -116,16 +143,14 @@
                             android:scaleType="fitXY"
                             android:src="@mipmap/ic_zoomin" />
 
-                        <!-- Line Separator -->
                         <LinearLayout
                             android:id="@+id/separator_line"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:layout_marginBottom="10dp"
                             android:background="#B5B8BF"
-                            android:orientation="vertical"></LinearLayout>
+                            android:orientation="vertical"/>
 
-                        <!-- Zoom Out Button -->
                         <ImageView
                             android:id="@+id/button_zoom_out"
                             android:layout_width="match_parent"
@@ -135,15 +160,14 @@
                             android:src="@mipmap/ic_zoomout" />
                     </LinearLayout>
 
-                    <!-- Spacer -->
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_weight="1" />
 
-                    <!-- New Button Section -->
+                    <!-- Navigation control buttons -->
                     <LinearLayout
-                        android:id="@+id/new_button_section"
+                        android:id="@+id/btn_stop_navigate"
                         android:layout_width="71dp"
                         android:layout_height="52dp"
                         android:layout_marginTop="24dp"
@@ -153,16 +177,7 @@
                         android:padding="10dp">
 
                         <Button
-                            android:id="@+id/button_negative"
-                            android:layout_width="100dp"
-                            android:layout_height="34dp"
-                            android:background="#6200EE"
-                            android:text="New Button"
-                            android:textColor="#FFFFFF"
-                            android:visibility="gone" />
-
-                        <Button
-                            android:id="@+id/button_turnbyturn"
+                            android:id="@+id/button_stop_navigate"
                             android:layout_width="100dp"
                             android:layout_height="34dp"
                             android:background="#6200EE"
@@ -170,9 +185,8 @@
                             android:textColor="#FFFFFF" />
                     </LinearLayout>
 
-                    <!-- New Button next to zoom_controls and button_turnbyturn -->
                     <LinearLayout
-                        android:id="@+id/new_button_side"
+                        android:id="@+id/btn_navigate"
                         android:layout_width="71dp"
                         android:layout_height="52dp"
                         android:layout_marginTop="24dp"
@@ -181,7 +195,7 @@
                         android:padding="10dp">
 
                         <Button
-                            android:id="@+id/button_new_side"
+                            android:id="@+id/button_navigate"
                             android:layout_width="100dp"
                             android:layout_height="34dp"
                             android:background="#6200EE"
@@ -189,7 +203,6 @@
                             android:textColor="#FFFFFF" />
                     </LinearLayout>
 
-                    <!-- Location Button -->
                     <LinearLayout
                         android:id="@+id/location_button"
                         android:layout_width="100dp"
@@ -209,9 +222,7 @@
                             android:scaleType="centerInside"
                             android:src="@mipmap/ic_your_location" />
                     </LinearLayout>
-
                 </LinearLayout>
-
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

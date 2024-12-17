@@ -54,11 +54,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polyline;
@@ -92,10 +94,10 @@ public class FragmentMap extends Fragment implements LocationListener {
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
     private String accessToken;
-    private Button button_turnbyturn;
-    private Button button_negative;
+    private Button btnStartNavigation;
     private Handler handler = new Handler();
     private boolean isRouteUpdating = false;
+    private boolean isNavigating = false;
     private List<Pothole> potholes = new ArrayList<>();
 
     private Button button_exit;
@@ -105,6 +107,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     final double MAX_LON = 106.8587615275;
     private List<Overlay> previousOverlays = new ArrayList<>();
     private Polyline currentRouteLine;
+    private Marker currentMarker = null;
     private double currentLat = 0.0;
     private double currentLon = 0.0;
 
@@ -131,6 +134,8 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         requestPermissions();
 
+
+
         mapView = rootView.findViewById(R.id.mapView);
         setupMap();
         setupLocation();
@@ -155,56 +160,64 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
 
-        button_negative = rootView.findViewById(R.id.button_new_side);
-        button_negative.setOnClickListener(new View.OnClickListener() {
+
+        // Initialize the new navigation button
+        btnStartNavigation = rootView.findViewById(R.id.btn_start_navigation);
+        btnStartNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("negative", "Button negative clicked");
-                isRouteUpdating = true;
-                handler.post(updateRouteRunnable); // Bắt đầu vẽ tuyến đường
-            }
-        });
+                if (!isNavigating) {
+                    // Start navigation
+                    isNavigating = true;
+                    isRouteUpdating = true;
+                    btnStartNavigation.setText("Stop");
 
+                    // Start updating the route by posting the updateRouteRunnable to the handler
+                    handler.post(updateRouteRunnable);
+                    Log.d("Navigation", "Starting navigation...");
 
+                    // Optional: Log or update anything else when starting the navigation
+                    Log.d("negative", "Button start navigation clicked");
 
-        button_turnbyturn = rootView.findViewById(R.id.button_turnbyturn);
-        button_turnbyturn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Log ra thông tin khi nút được nhấn
-                Log.d("stop", "Button stop clicked");
-
-
-                stopUpdatingRoute();
-                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-                String latString = preferences.getString("lat", null);
-                String lonString = preferences.getString("lon", null);
-
-
-                if (latString != null && lonString != null) {
-                    try {
-                        // Chuyển đổi từ String sang double
-                        double savedLat = Double.parseDouble(latString);
-                        double savedLon = Double.parseDouble(lonString);
-                        GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
-                        Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
-
-                        mapView.getOverlays().add(savedLocationMarker);
-
-                        // Vẽ tuyến đường giữa vị trí hiện tại và vị trí đã lưu
-                        drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
-
-                        // Cập nhật bản đồ
-                        mapView.invalidate();
-                    } catch (NumberFormatException e) {
-                        // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
-                        Toast.makeText(getContext(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
-                    }
                 } else {
-                    // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
-                    Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
-                }
+                    // Stop navigation
+                    isNavigating = false;
+                    btnStartNavigation.setText("Navigate");
 
+                    Log.d("stop", "Button stop navigation clicked");
+
+                    stopUpdatingRoute();
+                    SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                    String latString = preferences.getString("lat", null);
+                    String lonString = preferences.getString("lon", null);
+
+
+                    if (latString != null && lonString != null) {
+                        try {
+                            // Chuyển đổi từ String sang double
+                            double savedLat = Double.parseDouble(latString);
+                            double savedLon = Double.parseDouble(lonString);
+                            GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
+                            Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
+
+                            mapView.getOverlays().add(savedLocationMarker);
+
+                            // Vẽ tuyến đường giữa vị trí hiện tại và vị trí đã lưu
+                            drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
+
+                            // Cập nhật bản đồ
+                            mapView.invalidate();
+                        } catch (NumberFormatException e) {
+                            // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
+                            Toast.makeText(getContext(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
+                        Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                }
             }
         });
 
@@ -223,6 +236,8 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
     }
+
+
 
 
 
@@ -293,7 +308,47 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         // Tải dữ liệu khác (ví dụ: potholes)
         loadPotholes();
+        addMapClickListener();
     }
+    private void addMapClickListener() {
+        MapEventsReceiver mapEventsReceiver = new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+                // Xử lý sự kiện khi người dùng click vào bản đồ
+                Toast.makeText(requireContext(), "Clicked at: " + p.toString(), Toast.LENGTH_SHORT).show();
+
+                // Xóa marker cũ nếu tồn tại
+                if (currentMarker != null) {
+                    mapView.getOverlays().remove(currentMarker);
+                }
+
+                // Tạo marker mới tại vị trí đã click
+                Marker newMarker = createMarker(p, R.drawable.marker_blue);
+
+                // Cập nhật marker hiện tại
+                currentMarker = newMarker;
+
+                // Thêm marker mới vào mapView
+                mapView.getOverlays().add(currentMarker);
+                drawRouteBetweenPoints(currentLat, currentLon, p.getLatitude(), p.getLongitude());
+
+
+                // Làm mới bản đồ
+                mapView.invalidate();
+
+                return true;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint p) {
+                return false;
+            }
+        };
+
+        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(mapEventsReceiver);
+        mapView.getOverlays().add(mapEventsOverlay);
+    }
+
 
 
     private boolean isTileInBounds(int x, int y, int zoom) {
@@ -347,9 +402,22 @@ public class FragmentMap extends Fragment implements LocationListener {
                 requireActivity().runOnUiThread(() ->
                         Toast.makeText(requireContext(), "Warning: Pothole detected nearby!", Toast.LENGTH_LONG).show()
                 );
-
-
                 // Dừng kiểm tra nếu đã tìm thấy ổ gà gần
+                break;
+            }
+
+            SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+            String latString = preferences.getString("lat", null);
+            String lonString = preferences.getString("lon", null);
+            double distance_location = calculateDistance(currentLat, currentLon, Double.parseDouble(latString), Double.parseDouble(lonString));
+            if (distance_location <= 50) {
+                stopUpdatingRoute();
+                Log.d("Finished navigate", "You have arrived");
+
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(), "You have arrived", Toast.LENGTH_SHORT).show()
+                );
+
                 break;
             }
         }
@@ -401,11 +469,6 @@ public class FragmentMap extends Fragment implements LocationListener {
             startLocationUpdates();
         }
     }
-
-
-
-
-
 
 
 
@@ -498,7 +561,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         // Thêm một flag để kiểm tra xem có nên vẽ route hay không
         boolean shouldDrawRoute = preferences.getBoolean("shouldDrawRoute", false);
 
-        if (latString != null && lonString != null) {
+        if (latString != null && lonString != null ) {
             try {
                 // Chuyển đổi từ String sang double
                 double savedLat = Double.parseDouble(latString);
@@ -506,7 +569,14 @@ public class FragmentMap extends Fragment implements LocationListener {
                 GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
                 Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
 
-                mapView.getOverlays().add(savedLocationMarker);
+                // Xóa marker cũ nếu tồn tại
+                if (currentMarker != null) {
+                    mapView.getOverlays().remove(currentMarker);
+                }
+
+                // Gán marker hiện tại
+                currentMarker = savedLocationMarker;
+                mapView.getOverlays().add(currentMarker);
 
                 // Vẽ tuyến đường giữa vị trí hiện tại và vị trí đã lưu
                 drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
@@ -811,7 +881,7 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
 
-    // Trong Activity hoặc Fragment của bạn, sử dụng phương thức onDestroy để xóa SharedPreferences
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -1006,6 +1076,7 @@ public class FragmentMap extends Fragment implements LocationListener {
             startLocationUpdates();
         }
 
+
     }
 
     @Override
@@ -1013,6 +1084,8 @@ public class FragmentMap extends Fragment implements LocationListener {
         super.onPause();
         mapView.onPause();
         locationManager.removeUpdates(this);
+
+
     }
 
 

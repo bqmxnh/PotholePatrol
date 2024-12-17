@@ -94,6 +94,8 @@ public class LocationFragment extends Fragment {
             }
         });
 
+
+
         // ListView item click event
         lvLocationResults.setOnItemClickListener((parent, view, position, id) -> {
             NominatimResult selectedResult = locationList.get(position); // Lấy địa điểm được chọn
