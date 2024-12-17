@@ -128,6 +128,8 @@ public class LocationFragment extends Fragment {
                 editor.putString("lon", selectedResult.getLon());
                 // Thêm flag để chỉ định rằng nên vẽ route
                 editor.putBoolean("shouldDrawRoute", true);
+                // Thêm flag mới để chỉ định rằng nên hiện navigation panel
+                editor.putBoolean("showNavigationPanel", true);
                 editor.apply();
 
                 dialog.dismiss();

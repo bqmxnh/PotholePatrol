@@ -78,42 +78,73 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="400dp"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:background="@drawable/dialog_frame"
                     android:padding="16dp">
 
+                    <!-- Back button row -->
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:id="@+id/btn_back_navigation"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/right_arrow"
+                            android:layout_gravity="center_vertical"/>
 
                         <TextView
-                            android:id="@+id/text_estimated_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1 hour 16 minutes"
-                            android:textColor="#000000"
+                            android:text="Navigation"
+                            android:textStyle="bold"
                             android:textSize="16sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/text_distance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="33 km"
-                            android:textColor="#666666"
-                            android:textSize="14sp"/>
+                            android:layout_marginStart="8dp"
+                            android:textColor="#000000"/>
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btn_start_navigation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:background="@drawable/btn_frame"
-                        android:text="Navigate"
-                        android:textColor="#FFFFFF"
-                        android:paddingHorizontal="20dp"/>
+                    <!-- Navigation info row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_estimated_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1 hour 16 minutes"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:id="@+id/text_distance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="33 km"
+                                android:textColor="#666666"
+                                android:textSize="14sp"/>
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/btn_start_navigation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:background="@drawable/btn_frame"
+                            android:text="Navigate"
+                            android:textColor="#FFFFFF"
+                            android:paddingHorizontal="20dp"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Function Section -->
@@ -164,44 +195,6 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_weight="1" />
-
-                    <!-- Navigation control buttons -->
-                    <LinearLayout
-                        android:id="@+id/btn_stop_navigate"
-                        android:layout_width="71dp"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="10dp">
-
-                        <Button
-                            android:id="@+id/button_stop_navigate"
-                            android:layout_width="100dp"
-                            android:layout_height="34dp"
-                            android:background="#6200EE"
-                            android:text="exit"
-                            android:textColor="#FFFFFF" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btn_navigate"
-                        android:layout_width="71dp"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="24dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="10dp">
-
-                        <Button
-                            android:id="@+id/button_navigate"
-                            android:layout_width="100dp"
-                            android:layout_height="34dp"
-                            android:background="#6200EE"
-                            android:text="negative"
-                            android:textColor="#FFFFFF" />
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/location_button"
