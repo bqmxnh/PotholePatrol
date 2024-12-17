@@ -100,7 +100,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     private boolean isNavigating = false;
     private List<Pothole> potholes = new ArrayList<>();
 
-    private Button button_exit;
+
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
     final double MIN_LON = 106.734790771361;
@@ -187,10 +187,10 @@ public class FragmentMap extends Fragment implements LocationListener {
                     Log.d("stop", "Button stop navigation clicked");
 
                     stopUpdatingRoute();
+
                     SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
                     String latString = preferences.getString("lat", null);
                     String lonString = preferences.getString("lon", null);
-
 
                     if (latString != null && lonString != null) {
                         try {
@@ -198,9 +198,15 @@ public class FragmentMap extends Fragment implements LocationListener {
                             double savedLat = Double.parseDouble(latString);
                             double savedLon = Double.parseDouble(lonString);
                             GeoPoint savedGeoPoint = new GeoPoint(savedLat, savedLon);
-                            Marker savedLocationMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
 
-                            mapView.getOverlays().add(savedLocationMarker);
+                            // Xóa marker cũ nếu đã tồn tại
+                            if (currentMarker != null) {
+                                mapView.getOverlays().remove(currentMarker);
+                            }
+
+                            // Tạo và lưu marker mới
+                            currentMarker = createMarker(savedGeoPoint, R.drawable.marker_blue);
+                            mapView.getOverlays().add(currentMarker);
 
                             // Vẽ tuyến đường giữa vị trí hiện tại và vị trí đã lưu
                             drawRouteBetweenPoints(currentLat, currentLon, savedLat, savedLon);
@@ -215,11 +221,10 @@ public class FragmentMap extends Fragment implements LocationListener {
                         // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
                         Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
                     }
-
-
                 }
             }
         });
+
 
         reportPothole = rootView.findViewById(R.id.icon_report);
         reportPothole.setOnClickListener(new View.OnClickListener() {
@@ -314,8 +319,20 @@ public class FragmentMap extends Fragment implements LocationListener {
         MapEventsReceiver mapEventsReceiver = new MapEventsReceiver() {
             @Override
             public boolean singleTapConfirmedHelper(GeoPoint p) {
-                // Xử lý sự kiện khi người dùng click vào bản đồ
-                Toast.makeText(requireContext(), "Clicked at: " + p.toString(), Toast.LENGTH_SHORT).show();
+                // Lưu tọa độ vào SharedPreferences
+                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+
+                // Lấy tọa độ từ GeoPoint
+                String clickedLat = String.valueOf(p.getLatitude());
+                String clickedLon = String.valueOf(p.getLongitude());
+
+                editor.putString("lat", clickedLat);
+                editor.putString("lon", clickedLon);
+
+                // Thêm flag chỉ định vẽ route
+                editor.putBoolean("shouldDrawRoute", true);
+                editor.apply();
 
                 // Xóa marker cũ nếu tồn tại
                 if (currentMarker != null) {
@@ -330,12 +347,16 @@ public class FragmentMap extends Fragment implements LocationListener {
 
                 // Thêm marker mới vào mapView
                 mapView.getOverlays().add(currentMarker);
-                drawRouteBetweenPoints(currentLat, currentLon, p.getLatitude(), p.getLongitude());
 
+                // Vẽ route giữa vị trí hiện tại và vị trí mới click
+                drawRouteBetweenPoints(currentLat, currentLon, p.getLatitude(), p.getLongitude());
 
                 // Làm mới bản đồ
                 mapView.invalidate();
 
+                // Hiển thị thông báo tọa độ
+                Toast.makeText(requireContext(), "Clicked at: " + clickedLat + ", " + clickedLon, Toast.LENGTH_SHORT).show();
+                Log.d("MapClick", "Clicked at: " + clickedLat + ", " + clickedLon);
                 return true;
             }
 
@@ -345,9 +366,11 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         };
 
-        MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(mapEventsReceiver);
-        mapView.getOverlays().add(mapEventsOverlay);
+        // Thêm sự kiện vào MapView
+        MapEventsOverlay eventsOverlay = new MapEventsOverlay(mapEventsReceiver);
+        mapView.getOverlays().add(eventsOverlay);
     }
+
 
 
 
@@ -674,7 +697,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void stopUpdatingRoute() {
-        handler.removeCallbacks(updateRouteRunnable); // Xóa callback của Runnable
+        handler.removeCallbacks(updateRouteRunnable);
         isRouteUpdating = false;
     }
 
@@ -1075,8 +1098,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         if (checkLocationPermission()) {
             startLocationUpdates();
         }
-
-
     }
 
     @Override
@@ -1084,7 +1105,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         super.onPause();
         mapView.onPause();
         locationManager.removeUpdates(this);
-
 
     }
 
