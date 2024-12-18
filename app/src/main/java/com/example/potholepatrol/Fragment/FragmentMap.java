@@ -588,7 +588,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         myLocationOverlay.setDirectionArrow(personIcon, personIcon);
 
         myLocationOverlay.enableMyLocation();
-        myLocationOverlay.setDrawAccuracyEnabled(true);
+        myLocationOverlay.setDrawAccuracyEnabled(false);
 
         // Đảm bảo overlay vị trí được thêm sau cùng
         mapView.getOverlays().remove(myLocationOverlay);

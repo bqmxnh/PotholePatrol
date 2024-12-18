@@ -218,6 +218,13 @@
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
     <string name="log_out2">Log Out</string>
     <string name="cancel3">Cancel</string>
-    <string name="continue33" translatable="false">Continue</string>
+    <string name="continue33">Continue</string>
+    <string name="warning_pothole_detected_nearby2">Warning: Pothole detected nearby!</string>
+    <string name="continue24">Continue</string>
+    <string name="stop8">Stop</string>
+    <string name="pothole_detected">Pothole Detected?</string>
+    <string name="detect">We detected significant movement. Did you encounter a pothole?</string>
+    <string name="yes2">Yes</string>
+    <string name="no3">No</string>
 
 </resources>
