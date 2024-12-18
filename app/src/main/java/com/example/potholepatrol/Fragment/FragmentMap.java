@@ -116,7 +116,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private float lastX, lastY, lastZ;
-    private static final float SHAKE_THRESHOLD = 16.0f; // Ngưỡng phát hiện rung lắc
+    private static float SHAKE_THRESHOLD = 16.0f; // Ngưỡng phát hiện rung lắc mặc định
     private long lastUpdate = 0;
     private static final int MIN_TIME_BETWEEN_SHAKES = 1000; // Thời gian tối thiểu giữa các lần phát hiện (ms)
     private Dialog shakeDialog = null;
@@ -146,6 +146,22 @@ public class FragmentMap extends Fragment implements LocationListener {
                 sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
             }
         }
+
+        SharedPreferences settingsPrefs = requireActivity().getSharedPreferences("SettingsPrefs", Context.MODE_PRIVATE);
+        String sensitivity = settingsPrefs.getString("detection_sensitivity", "medium");
+
+        switch (sensitivity) {
+            case "low":
+                SHAKE_THRESHOLD = 20.0f; // Ít nhạy hơn
+                break;
+            case "medium":
+                SHAKE_THRESHOLD = 16.0f; // Mặc định
+                break;
+            case "high":
+                SHAKE_THRESHOLD = 12.0f; // Nhạy hơn
+                break;
+        }
+
     }
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {

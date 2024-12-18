@@ -11,19 +11,19 @@
         android:clipToPadding="false"
         android:id="@+id/r8h0m93doygl"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:paddingTop="2dp"
         android:paddingBottom="38dp"
         android:paddingHorizontal="2dp">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:orientation="horizontal">
             <LinearLayout
-                android:id="@+id/rbszlx9xob0v"
+                android:id="@+id/container_term"
                 android:layout_width="406dp"
                 android:layout_height="wrap_content"
                 android:clipChildren="false"
@@ -32,8 +32,7 @@
                 <RelativeLayout
                     android:id="@+id/rog79wcr5r5o_rl"
                     android:layout_width="match_parent"
-                    android:layout_height="263dp"
-                    >
+                    android:layout_height="263dp">
                     <ImageView
                         android:id="@+id/rog79wcr5r5o"
                         android:layout_width="match_parent"
@@ -51,7 +50,7 @@
                         android:paddingBottom="183dp">
 
                         <LinearLayout
-                            android:id="@+id/rgeemv8p68rk"
+                            android:id="@+id/term_bar"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="30dp"
@@ -71,6 +70,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:textStyle="bold"
                                 android:text="@string/terms_amp_policies2"
                                 android:textColor="#0D1B34"
                                 android:textSize="30sp" />

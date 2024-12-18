@@ -1,16 +1,15 @@
 package com.example.potholepatrol.Settings;
 
-import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,73 +17,83 @@ import com.example.potholepatrol.R;
 
 public class NotificationSettingActivity extends AppCompatActivity {
 
+    private SharedPreferences sharedPreferences;
+    private TextView soundOption, vibrateOption;
+    private Button btnSave;
+    private String selectedPreference = "Sound"; // Default preference
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_notifications);
 
-        // Set up back button
+        setupStatusBar();
+
+        // Khởi tạo SharedPreferences
+        sharedPreferences = getSharedPreferences("SettingsPrefs", MODE_PRIVATE);
+
+        // Ánh xạ view
         ImageView btnBack = findViewById(R.id.btn_back);
+        soundOption = findViewById(R.id.btn_sound);
+        vibrateOption = findViewById(R.id.btn_vibrate);
+        btnSave = findViewById(R.id.btn_save);
+
+        // Load preference đã lưu
+        loadSavedPreference();
+
+        // Xử lý sự kiện Back
         btnBack.setOnClickListener(v -> finish());
 
-        // Set up sound option
-        TextView soundOption = findViewById(R.id.button_sound);
-        soundOption.setOnClickListener(v -> {
-            // Handle sound option click
-        });
+        // Xử lý chọn Sound
+        soundOption.setOnClickListener(v -> selectPreference("Sound"));
 
-        // Set up vibrate option
-        TextView vibrateOption = findViewById(R.id.button_vibrate);
-        vibrateOption.setOnClickListener(v -> {
-            // Handle vibrate option click
-        });
+        // Xử lý chọn Vibrate
+        vibrateOption.setOnClickListener(v -> selectPreference("Vibrate"));
 
-        // Set up save button
-        Button btnSave = findViewById(R.id.btn_save);
-        btnSave.setOnClickListener(v -> {
-            showStatusDialog(true, "Save Successful");
-        });
+        // Xử lý Save
+        btnSave.setOnClickListener(v -> savePreference());
     }
 
-    private void showStatusDialog(boolean isSuccess, String message) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_status);
+    private void selectPreference(String preference) {
+        selectedPreference = preference;
+        updateButtonState();
+    }
 
-        Window window = dialog.getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-            layoutParams.copyFrom(window.getAttributes());
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+    private void savePreference() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("alert_preference", selectedPreference);
+        editor.apply();
 
-            // Set position and background
-            layoutParams.gravity = Gravity.TOP;
-            layoutParams.y = 0;
-            window.setAttributes(layoutParams);
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        // Hiển thị thông báo
+        Toast.makeText(this, "Preference saved: " + selectedPreference, Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
-            // Add dim amount
-            layoutParams.dimAmount = 0.5f;
-            window.setAttributes(layoutParams);
+    private void loadSavedPreference() {
+        selectedPreference = sharedPreferences.getString("alert_preference", "Sound");
+        updateButtonState();
+    }
+
+    private void updateButtonState() {
+        // Reset styles
+        soundOption.setBackgroundResource(R.drawable.setting_frame);
+        vibrateOption.setBackgroundResource(R.drawable.setting_frame);
+
+        // Highlight selected option
+        if ("Sound".equals(selectedPreference)) {
+            soundOption.setBackgroundResource(R.drawable.selected_button_background);
+        } else {
+            vibrateOption.setBackgroundResource(R.drawable.selected_button_background);
         }
+    }
 
-        ImageView ivStatus = dialog.findViewById(R.id.ivStatus);
-        TextView tvLoginStatus = dialog.findViewById(R.id.tvLoginStatus);
-        TextView tvStatusMessage = dialog.findViewById(R.id.tvStatusMessage);
-
-        ivStatus.setImageResource(isSuccess ? R.mipmap.tick : R.mipmap.error);
-        tvLoginStatus.setText("Save");
-        tvStatusMessage.setText(isSuccess ? "Successful" : message);
-
-        dialog.show();
-
-        new Handler().postDelayed(() -> {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-                if (isSuccess) {
-                    finish();
-                }
-            }
-        }, 2000);
+    private void setupStatusBar() {
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        window.getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
     }
 }
