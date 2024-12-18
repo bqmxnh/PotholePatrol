@@ -222,4 +222,6 @@
     <string name="detect">Phát hiện chuyển động bất thường. Bạn vừa đi qua ổ gà phải không?</string>
     <string name="yes2">Đúng</string>
     <string name="no3">Không</string>
+    <string name="language_change_title">Thay đổi ngôn ngữ</string>
+    <string name="language_change_message">Bạn có chắc chắn muốn thay đổi ngôn ngữ? Ứng dụng sẽ khởi động lại để áp dụng các thay đổi.</string>
 </resources>

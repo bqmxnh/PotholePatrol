@@ -226,5 +226,7 @@
     <string name="detect">We detected significant movement. Did you encounter a pothole?</string>
     <string name="yes2">Yes</string>
     <string name="no3">No</string>
+    <string name="language_change_title">Change Language</string>
+    <string name="language_change_message" >Are you sure you want to change the language? The app will restart to apply changes.</string>
 
 </resources>
