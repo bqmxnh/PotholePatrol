@@ -1084,7 +1084,7 @@ public class FragmentMap extends Fragment implements LocationListener {
 
             double distance = calculateDistance(currentLat, currentLon, potholeLat, potholeLon);
 
-            if (distance <= 50) { // Nếu khoảng cách nhỏ hơn hoặc bằng 50m
+            if (distance <= 150) { // Nếu khoảng cách nhỏ hơn hoặc bằng 50m
                 // Phát cảnh báo
                 stopUpdatingRoute();
                 Log.d("ProximityAlert", "You are near a pothole! Distance: " + distance + " meters");
