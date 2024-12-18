@@ -49,7 +49,7 @@
     <string name="remember_me">Ghi nhớ đăng nhập</string>
     <string name="log_in">Đăng nhập</string>
     <string name="or_continue_with">Hoặc tiếp tục với</string>
-    <string name="already_have_an_account">Đã có tài khoản?</string>
+    <string name="already_have_an_account">Chưa có tài khoản?</string>
     <string name="create_now">Tạo mới ngay</string>
     <string name="map">Bản đồ</string>
     <string name="navigation">Điều hướng</string>
@@ -94,7 +94,7 @@
     <string name="confirm_password">Xác nhận mật khẩu</string>
     <string name="i_agree_to_the_terms_and_policies">Tôi đồng ý với Điều khoản và Chính sách</string>
     <string name="sign_up">Đăng ký</string>
-    <string name="already_have_an_account2">Đã có tài khoản?</string>
+    <string name="already_have_an_account2">Chưa có tài khoản?</string>
     <string name="login">Đăng nhập</string>
     <string name="reset_password3">Đặt lại mật khẩu</string>
     <string name="congratulations2">Chúc mừng</string>
