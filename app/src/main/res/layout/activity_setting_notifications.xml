@@ -68,7 +68,7 @@
                             android:layout_height="wrap_content"
                             android:layout_width="match_parent"
                             android:layout_weight="1"
-                            android:text="Notifications"
+                            android:text="@string/notifications2"
                             />
                     </LinearLayout>
                     <ImageView
@@ -116,7 +116,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"
                         android:layout_weight="1"
-                        android:text="Alert Preferences"
+                        android:text="@string/alert_preferences"
                         />
                 </LinearLayout>
                 <Button
@@ -128,7 +128,7 @@
                     android:elevation="20dp"
                     android:gravity=""
                     android:paddingVertical="19dp"
-                    android:text="Sound"
+                    android:text="@string/sound"
                     android:textColor="#626262"
                     android:textSize="25dp"
                     app:cornerRadius="15dp" />
@@ -141,7 +141,7 @@
                     android:elevation="20dp"
                     android:gravity=""
                     android:paddingVertical="19dp"
-                    android:text="Vibrate"
+                    android:text="@string/vibrate"
                     android:textColor="#626262"
                     android:textSize="25dp"
                     app:cornerRadius="15dp" />
@@ -155,7 +155,7 @@
                 android:elevation="20dp"
                 android:gravity="center_horizontal"
                 android:paddingVertical="19dp"
-                android:text="Save"
+                android:text="@string/save"
                 android:textColor="#FFFFFF"
                 android:textSize="25dp"
                 app:cornerRadius="15dp" />

@@ -71,7 +71,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Terms &amp; Policies"
+                                android:text="@string/terms_amp_policies2"
                                 android:textColor="#0D1B34"
                                 android:textSize="30sp" />
                         </LinearLayout>
@@ -96,7 +96,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="By using Pothole Patrol, \nyou agree to the following:\n\n 1. Services: Users can report potholes with photos and GPS location to relevant authorities.\n\n 2. User Responsibilities: Do not submit false information or illegal content.\n\n 3. Personal Data: We collect personal info, location, and media solely for processing reports. Data may be shared with municipal services.\n\n 4. Liability: We are not responsible for delays or unresolved reports.\n\n 5. Updates: Terms may change, and continued use implies acceptance."
+                        android:text="@string/privacy22"
                         android:textColor="#000000"
                         android:textSize="23sp" />
                 </LinearLayout>

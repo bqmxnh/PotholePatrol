@@ -29,7 +29,7 @@
             android:layout_marginStart="33dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Location"
+            android:text="@string/location3"
             />
         <LinearLayout
             android:id="@+id/address_container"
@@ -55,7 +55,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Your address"
+                    android:text="@string/your_address2"
                     />
             </LinearLayout>
         </LinearLayout>
@@ -67,7 +67,7 @@
             android:layout_marginStart="32dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Details"
+            android:text="@string/details"
             />
         <TextView
             android:id="@+id/title_dimension"
@@ -77,7 +77,7 @@
             android:layout_marginStart="32dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Dimension"
+            android:text="@string/dimension4"
             />
         <LinearLayout
             android:id="@+id/dimension_container"
@@ -101,7 +101,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Compact"
+                    android:text="@string/compact3"
                     />
             </LinearLayout>
             <View
@@ -123,7 +123,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Average"
+                    android:text="@string/average4"
                     />
             </LinearLayout>
             <View
@@ -145,7 +145,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Large"
+                    android:text="@string/large3"
                     />
             </LinearLayout>
         </LinearLayout>
@@ -157,7 +157,7 @@
             android:layout_marginStart="32dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Depth"
+            android:text="@string/depth4"
             />
         <LinearLayout
             android:id="@+id/depth_container"
@@ -181,7 +181,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Shallow"
+                    android:text="@string/shallow4"
                     />
             </LinearLayout>
             <View
@@ -203,7 +203,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Noticeable"
+                    android:text="@string/noticeable3"
                     />
             </LinearLayout>
             <View
@@ -225,7 +225,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Deep"
+                    android:text="@string/deep3"
                     />
             </LinearLayout>
         </LinearLayout>
@@ -237,7 +237,7 @@
             android:layout_marginStart="31dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Shape"
+            android:text="@string/shape4"
             />
         <LinearLayout
             android:id="@+id/shape_container"
@@ -261,7 +261,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Uniform"
+                    android:text="@string/uniform4"
                     />
             </LinearLayout>
             <View
@@ -283,7 +283,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Uneven"
+                    android:text="@string/uneven4"
                     />
             </LinearLayout>
             <View
@@ -305,7 +305,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Jagged"
+                    android:text="@string/jagged4"
                     />
             </LinearLayout>
         </LinearLayout>
@@ -317,7 +317,7 @@
             android:layout_marginStart="31dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Severity level"
+            android:text="@string/severity_level4"
             />
         <RelativeLayout
             android:id="@+id/level_bar"
@@ -355,7 +355,7 @@
                 android:textSize="16sp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Low"
+                android:text="@string/low5"
                 />
             <View
                 android:layout_width="0dp"
@@ -368,7 +368,7 @@
                 android:textSize="16sp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Medium"
+                android:text="@string/medium5"
                 />
             <View
                 android:layout_width="0dp"
@@ -381,7 +381,7 @@
                 android:textSize="16sp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="High"
+                android:text="@string/high6"
                 />
         </LinearLayout>
         <LinearLayout
@@ -398,7 +398,7 @@
                 android:id="@+id/title_confi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirm"
+                android:text="@string/confirm6"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />

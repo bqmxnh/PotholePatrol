@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Chart"
+                        android:text="@string/chart"
                         android:textColor="#0D1B34"
                         android:textSize="28sp"
                         android:textStyle="bold" />
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginStart="14dp"
-                android:text="Number of Potholes by Severity Level"
+                android:text="@string/number_of_potholes_by_severity_level"
                 android:textColor="#000000"
                 android:textSize="23sp" />
 
@@ -102,7 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Low"
+                        android:text="@string/low"
                         android:textColor="#000000"
                         android:textSize="16sp" />
 
@@ -135,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="13dp"
-                        android:text="Medium"
+                        android:text="@string/medium"
                         android:textColor="#000000"
                         android:textSize="16sp" />
 
@@ -168,7 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        android:text="High"
+                        android:text="@string/high"
                         android:textColor="#000000"
                         android:textSize="16sp" />
 
@@ -200,7 +200,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Distribution of Potholes \nby Severity Level"
+                    android:text="@string/distribution_of_potholes_nby_severity_level"
                     android:textColor="#000000"
                     android:textSize="20sp" />
             </LinearLayout>

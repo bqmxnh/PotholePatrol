@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Map"
+                android:text="@string/map"
                 android:textColor="#0D1B34"
                 android:textSize="28sp"
                 android:textStyle="bold" />
@@ -84,7 +84,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Navigation"
+                android:text="@string/navigation"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginStart="8dp"
@@ -106,7 +106,7 @@
                     android:id="@+id/text_estimated_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1 hour 16 minutes"
+                    android:text="@string/_1_hour_16_minutes"
                     android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
@@ -124,7 +124,7 @@
                 android:id="@+id/btn_start_navigation"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:text="Navigate"
+                android:text="@string/navigate"
                 android:textSize="16sp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"

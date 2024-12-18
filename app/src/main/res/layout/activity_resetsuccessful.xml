@@ -31,7 +31,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Reset Password"
+        android:text="@string/reset_password3"
         android:textColor="#8EA98D"
         android:textSize="26sp" />
 
@@ -55,7 +55,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:fontFamily="@font/roboto_medium"
-        android:text="Congratulations"
+        android:text="@string/congratulations2"
         android:textColor="#000000"
         android:textSize="26sp" />
 
@@ -67,7 +67,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_light"
-        android:text="You have successfully reset your password!"
+        android:text="@string/you_have_successfully_reset_your_password"
         android:textStyle="bold"
         android:textColor="#000000"
         android:textSize="15sp" />
@@ -83,7 +83,7 @@
         android:layout_below="@id/tvYouHave"
         android:layout_marginTop="45dp"
         android:backgroundTint="#AFC7B1"
-        android:text="Go to the login screen"
+        android:text="@string/go_to_the_login_screen2"
         android:textAllCaps="false"
         app:cornerRadius="8dp" />
 

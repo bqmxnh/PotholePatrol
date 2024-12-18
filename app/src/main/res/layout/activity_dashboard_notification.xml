@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Notification"
+                        android:text="@string/notification"
                         android:textColor="#0D1B34"
                         android:textSize="28sp"
                         android:textStyle="bold" />
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="27dp"
                 android:layout_marginBottom="9dp"
-                android:text="Clear all"
+                android:text="@string/clear_all"
                 android:textColor="#0D1B34"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -119,7 +119,7 @@
                             android:id="@+id/title_warning"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Warning!!!"
+                            android:text="@string/warning"
                             android:textColor="#000000"
                             android:textSize="24sp" />
 
@@ -142,7 +142,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="1dp"
-                        android:text="You’ re close to a pothole!\nPlease be careful, pothole\n#69 was detected close to\nyour position! Slow down\nand keep your eyes open."
+                        android:text="@string/you_re_close_to_a_pothole_nplease_be_careful_pothole_n_69_was_detected_close_to_nyour_position_slow_down_nand_keep_your_eyes_open"
                         android:textColor="#000000"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -191,7 +191,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:text="Thank you!"
+                            android:text="@string/thank_you"
                             android:textColor="#000000"
                             android:textSize="24sp" />
 
@@ -208,7 +208,7 @@
                         android:id="@+id/thank_you_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thank you for your contribution.\nWe have a gift for you, please\naccess this link to get a voucher.\nabcxyz.com"
+                        android:text="@string/thank_you_for_your_contribution_nwe_have_a_gift_for_you_please_naccess_this_link_to_get_a_voucher_nabcxyz_com"
                         android:textSize="20sp" />
                 </LinearLayout>
             </LinearLayout>

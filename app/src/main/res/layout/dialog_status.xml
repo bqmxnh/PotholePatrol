@@ -34,7 +34,7 @@
                 android:id="@+id/tvLoginStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login"
+                android:text="@string/login2"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#000000"
@@ -44,7 +44,7 @@
                 android:id="@+id/tvStatusMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Successful"
+                android:text="@string/successful2"
                 android:textSize="20sp"
                 android:textColor="#000000"/>
 

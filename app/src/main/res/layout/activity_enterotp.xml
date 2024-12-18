@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back2"
         android:padding="8dp"
         android:rotation="270"
         android:scaleType="centerInside"
@@ -42,7 +42,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Enter OTP"
+        android:text="@string/enter_otp"
         android:textColor="#8EA98D"
         android:textSize="26sp" />
 
@@ -54,7 +54,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_light"
-        android:text="Enter the OTP code we just sent on your registered Email"
+        android:text="@string/enter_the_otp_code_we_just_sent_on_your_registered_email"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textAlignment="center"
@@ -165,7 +165,7 @@
         android:layout_below="@id/otpContainer"
         android:layout_marginTop="25dp"
         android:backgroundTint="#AFC7B1"
-        android:text="Reset Password"
+        android:text="@string/reset_password2"
         android:textAllCaps="false"
         app:cornerRadius="8dp" />
 

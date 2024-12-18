@@ -66,7 +66,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Edit profile"
+                            android:text="@string/edit_profile2"
                             android:textColor="#0D1B34"
                             android:textSize="24sp" />
                     </LinearLayout>
@@ -116,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Name"
+                    android:text="@string/name"
                     android:textColor="#000000"
                     android:textSize="16sp" />
 
@@ -172,7 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Password"
+                    android:text="@string/password"
                     android:textColor="#000000"
                     android:textSize="16sp" />
 
@@ -200,7 +200,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="9dp"
-                    android:text="Date of Birth"
+                    android:text="@string/date_of_birth"
                     android:textColor="#000000"
                     android:textSize="16sp" />
 
@@ -238,7 +238,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="9dp"
-                    android:text="Country/Region"
+                    android:text="@string/country_region"
                     android:textColor="#000000"
                     android:textSize="16sp" />
 
@@ -285,7 +285,7 @@
                         android:id="@+id/title_confirm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Confirm"
+                        android:text="@string/confirm3"
                         android:textColor="#FFFFFF"
                         android:textSize="20sp"
                         android:textStyle="bold" />
