@@ -66,7 +66,7 @@
                                 android:layout_marginStart="34dp"
                                 android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"
-                                android:text="Account" />
+                                android:text="@string/account" />
 
                             <LinearLayout
                                 android:id="@+id/account_section"
@@ -104,7 +104,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_width="match_parent"
                                         android:layout_weight="1"
-                                        android:text="Edit profile" />
+                                        android:text="@string/edit_profile" />
                                 </LinearLayout>
 
                                 <!-- "Personalization" option -->
@@ -131,7 +131,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_width="match_parent"
                                         android:layout_weight="1"
-                                        android:text="Personalization" />
+                                        android:text="@string/personalization" />
                                 </LinearLayout>
 
                                 <!-- "Notifications" option -->
@@ -158,7 +158,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_width="match_parent"
                                         android:layout_weight="1"
-                                        android:text="Notifications" />
+                                        android:text="@string/notifications" />
                                 </LinearLayout>
 
                                 <!-- "Privacy" option -->
@@ -184,7 +184,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_width="match_parent"
                                         android:layout_weight="1"
-                                        android:text="Privacy" />
+                                        android:text="@string/privacy" />
                                 </LinearLayout>
                             </LinearLayout>
 
@@ -196,7 +196,7 @@
                                 android:layout_marginStart="34dp"
                                 android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"
-                                android:text="Terms &amp; Support" />
+                                android:text="@string/terms_amp_support" />
 
                             <RelativeLayout
                                 android:id="@+id/terms_support_container"
@@ -236,7 +236,7 @@
 
                                         <TextView
                                             android:id="@+id/text_report_problem"
-                                            android:text="Report a problem"
+                                            android:text="@string/report_a_problem"
                                             android:textColor="#000000"
                                             android:textSize="16sp"
                                             android:layout_width="wrap_content"
@@ -261,7 +261,7 @@
 
                                         <TextView
                                             android:id="@+id/text_terms_policies"
-                                            android:text="Terms and Policies"
+                                            android:text="@string/terms_and_policies"
                                             android:textColor="#000000"
                                             android:textSize="16sp"
                                             android:layout_width="wrap_content"
@@ -314,7 +314,7 @@
                                         android:textSize="16sp"
                                         android:layout_height="wrap_content"
                                         android:layout_width="wrap_content"
-                                        android:text="Log out" />
+                                        android:text="@string/log_out" />
                                 </LinearLayout>
                             </LinearLayout>
 
@@ -363,7 +363,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginEnd="4dp"
                                     android:layout_weight="1"
-                                    android:text="Settings"
+                                    android:text="@string/settings"
                                     android:textColor="#0D1B34"
                                     android:textSize="32sp"
                                     android:textStyle="bold" />
@@ -384,7 +384,7 @@
                                         android:id="@+id/text_select_language"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Select Language"
+                                        android:text="@string/select_language"
                                         android:textColor="#6B6B6B"
                                         android:textSize="13sp" />
 

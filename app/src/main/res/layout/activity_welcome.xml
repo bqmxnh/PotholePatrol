@@ -62,7 +62,7 @@
         android:elevation="4dp"
         android:paddingStart="32dp"
         android:paddingEnd="32dp"
-        android:text="Get Started"
+        android:text="@string/get_started"
         android:textColor="#637D4B"
         android:textSize="20sp" />
 

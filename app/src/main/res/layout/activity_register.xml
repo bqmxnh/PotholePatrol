@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back5"
         android:padding="8dp"
         android:rotation="270"
         android:scaleType="centerInside"
@@ -42,7 +42,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Create Account"
+        android:text="@string/create_account2"
         android:textColor="#8EA98D"
         android:textSize="26sp" />
 
@@ -60,7 +60,7 @@
             android:id="@+id/etUsernamee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="@string/username"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,7 +78,7 @@
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,7 +116,7 @@
             android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirm Password"
+            android:hint="@string/confirm_password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,7 +125,7 @@
         android:id="@+id/cbTermss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="I agree to the Terms and Policies"
+        android:text="@string/i_agree_to_the_terms_and_policies"
         android:textColor="#828282"
         android:layout_below="@id/tilConfirmPassword"
         android:layout_marginTop="8dp" />
@@ -138,7 +138,7 @@
         android:layout_below="@id/cbTermss"
         android:layout_marginTop="4dp"
         android:backgroundTint="#AFC7B1"
-        android:text="Sign Up"
+        android:text="@string/sign_up"
         android:textAllCaps="false"
         app:cornerRadius="8dp" />
 
@@ -158,14 +158,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:text="Already have an account?"
+            android:text="@string/already_have_an_account2"
             android:textColor="#82828282" />
 
         <TextView
             android:id="@+id/tvLoginn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="@string/login"
             android:textColor="@color/black"
             android:textStyle="bold" />
     </LinearLayout>

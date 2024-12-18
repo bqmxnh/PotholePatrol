@@ -69,7 +69,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Privacy"
+                            android:text="@string/privacy4"
                             android:textColor="#0D1B34"
                             android:textSize="24sp" />
                     </LinearLayout>
@@ -123,7 +123,7 @@
                         android:id="@+id/rdsxy3foix0j"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Data Sharing Options"
+                        android:text="@string/data_sharing_options"
                         android:textColor="#0D1B34"
                         android:textSize="25sp" />
                 </LinearLayout>
@@ -138,7 +138,7 @@
                     android:elevation="20dp"
                     android:gravity=""
                     android:paddingVertical="19dp"
-                    android:text="On"
+                    android:text="@string/on"
                     android:textColor="#626262"
                     android:textSize="25dp"
                     app:cornerRadius="15dp" />
@@ -152,7 +152,7 @@
                     android:elevation="20dp"
                     android:gravity=""
                     android:paddingVertical="19dp"
-                    android:text="Off"
+                    android:text="@string/off"
                     android:textColor="#626262"
                     android:textSize="25dp"
                     app:cornerRadius="15dp" />
@@ -167,7 +167,7 @@
                 android:elevation="20dp"
                 android:gravity="center_horizontal"
                 android:paddingVertical="19dp"
-                android:text="Save"
+                android:text="@string/save4"
                 android:textColor="#FFFFFF"
                 android:textSize="25dp"
                 app:cornerRadius="15dp" />

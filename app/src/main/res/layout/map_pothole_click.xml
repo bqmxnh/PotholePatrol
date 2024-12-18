@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
-            android:text="Pothole Information"
+            android:text="@string/pothole_information"
             android:textColor="#000000"
             android:textSize="24sp" />
 

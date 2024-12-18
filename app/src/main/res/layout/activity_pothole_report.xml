@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Add a pothole"
+                android:text="@string/add_a_pothole"
                 android:textSize="20sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"/>
@@ -42,7 +42,7 @@
             android:id="@+id/et_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type location"
+            android:hint="@string/type_location"
             android:textSize="16sp"
             android:textStyle="bold"
             android:background="@drawable/setting_frame"
@@ -82,7 +82,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dimension"
+                android:text="@string/dimension2"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="18sp"/>
@@ -98,7 +98,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Compact"
+                    android:text="@string/compact"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -114,7 +114,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Average"
+                    android:text="@string/average2"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -130,7 +130,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Large"
+                    android:text="@string/large"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -157,7 +157,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Depth"
+                android:text="@string/depth2"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="18sp"/>
@@ -173,7 +173,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Shallow"
+                    android:text="@string/shallow2"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -189,7 +189,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Noticeable"
+                    android:text="@string/noticeable"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -205,7 +205,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Deep"
+                    android:text="@string/deep"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -232,7 +232,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Shape"
+                android:text="@string/shape2"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="18sp"/>
@@ -248,7 +248,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Uniform"
+                    android:text="@string/uniform"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -264,7 +264,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Uneven"
+                    android:text="@string/uneven"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -280,7 +280,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Jagged"
+                    android:text="@string/jagged2"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -307,7 +307,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Severity level"
+                android:text="@string/severity_level2"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="18sp"/>
@@ -323,7 +323,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Low"
+                    android:text="@string/low2"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -339,7 +339,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Medium"
+                    android:text="@string/medium2"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -355,7 +355,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="High"
+                    android:text="@string/high3"
                     android:textStyle="bold"
 
                     android:gravity="center"
@@ -383,7 +383,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Do pothole damaged you?"
+                android:text="@string/do_pothole_damaged_you"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"/>
@@ -398,7 +398,7 @@
             android:id="@+id/btn_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Confirm"
+            android:text="@string/confirm2"
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:textAllCaps="false"

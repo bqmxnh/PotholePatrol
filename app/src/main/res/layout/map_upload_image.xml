@@ -36,7 +36,7 @@
             android:layout_marginBottom="8dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Media Upload" />
+            android:text="@string/media_upload" />
 
         <TextView
             android:id="@+id/title_description"
@@ -45,7 +45,7 @@
             android:layout_marginBottom="18dp"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Add your documents here, and you can upload up to 5 files max" />
+            android:text="@string/addcoment" />
 
         <LinearLayout
             android:id="@+id/file_container"
@@ -88,7 +88,7 @@
                 android:layout_marginStart="59dp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Drag your file(s) to start uploading" />
+                android:text="@string/drag_your_file_s_to_start_uploading" />
 
             <LinearLayout
                 android:id="@+id/or_container"
@@ -121,7 +121,7 @@
                     android:textSize="12sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="OR" />
+                    android:text="@string/or" />
 
                 <View
                     android:layout_width="0dp"
@@ -156,7 +156,7 @@
                     android:textSize="12sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Browse files" />
+                    android:text="@string/browse_files" />
             </LinearLayout>
         </LinearLayout>
 
@@ -174,7 +174,7 @@
                 android:id="@+id/title_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"
+                android:text="@string/save3"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />

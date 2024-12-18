@@ -64,7 +64,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Report a problem"
+                            android:text="@string/report_a_problem2"
                             android:textColor="#0D1B34"
                             android:textSize="24sp" />
                     </LinearLayout>
@@ -111,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"
                         android:layout_weight="1"
-                        android:text="Describe your problem"
+                        android:text="@string/describe_your_problem"
                         />
                 </LinearLayout>
                 <LinearLayout
@@ -129,7 +129,7 @@
                         android:textSize="20sp"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:text="Write something!"
+                        android:text="@string/write_something"
                         />
                 </LinearLayout>
             </LinearLayout>
