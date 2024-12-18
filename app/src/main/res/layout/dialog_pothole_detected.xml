@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:elevation="10dp"
+    android:background="@drawable/dialog_frame"
+    android:gravity="center_horizontal">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Be careful"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:gravity="center"/>
+
+    <!-- Tên địa điểm -->
+    <TextView
+        android:id="@+id/tvWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Warning: Pothole detected nearby!"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#FF3D00"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Nút xác nhận -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnContinue"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="#AFC7B1"
+            android:text="Continue"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="#B22222"
+            android:text="Stop"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+</LinearLayout>

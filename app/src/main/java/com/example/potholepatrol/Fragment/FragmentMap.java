@@ -3,6 +3,7 @@ package com.example.potholepatrol.Fragment;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -105,7 +106,8 @@ public class FragmentMap extends Fragment implements LocationListener {
     private View zoomControls;
     private View locationButton;
     private ImageView btnBackNavigation;
-
+    private TextView textEstimatedTime;
+    private TextView textDistance;
 
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
@@ -135,7 +137,8 @@ public class FragmentMap extends Fragment implements LocationListener {
         navigationInfoPanel = rootView.findViewById(R.id.navigation_info_panel);
         zoomControls = rootView.findViewById(R.id.zoom_controls);
         locationButton = rootView.findViewById(R.id.location_button);
-
+        textEstimatedTime = rootView.findViewById(R.id.text_estimated_time);
+        textDistance = rootView.findViewById(R.id.text_distance);
         // Initially hide navigation panel
         setNavigationMode(false);
 
@@ -480,16 +483,18 @@ public class FragmentMap extends Fragment implements LocationListener {
         // Tạo MyLocationNewOverlay với custom icon
         myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), mapView);
         myLocationOverlay.setPersonIcon(personIcon);
-        myLocationOverlay.setDirectionArrow(personIcon, personIcon); // Nếu muốn thay đổi cả mũi tên chỉ hướng
+        myLocationOverlay.setDirectionArrow(personIcon, personIcon);
 
         myLocationOverlay.enableMyLocation();
         myLocationOverlay.setDrawAccuracyEnabled(true);
 
         // Đảm bảo overlay vị trí được thêm sau cùng
-        mapView.getOverlays().remove(myLocationOverlay); // Xóa overlay nếu đã tồn tại
-        mapView.getOverlays().add(myLocationOverlay);    // Thêm vào cuối danh sách overlay
+        mapView.getOverlays().remove(myLocationOverlay);
 
-        mapView.invalidate(); // Làm mới bản đồ
+        // Thêm vào cuối danh sách overlay
+        mapView.getOverlays().add(myLocationOverlay);
+
+        mapView.invalidate();
 
         if (checkLocationPermission()) {
             startLocationUpdates();
@@ -675,8 +680,11 @@ public class FragmentMap extends Fragment implements LocationListener {
         MapEventsReceiver mapEventsReceiver = new MapEventsReceiver() {
             @Override
             public boolean singleTapConfirmedHelper(GeoPoint p) {
-                // Hiện navigation khi bấm vào map
-                setNavigationMode(true);
+                // Kiểm tra nếu đang trong chế độ navigation thì không cho click
+                if (isNavigating) {
+                    return true; // Chặn sự kiện click
+                }
+
                 // Lưu tọa độ vào SharedPreferences
                 SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
@@ -783,6 +791,9 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Vẽ tuyến đường tĩnh
     private void drawRouteBetweenPoints(double startLat, double startLon, double endLat, double endLon) {
+        // Ẩn navigation panel trong khi tính toán
+        setNavigationMode(false);
+
         String url = String.format(Locale.US,
                 "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
                 startLon, startLat, endLon, endLat);
@@ -795,7 +806,9 @@ public class FragmentMap extends Fragment implements LocationListener {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // Xử lý lỗi nếu cần
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Unable to calculate route", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
@@ -809,12 +822,10 @@ public class FragmentMap extends Fragment implements LocationListener {
                             JSONObject shortestRoute = null;
                             double minDistance = Double.MAX_VALUE;
 
-                            // Duyệt qua tất cả các tuyến đường và chọn tuyến ngắn nhất
                             for (int i = 0; i < routes.length(); i++) {
                                 JSONObject route = routes.getJSONObject(i);
                                 double distance = route.getDouble("distance");
 
-                                // Nếu tìm thấy tuyến đường ngắn hơn, cập nhật
                                 if (distance < minDistance) {
                                     minDistance = distance;
                                     shortestRoute = route;
@@ -827,37 +838,66 @@ public class FragmentMap extends Fragment implements LocationListener {
                                 String geometry = shortestRoute.getString("geometry");
                                 double distance = shortestRoute.getDouble("distance");
                                 double duration = shortestRoute.getDouble("duration");
-
                                 List<GeoPoint> points = decodePolyline(geometry);
 
                                 requireActivity().runOnUiThread(() -> {
-
+                                    // Xóa tuyến đường cũ và myLocationOverlay
                                     if (currentRouteLine != null) {
                                         mapView.getOverlays().remove(currentRouteLine);
                                     }
-                                    // Vẽ tuyến đường ngắn nhất
+                                    mapView.getOverlays().remove(myLocationOverlay);
+
+                                    // Vẽ tuyến đường mới
                                     currentRouteLine = new Polyline(mapView);
                                     currentRouteLine.setColor(Color.BLUE);
                                     currentRouteLine.setWidth(10f);
                                     currentRouteLine.setPoints(points);
-                                    mapView.getOverlays().add(currentRouteLine);
-                                    // Tính toán bounding box (phạm vi của đoạn đường)
-                                    BoundingBox boundingBox = calculateBoundingBox(points);
 
-                                    // Điều chỉnh bản đồ để bao gồm toàn bộ đoạn đường
+                                    // Thêm lại các overlay theo thứ tự
+                                    mapView.getOverlays().add(currentRouteLine);
+                                    mapView.getOverlays().add(myLocationOverlay);
+
+                                    // Format thời gian
+                                    String timeText;
+                                    double durationInMinutes = duration / 60.0;
+                                    if (durationInMinutes >= 60) {
+                                        int hours = (int) (durationInMinutes / 60);
+                                        int minutes = (int) (durationInMinutes % 60);
+                                        if (minutes > 0) {
+                                            timeText = String.format(Locale.US, "%d hour %d minutes", hours, minutes);
+                                        } else {
+                                            timeText = String.format(Locale.US, "%d hour", hours);
+                                        }
+                                    } else {
+                                        timeText = String.format(Locale.US, "%d minutes", (int) durationInMinutes);
+                                    }
+
+                                    // Format khoảng cách
+                                    String distanceText = String.format(Locale.US, "%.1f km", distance / 1000.0);
+
+                                    // Cập nhật TextView và hiện panel
+                                    textEstimatedTime.setText(timeText);
+                                    textDistance.setText(distanceText);
+                                    setNavigationMode(true);
+
+                                    // Tính toán và thiết lập bounding box
+                                    BoundingBox boundingBox = calculateBoundingBox(points);
                                     mapView.zoomToBoundingBox(boundingBox, true);
 
-                                    // Hiển thị thông tin về tuyến đường
-                                    String routeInfo = String.format(Locale.US,
-                                            "Distance: %.1f km\nEstimated time: %.0f min",
-                                            distance / 1000.0, duration / 60.0);
-                                    Toast.makeText(requireContext(), routeInfo, Toast.LENGTH_LONG).show();
+                                    mapView.invalidate();
                                 });
                             }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(requireContext(), "Error calculating route", Toast.LENGTH_SHORT).show();
+                        });
                     }
+                } else {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Unable to find route", Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
         });
@@ -868,16 +908,16 @@ public class FragmentMap extends Fragment implements LocationListener {
         String url = String.format(Locale.US,
                 "https://router.project-osrm.org/route/v1/driving/%f,%f;%f,%f?overview=full&geometries=polyline",
                 startLon, startLat, endLon, endLat);
-        Log.d("negative", "Request URL: " + url);
+        Log.d("navigate", "Request URL: " + url);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
                 .build();
-        Log.d("negative", "call");
+        Log.d("navigate", "call");
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("negative", "Request failed", e);
+                Log.e("navigate", "Request failed", e);
             }
 
             @Override
@@ -910,20 +950,28 @@ public class FragmentMap extends Fragment implements LocationListener {
                                 List<GeoPoint> points = decodePolyline(geometry);
 
                                 requireActivity().runOnUiThread(() -> {
-                                    // Xóa tuyến đường cũ nếu tồn tại
+                                    // Xóa tuyến đường cũ và myLocationOverlay
                                     if (currentRouteLine != null) {
                                         mapView.getOverlays().remove(currentRouteLine);
                                     }
-                                    GeoPoint myPosition = new GeoPoint(startLat, startLon);
-                                    mapView.getController().animateTo(myPosition);  // Di chuyển đến vị trí người dùng
-                                    mapView.getController().setZoom(17.0);  // Đặt mức zoom
+                                    mapView.getOverlays().remove(myLocationOverlay);
 
                                     // Vẽ tuyến đường mới
                                     currentRouteLine = new Polyline(mapView);
                                     currentRouteLine.setColor(Color.BLUE);
                                     currentRouteLine.setWidth(10f);
                                     currentRouteLine.setPoints(points);
+
+                                    // Thêm lại các overlay theo thứ tự: Polyline trước, myLocationOverlay sau
                                     mapView.getOverlays().add(currentRouteLine);
+                                    mapView.getOverlays().add(myLocationOverlay);
+
+                                    // Di chuyển camera
+                                    GeoPoint myPosition = new GeoPoint(startLat, startLon);
+                                    mapView.getController().animateTo(myPosition);
+                                    mapView.getController().setZoom(18.0);
+
+                                    mapView.invalidate();
                                 });
                             }
                         }
@@ -1028,7 +1076,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         }
     };
 
-    // Kiểm tra và cảnh báo ổ gà gần đó
+    // Kiểm tra và cảnh báo ổ gà gần do hoac thong bao da den noi
     private void checkProximityAndAlert(double currentLat, double currentLon, List<Pothole> potholes) {
         for (Pothole pothole : potholes) {
             double potholeLat = pothole.getLocation().getCoordinates().getLatitude();
@@ -1040,29 +1088,80 @@ public class FragmentMap extends Fragment implements LocationListener {
                 // Phát cảnh báo
                 stopUpdatingRoute();
                 Log.d("ProximityAlert", "You are near a pothole! Distance: " + distance + " meters");
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(requireContext(), "Warning: Pothole detected nearby!", Toast.LENGTH_LONG).show()
-                );
-                // Dừng kiểm tra nếu đã tìm thấy ổ gà gần
+
+                // Hiển thị dialog thay vì toast
+                requireActivity().runOnUiThread(this::showPotholeWarningDialog);
                 break;
             }
 
             SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
             String latString = preferences.getString("lat", null);
             String lonString = preferences.getString("lon", null);
-            double distance_location = calculateDistance(currentLat, currentLon, Double.parseDouble(latString), Double.parseDouble(lonString));
-            if (distance_location <= 50) {
-                stopUpdatingRoute();
-                Log.d("Finished navigate", "You have arrived");
-
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(requireContext(), "You have arrived", Toast.LENGTH_SHORT).show()
-                );
-
-                break;
+            if (latString != null && lonString != null) {
+                double distance_location = calculateDistance(currentLat, currentLon,
+                        Double.parseDouble(latString), Double.parseDouble(lonString));
+                if (distance_location <= 50) {
+                    stopUpdatingRoute();
+                    Log.d("Finished navigate", "You have arrived");
+                    requireActivity().runOnUiThread(this::showArrivedDialog);
+                    break;
+                }
             }
         }
     }
+
+    private void showArrivedDialog() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.dialog_arrived);
+        dialog.setCancelable(false);
+
+        // Set rounded corners cho dialog
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // Tìm button OK trong dialog
+        Button btnOk = dialog.findViewById(R.id.btn_ok_arrived);
+        btnOk.setOnClickListener(v -> {
+            dialog.dismiss();
+            exitNavigationMode(); // Thoát chế độ navigation khi bấm OK
+        });
+
+        dialog.show();
+    }
+
+    // Hiển thị dialog cảnh báo ổ gà gần
+    private void showPotholeWarningDialog() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.dialog_pothole_detected);
+        dialog.setCancelable(false);
+
+        // Set rounded corners cho dialog
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // Tìm các button trong dialog
+        Button btnContinue = dialog.findViewById(R.id.btnContinue);
+        Button btnStop = dialog.findViewById(R.id.btnStop);
+
+        // Xử lý sự kiện khi click Continue
+        btnContinue.setOnClickListener(v -> {
+            dialog.dismiss();
+            // Tiếp tục navigation
+            isRouteUpdating = true;
+            handler.post(updateRouteRunnable);
+        });
+
+        // Xử lý sự kiện khi click Stop
+        btnStop.setOnClickListener(v -> {
+            dialog.dismiss();
+            exitNavigationMode(); // Thoát chế độ navigation
+        });
+
+        dialog.show();
+    }
+
 
     // Tính khoảng cách giữa hai điểm
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
