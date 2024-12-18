@@ -333,7 +333,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                             mapView.invalidate();
                         } catch (NumberFormatException e) {
                             // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
-                            Toast.makeText(getContext(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(getContext(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
@@ -823,7 +823,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                 mapView.invalidate();
 
                 // Hiển thị thông báo tọa độ
-                Toast.makeText(requireContext(), "Clicked at: " + clickedLat + ", " + clickedLon, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(requireContext(), "Clicked at: " + clickedLat + ", " + clickedLon, Toast.LENGTH_SHORT).show();
                 Log.d("MapClick", "Clicked at: " + clickedLat + ", " + clickedLon);
                 return true;
             }
@@ -883,11 +883,11 @@ public class FragmentMap extends Fragment implements LocationListener {
                 mapView.invalidate();
             } catch (NumberFormatException e) {
                 // Thông báo lỗi nếu dữ liệu trong SharedPreferences không hợp lệ
-                Toast.makeText(getContext(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(), "Invalid saved location data", Toast.LENGTH_SHORT).show();
             }
         } else {
             // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
-            Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
         }
     }
 
