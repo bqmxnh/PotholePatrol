@@ -12,12 +12,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -108,6 +113,13 @@ public class FragmentMap extends Fragment implements LocationListener {
     private ImageView btnBackNavigation;
     private TextView textEstimatedTime;
     private TextView textDistance;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private float lastX, lastY, lastZ;
+    private static final float SHAKE_THRESHOLD = 16.0f; // Ngưỡng phát hiện rung lắc
+    private long lastUpdate = 0;
+    private static final int MIN_TIME_BETWEEN_SHAKES = 1000; // Thời gian tối thiểu giữa các lần phát hiện (ms)
+    private Dialog shakeDialog = null;
 
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
@@ -125,6 +137,96 @@ public class FragmentMap extends Fragment implements LocationListener {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         startRealTimeLocationUpdates();
+
+        // Khởi tạo sensor manager
+        sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if (accelerometer != null) {
+                sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            }
+        }
+    }
+
+    private final SensorEventListener sensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                long curTime = System.currentTimeMillis();
+                // Chỉ xử lý nếu đã đủ thời gian từ lần phát hiện trước
+                if ((curTime - lastUpdate) > MIN_TIME_BETWEEN_SHAKES) {
+                    float x = event.values[0];
+                    float y = event.values[1];
+                    float z = event.values[2];
+
+                    float deltaX = Math.abs(lastX - x);
+                    float deltaY = Math.abs(lastY - y);
+                    float deltaZ = Math.abs(lastZ - z);
+
+                    // Tính toán độ rung lắc tổng hợp
+                    float shakeForce = (deltaX + deltaY + deltaZ) / 3;
+
+                    if (shakeForce > SHAKE_THRESHOLD) {
+                        lastUpdate = curTime;
+                        onShakeDetected();
+                    }
+
+                    lastX = x;
+                    lastY = y;
+                    lastZ = z;
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // Không cần xử lý
+        }
+    };
+
+    // Xử lý khi phát hiện rung lắc
+    private void onShakeDetected() {
+        // Chỉ hiện dialog nếu chưa có dialog nào đang hiển thị
+        if (shakeDialog == null || !shakeDialog.isShowing()) {
+            requireActivity().runOnUiThread(() -> showShakeDetectionDialog());
+        }
+    }
+
+    // Dialog xác nhận ổ gà
+    private void showShakeDetectionDialog() {
+        shakeDialog = new Dialog(requireContext());
+        shakeDialog.setContentView(R.layout.dialog_shake_detection);
+        shakeDialog.setCancelable(true);
+
+        if (shakeDialog.getWindow() != null) {
+            shakeDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // Thêm hiệu ứng rung
+        if (getContext() != null) {
+            Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                vibrator.vibrate(300);
+            }
+        }
+
+        Button btnYes = shakeDialog.findViewById(R.id.btnYes);
+        Button btnNo = shakeDialog.findViewById(R.id.btnNo);
+
+        btnYes.setOnClickListener(v -> {
+            shakeDialog.dismiss();
+            // Chuyển đến màn hình thêm ổ gà
+            Intent intent = new Intent(getActivity(), AddPotholeActivity.class);
+            // Thêm vị trí hiện tại vào intent nếu cần
+            intent.putExtra("latitude", currentLat);
+            intent.putExtra("longitude", currentLon);
+            startActivity(intent);
+        });
+
+        btnNo.setOnClickListener(v -> shakeDialog.dismiss());
+
+        shakeDialog.setOnDismissListener(dialog -> shakeDialog = null);
+        shakeDialog.show();
     }
 
     // Khởi tạo view và kiểm tra token
@@ -235,7 +337,7 @@ public class FragmentMap extends Fragment implements LocationListener {
                         }
                     } else {
                         // Thông báo nếu không có dữ liệu lat/lon trong SharedPreferences
-                        Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getContext(), "No saved location data", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -1078,85 +1180,129 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Kiểm tra và cảnh báo ổ gà gần do hoac thong bao da den noi
     private void checkProximityAndAlert(double currentLat, double currentLon, List<Pothole> potholes) {
+        // Kiểm tra đã đến đích trước
+        SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+        String latString = preferences.getString("lat", null);
+        String lonString = preferences.getString("lon", null);
+
+        if (latString != null && lonString != null) {
+            double destinationLat = Double.parseDouble(latString);
+            double destinationLon = Double.parseDouble(lonString);
+            double distanceToDestination = calculateDistance(currentLat, currentLon, destinationLat, destinationLon);
+
+            // Giảm ngưỡng khoảng cách xuống 30m để phát hiện chính xác hơn khi đến nơi
+            if (distanceToDestination <= 30) {
+                stopUpdatingRoute();
+                Log.d("Navigation", "Arrived at destination. Distance: " + distanceToDestination + " meters");
+                requireActivity().runOnUiThread(this::showArrivedDialog);
+                return;
+            }
+        }
+
+        // Tìm ổ gà gần nhất
+        Pothole nearestPothole = null;
+        double minDistance = Double.MAX_VALUE;
+
         for (Pothole pothole : potholes) {
             double potholeLat = pothole.getLocation().getCoordinates().getLatitude();
             double potholeLon = pothole.getLocation().getCoordinates().getLongitude();
-
             double distance = calculateDistance(currentLat, currentLon, potholeLat, potholeLon);
 
-            if (distance <= 150) { // Nếu khoảng cách nhỏ hơn hoặc bằng 50m
-                // Phát cảnh báo
-                stopUpdatingRoute();
-                Log.d("ProximityAlert", "You are near a pothole! Distance: " + distance + " meters");
-
-                // Hiển thị dialog thay vì toast
-                requireActivity().runOnUiThread(this::showPotholeWarningDialog);
-                break;
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestPothole = pothole;
             }
+        }
 
-            SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-            String latString = preferences.getString("lat", null);
-            String lonString = preferences.getString("lon", null);
-            if (latString != null && lonString != null) {
-                double distance_location = calculateDistance(currentLat, currentLon,
-                        Double.parseDouble(latString), Double.parseDouble(lonString));
-                if (distance_location <= 50) {
-                    stopUpdatingRoute();
-                    Log.d("Finished navigate", "You have arrived");
-                    requireActivity().runOnUiThread(this::showArrivedDialog);
-                    break;
-                }
+        // Lưu trạng thái cảnh báo trước đó
+        boolean wasWarned = preferences.getBoolean("pothole_warned", false);
+
+        // Kiểm tra và hiển thị cảnh báo ổ gà
+        if (nearestPothole != null && minDistance <= 100) { // Tăng phạm vi phát hiện lên 100m
+            // Chỉ hiển thị cảnh báo nếu chưa được cảnh báo trước đó
+            if (!wasWarned) {
+                stopUpdatingRoute();
+                Log.d("ProximityAlert", "Approaching pothole! Distance: " + minDistance + " meters");
+
+                // Lưu trạng thái đã cảnh báo
+                preferences.edit().putBoolean("pothole_warned", true).apply();
+
+                requireActivity().runOnUiThread(this::showPotholeWarningDialog);
+            }
+        } else {
+            // Reset trạng thái cảnh báo khi đã ra khỏi vùng nguy hiểm (>150m)
+            if (minDistance > 150) {
+                preferences.edit().putBoolean("pothole_warned", false).apply();
             }
         }
     }
 
+    // Cải thiện dialog hiển thị khi đến nơi
     private void showArrivedDialog() {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_arrived);
         dialog.setCancelable(false);
 
-        // Set rounded corners cho dialog
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // Tìm button OK trong dialog
         Button btnOk = dialog.findViewById(R.id.btn_ok_arrived);
+
+        // Thêm hiệu ứng rung nhẹ khi hiển thị dialog
+        if (getContext() != null) {
+            Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                vibrator.vibrate(500);
+            }
+        }
+
         btnOk.setOnClickListener(v -> {
             dialog.dismiss();
-            exitNavigationMode(); // Thoát chế độ navigation khi bấm OK
+            exitNavigationMode();
+            // Reset trạng thái cảnh báo khi kết thúc hành trình
+            SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+            preferences.edit().putBoolean("pothole_warned", false).apply();
         });
 
         dialog.show();
     }
 
-    // Hiển thị dialog cảnh báo ổ gà gần
+    // Cải thiện dialog cảnh báo ổ gà
     private void showPotholeWarningDialog() {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_pothole_detected);
         dialog.setCancelable(false);
 
-        // Set rounded corners cho dialog
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // Tìm các button trong dialog
         Button btnContinue = dialog.findViewById(R.id.btnContinue);
         Button btnStop = dialog.findViewById(R.id.btnStop);
 
-        // Xử lý sự kiện khi click Continue
+        // Thêm hiệu ứng rung để thu hút sự chú ý
+        if (getContext() != null) {
+            Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                // Tạo mẫu rung dài hơn và mạnh hơn cho cảnh báo
+                long[] pattern = {0, 200, 100, 200};
+                vibrator.vibrate(pattern, -1);
+            }
+        }
+
         btnContinue.setOnClickListener(v -> {
             dialog.dismiss();
-            // Tiếp tục navigation
             isRouteUpdating = true;
             handler.post(updateRouteRunnable);
         });
 
-        // Xử lý sự kiện khi click Stop
         btnStop.setOnClickListener(v -> {
             dialog.dismiss();
-            exitNavigationMode(); // Thoát chế độ navigation
+            exitNavigationMode();
+            // Reset trạng thái cảnh báo
+            SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+            preferences.edit().putBoolean("pothole_warned", false).apply();
         });
 
         dialog.show();
@@ -1196,6 +1342,8 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // 10. XỬ LÝ VÒNG ĐỜI FRAGMENT
     // Khởi động lại các tính năng khi Fragment active
+    // Cập nhật onResume() để đăng ký sensor listener
+    @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
@@ -1203,13 +1351,15 @@ public class FragmentMap extends Fragment implements LocationListener {
             startLocationUpdates();
         }
 
-        // Check if we should show navigation panel
+        // Đăng ký sensor listener
+        if (sensorManager != null && accelerometer != null) {
+            sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
         SharedPreferences preferences = requireActivity().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
         boolean showNavigationPanel = preferences.getBoolean("showNavigationPanel", false);
-
         if (showNavigationPanel) {
             setNavigationMode(true);
-            // Clear the flag after using it
             preferences.edit().putBoolean("showNavigationPanel", false).apply();
         }
     }
@@ -1221,6 +1371,10 @@ public class FragmentMap extends Fragment implements LocationListener {
         mapView.onPause();
         locationManager.removeUpdates(this);
 
+        // Hủy đăng ký sensor listener
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(sensorEventListener);
+        }
     }
 
     // Dọn dẹp tài nguyên khi Fragment bị hủy
