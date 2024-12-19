@@ -1,6 +1,7 @@
 package com.example.potholepatrol.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.potholepatrol.Dashboard.ActivityDashboardChart;
 import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
@@ -51,6 +53,13 @@ public class FragmentDashboard extends Fragment {
         textDistance = view.findViewById(R.id.text_distance_data);
         textFalls = view.findViewById(R.id.text_falls_data);
 
+        // Initialize button chart and set click listener
+        View btnChart = view.findViewById(R.id.btn_chart);
+        btnChart.setOnClickListener(v -> {
+            // Start ActivityDashboardChart
+            Intent intent = new Intent(requireContext(), ActivityDashboardChart.class);
+            startActivity(intent);
+        });
         // Load data
         loadUserProfile();
         loadDashboardStats();

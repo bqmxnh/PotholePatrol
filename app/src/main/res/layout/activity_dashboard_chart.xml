@@ -33,37 +33,34 @@
                 android:elevation="0dp">
 
                 <!-- Map Title Bar -->
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:id="@+id/ic_back"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:scaleType="fitXY"
-                        android:src="@drawable/right_arrow" />
+                        android:src="@drawable/right_arrow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/text_chart_title"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/chart"
-                        android:textColor="#0D1B34"
+                        android:text="Chart"
                         android:textSize="28sp"
-                        android:textStyle="bold" />
+                        android:textColor="#0D1B34"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/ic_back"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <ImageView
-                        android:id="@+id/ic_notification"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/ic_notification" />
-                </LinearLayout>
             </LinearLayout>
 
             <!-- Title -->

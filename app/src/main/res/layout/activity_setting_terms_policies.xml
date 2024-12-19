@@ -86,29 +86,36 @@
 
                     </LinearLayout>
                 </RelativeLayout>
-                <LinearLayout
-                    android:id="@+id/rr2694iajgig"
+                <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rectangle_3_shape"
-                    android:paddingVertical="27dp"
-                    android:paddingHorizontal="18dp"
-                    android:layout_marginTop="-140dp"
-                    android:layout_marginHorizontal="24dp"
-                    android:elevation="10dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:orientation="vertical">
+                    android:fillViewport="true">
 
-                    <TextView
-                        android:id="@+id/re9t03wa2sse"
+                    <LinearLayout
+                        android:id="@+id/rr2694iajgig"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/privacy22"
-                        android:textColor="#000000"
-                        android:textSize="23sp" />
-                </LinearLayout>
+                        android:background="@drawable/rectangle_3_shape"
+                        android:paddingVertical="27dp"
+                        android:paddingHorizontal="18dp"
+                        android:layout_marginTop="-140dp"
+                        android:layout_marginHorizontal="24dp"
+                        android:elevation="10dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/re9t03wa2sse"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/privacy22"
+                            android:textColor="#000000"
+                            android:textSize="23sp" />
+                    </LinearLayout>
+
+                </ScrollView>
+
             </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
