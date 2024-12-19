@@ -1,5 +1,6 @@
 package com.example.potholepatrol.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -45,5 +47,9 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(intent);
             finish(); // Đóng SplashActivity để không quay lại
         }, 2000); // Thời gian chờ 2000ms (2 giây)
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 }

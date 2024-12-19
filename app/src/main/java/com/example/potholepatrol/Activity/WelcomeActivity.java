@@ -1,5 +1,6 @@
 package com.example.potholepatrol.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 
 public class WelcomeActivity extends AppCompatActivity {
@@ -58,5 +60,10 @@ public class WelcomeActivity extends AppCompatActivity {
             // Tùy chọn: Đóng WelcomeActivity để người dùng không thể quay lại
             finish();
         });
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 }

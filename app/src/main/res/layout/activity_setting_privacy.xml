@@ -45,7 +45,8 @@
                     android:paddingTop="30dp"
                     android:paddingBottom="0dp">
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        xmlns:android="http://schemas.android.com/apk/res/android"
                         xmlns:app="http://schemas.android.com/apk/res-auto"
                         xmlns:tools="http://schemas.android.com/tools"
                         android:id="@+id/privacy_bar"
@@ -53,28 +54,35 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginTop="34dp"
-                        android:layout_marginBottom="15dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_marginBottom="15dp">
 
+                        <!-- Nút Quay Lại -->
                         <ImageView
                             android:id="@+id/ic_back"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:layout_marginEnd="100dp"
                             android:scaleType="fitXY"
-                            android:src="@drawable/right_arrow" />
+                            android:src="@drawable/right_arrow"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
+                        <!-- Tiêu Đề -->
                         <TextView
                             android:id="@+id/title_privacy"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:text="@string/privacy4"
                             android:textStyle="bold"
                             android:textColor="#0D1B34"
-                            android:textSize="24sp" />
-                    </LinearLayout>
+                            android:textSize="24sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                     <ImageView
                         android:id="@+id/ic_privacy"
@@ -115,7 +123,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Data Sharing"
+                        android:text="@string/data_sharing"
                         android:textStyle="bold"
                         android:textColor="#0D1B34"
                         android:textSize="20sp"/>
@@ -133,7 +141,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="On"
+                        android:text="@string/on"
                         android:textStyle="bold"
                         android:gravity="center"
                         android:padding="8dp"
@@ -148,7 +156,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Off"
+                        android:text="@string/off"
                         android:textStyle="bold"
                         android:gravity="center"
                         android:padding="8dp"

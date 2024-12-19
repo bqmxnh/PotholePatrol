@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
@@ -55,6 +56,11 @@ public class FragmentDashboard extends Fragment {
 
         return view;
 
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(App.wrap(context));
     }
 
     private String getAccessToken() {

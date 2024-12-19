@@ -16,18 +16,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginBottom="16dp"
-        android:src="@mipmap/ic_user"
+        android:src="@mipmap/ic_profile"
         android:scaleType="fitCenter" />
-
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="James"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/logout_message"

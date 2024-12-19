@@ -28,34 +28,41 @@
             android:paddingTop="11dp"
             android:paddingBottom="1dp">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/edit_profile_title_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="35dp"
-                android:layout_marginHorizontal="24dp"
-                android:orientation="horizontal">
+                android:layout_marginHorizontal="24dp">
 
+                <!-- Back Button -->
                 <ImageView
                     android:id="@+id/ic_back"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginEnd="87dp"
                     android:src="@drawable/right_arrow"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
+                <!-- Title -->
                 <TextView
                     android:id="@+id/tile_edit_profile"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/edit_profile2"
                     android:textColor="#0D1B34"
                     android:textStyle="bold"
-                    android:textSize="24sp" />
-            </LinearLayout>
+                    android:textSize="24sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ic_back"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <RelativeLayout
                 android:id="@+id/image_edit_profile_container"
@@ -122,7 +129,7 @@
                 android:paddingHorizontal="15dp"
                 android:layout_marginBottom="18dp"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Enter your name"
+                android:hint="@string/enter_your_name"
                 android:textColor="#534C4C"
                 android:textSize="14sp" />
 
@@ -131,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:text="Email"
+                android:text="@string/email"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -145,7 +152,7 @@
                 android:paddingHorizontal="15dp"
                 android:layout_marginBottom="18dp"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Enter your email"
+                android:hint="@string/enter_your_email"
                 android:textColor="#534C4C"
                 android:textSize="14sp"
                 android:inputType="textEmailAddress" />
@@ -155,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Old Password"
+                android:text="@string/old_password"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -169,7 +176,7 @@
                 android:paddingHorizontal="15dp"
                 android:layout_marginBottom="18dp"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Enter your old password"
+                android:hint="@string/enter_your_old_password"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:inputType="textPassword" />
@@ -179,7 +186,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="9dp"
-                android:text="New password"
+                android:text="@string/new_password"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -193,7 +200,7 @@
                 android:paddingHorizontal="15dp"
                 android:layout_marginBottom="18dp"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Enter your new password"
+                android:hint="@string/enter_your_new_password"
                 android:textColor="#534C4C"
                 android:textSize="14sp"
                 android:inputType="textEmailAddress" />
@@ -216,7 +223,7 @@
                 android:paddingHorizontal="15dp"
                 android:layout_marginBottom="18dp"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Enter your date of birth (dd/mm/yyyy)"
+                android:hint="@string/enter_your_date_of_birth_dd_mm_yyyy"
                 android:textColor="#534C4C"
                 android:textSize="14sp"
                 android:inputType="date" />
@@ -240,7 +247,7 @@
                 android:paddingHorizontal="15dp"
                 android:layout_marginBottom="18dp"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Enter your country"
+                android:hint="@string/enter_your_country"
                 android:textColor="#534C4C"
                 android:textSize="14sp" />
 

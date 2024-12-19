@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
@@ -53,6 +54,11 @@ public class EditSettingActivity extends AppCompatActivity {
 
         // Tải thông tin người dùng từ server
         loadUserProfile();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
     private String getAccessToken() {

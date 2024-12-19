@@ -89,7 +89,7 @@
                         android:id="@+id/text_hello"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hello,"
+                        android:text="@string/hello"
                         android:textColor="#8696BB"
                         android:textSize="16sp" />
 
@@ -114,7 +114,7 @@
                             android:id="@+id/text_quotes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Have a nice day"
+                            android:text="@string/have_a_nice_day"
                             android:textColor="#000000"
                             android:textSize="16sp" />
 
@@ -171,7 +171,7 @@
                     android:id="@+id/text_potholes_detected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Potholes Detected"
+                    android:text="@string/potholes_detected"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
@@ -217,7 +217,7 @@
                     android:id="@+id/text_distance_traveled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Distance Traveled"
+                    android:text="@string/distance_traveled"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
@@ -263,7 +263,7 @@
                     android:id="@+id/text_falls"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Falls"
+                    android:text="@string/falls"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 

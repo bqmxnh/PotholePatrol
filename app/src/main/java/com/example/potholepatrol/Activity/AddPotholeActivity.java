@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.model.PotholeRequest;
 import com.example.potholepatrol.api.ApiClient;
@@ -77,6 +78,10 @@ public class AddPotholeActivity extends AppCompatActivity {
         setupClickListeners();
         setupLocationServices();
         updateConfirmButtonState();
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
 

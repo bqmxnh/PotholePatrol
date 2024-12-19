@@ -1,6 +1,7 @@
 package com.example.potholepatrol.Settings;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 
 public class PrivacySettingActivity extends AppCompatActivity {
@@ -39,6 +41,11 @@ public class PrivacySettingActivity extends AppCompatActivity {
 
         initializeViews();
         updateSharingButtons();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
     private void initializeViews() {

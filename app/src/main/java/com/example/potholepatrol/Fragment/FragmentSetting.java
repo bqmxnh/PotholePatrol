@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,7 +37,6 @@ import com.example.potholepatrol.Activity.LoginActivity;
 import com.example.potholepatrol.model.UserProfileResponse;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class FragmentSetting extends Fragment {
@@ -71,17 +67,16 @@ public class FragmentSetting extends Fragment {
 
         // Load user profile information
         loadUserProfile();
-        // Setup language buttons
-        setupLanguageButtons(view);
 
         // Setting up navigation for all setting options
         setupSettingOptions(view);
 
         return view;
     }
+
     private String getAccessToken() {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("accessToken", ""); // Trả về token hoặc chuỗi rỗng nếu không có
+        return sharedPreferences.getString("accessToken", "");
     }
 
     private void loadUserProfile() {
@@ -94,7 +89,6 @@ public class FragmentSetting extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     UserProfileResponse profile = response.body();
 
-                    // Hiển thị tên và email hoặc hiển thị thông báo cập nhật
                     String name = profile.getUsername() != null ? profile.getUsername() : "Please update your name";
                     String email = profile.getEmail() != null ? profile.getEmail() : "Please update your email";
 
@@ -112,103 +106,6 @@ public class FragmentSetting extends Fragment {
                 Log.e(TAG, "Error loading user profile: " + t.getMessage());
             }
         });
-    }
-
-    private void setupLanguageButtons(View view) {
-        // Find language buttons and their text views
-        View viButton = view.findViewById(R.id.vi_button);
-        View enButton = view.findViewById(R.id.en_button);
-        TextView viText = view.findViewById(R.id.text_vi);
-        TextView enText = view.findViewById(R.id.text_en);
-
-        // Set click listeners
-        viButton.setOnClickListener(v -> {
-            setNewLocale("vi");
-            updateLanguageUI(viText, enText, true);
-        });
-
-        enButton.setOnClickListener(v -> {
-            setNewLocale("en");
-            updateLanguageUI(viText, enText, false);
-        });
-
-        // Set initial state
-        String currentLang = getCurrentLanguage();
-        updateLanguageUI(viText, enText, currentLang.equals("vi"));
-    }
-
-    private void updateLanguageUI(TextView viText, TextView enText, boolean isVietnamese) {
-        if (isVietnamese) {
-            viText.setTextColor(getResources().getColor(android.R.color.white));
-            enText.setTextColor(getResources().getColor(android.R.color.black));
-            ((View) viText.getParent()).setBackgroundResource(R.drawable.btn_frame);
-            ((View) enText.getParent()).setBackgroundResource(R.drawable.dialog_frame);
-        } else {
-            viText.setTextColor(getResources().getColor(android.R.color.black));
-            enText.setTextColor(getResources().getColor(android.R.color.white));
-            ((View) viText.getParent()).setBackgroundResource(R.drawable.dialog_frame);
-            ((View) enText.getParent()).setBackgroundResource(R.drawable.btn_frame);
-        }
-    }
-
-    private void setNewLocale(String languageCode) {
-        try {
-            // Inflate the custom dialog view
-            LayoutInflater inflater = LayoutInflater.from(requireContext());
-            View dialogView = inflater.inflate(R.layout.dialog_change_language, null); // Replace with the correct dialog layout filename
-
-            // Find views in the dialog
-            TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
-            TextView dialogMessage = dialogView.findViewById(R.id.dialog_message);
-            Button btnYes = dialogView.findViewById(R.id.btnYes);
-            Button btnNo = dialogView.findViewById(R.id.btnNo);
-
-            // Customize dialog title and message
-            dialogTitle.setText(getString(R.string.language_change_title)); // Define this in strings.xml
-            dialogMessage.setText(getString(R.string.language_change_message)); // Define this in strings.xml
-
-            // Create and show the dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setView(dialogView);
-            AlertDialog dialog = builder.create();
-
-            // Set click listeners for the buttons
-            btnYes.setOnClickListener(v -> {
-                dialog.dismiss();
-
-                // Save language preference
-                SharedPreferences settings = requireContext().getSharedPreferences("Settings", Context.MODE_PRIVATE);
-                settings.edit().putString("language", languageCode).apply();
-
-                // Update locale
-                Locale locale = new Locale(languageCode);
-                Locale.setDefault(locale);
-
-                Resources resources = requireContext().getResources();
-                Configuration config = new Configuration(resources.getConfiguration());
-                config.setLocale(locale);
-                resources.updateConfiguration(config, resources.getDisplayMetrics());
-
-                // Restart the activity
-                requireActivity().recreate();
-            });
-
-            btnNo.setOnClickListener(v -> dialog.dismiss());
-
-            if (dialog.getWindow() != null) {
-                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent); // Optional: Set background to transparent
-            }
-
-            dialog.show();
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting locale: " + e.getMessage());
-        }
-    }
-
-
-    private String getCurrentLanguage() {
-        SharedPreferences settings = requireContext().getSharedPreferences("Settings", Context.MODE_PRIVATE);
-        return settings.getString("language", "en");
     }
 
     private void setupSettingOptions(View view) {
@@ -262,27 +159,22 @@ public class FragmentSetting extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        // Restore original status bar color and system UI visibility
         Window window = requireActivity().getWindow();
         window.setStatusBarColor(originalStatusBarColor);
         window.getDecorView().setSystemUiVisibility(originalSystemUiVisibility);
     }
 
     private void showLogoutDialog() {
-        // Create and show the logout confirmation dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = getLayoutInflater().inflate(R.layout.setting_dialog_logout, null);
         builder.setView(dialogView);
 
         AlertDialog dialog = builder.create();
 
-        // Set the dialog window background to transparent
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // Set up dialog buttons
         LinearLayout btnLogout = dialogView.findViewById(R.id.btn_logout);
         LinearLayout btnCancel = dialogView.findViewById(R.id.btn_cancel);
 
@@ -335,5 +227,4 @@ public class FragmentSetting extends Fragment {
         editor.clear();
         editor.apply();
     }
-
 }

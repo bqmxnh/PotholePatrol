@@ -224,4 +224,18 @@
     <string name="no3">Không</string>
     <string name="language_change_title">Thay đổi ngôn ngữ</string>
     <string name="language_change_message">Bạn có chắc chắn muốn thay đổi ngôn ngữ? Ứng dụng sẽ khởi động lại để áp dụng các thay đổi.</string>
+    <string name="enter_your_name">Điền tên của bạn</string>
+    <string name="enter_your_old_password">Điền mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="enter_your_new_password">Điền mật khẩu mới</string>
+    <string name="enter_your_date_of_birth_dd_mm_yyyy">Điền ngày tháng năm sinh của bạn (dd/mm/yyyy)</string>
+    <string name="enter_your_country">Điền quốc gia của bạn</string>
+    <string name="data_sharing">Chia sẻ dữ liệu</string>
+    <string name="write_something_here">Nhập gì đó...</string>
+    <string name="potholes_detected">Số lượng ổ gà</string>
+    <string name="distance_traveled">Khoảng cách đi được</string>
+    <string name="falls">Té ngã</string>
+    <string name="have_a_nice_day">Chúc một ngày vui vẻ</string>
+    <string name="hello">Xin chào,</string>
 </resources>

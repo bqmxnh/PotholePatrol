@@ -1,5 +1,6 @@
 package com.example.potholepatrol.Activity;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.potholepatrol.Fragment.FragmentDashboard;
 import com.example.potholepatrol.Fragment.FragmentMap;
 import com.example.potholepatrol.Fragment.FragmentSetting;
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 
 
@@ -69,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
             resizeSelectedIcon(icSetting);
             setBoldTitle(navSettingTitle);
         });
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
     // Hàm để đặt kích thước mặc định cho các icon

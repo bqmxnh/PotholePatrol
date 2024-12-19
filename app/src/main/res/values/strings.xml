@@ -228,5 +228,19 @@
     <string name="no3">No</string>
     <string name="language_change_title">Change Language</string>
     <string name="language_change_message" >Are you sure you want to change the language? The app will restart to apply changes.</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="enter_your_old_password">Enter your old password</string>
+    <string name="new_password">New password</string>
+    <string name="old_password">Old Password</string>
+    <string name="enter_your_new_password">Enter your new password</string>
+    <string name="enter_your_date_of_birth_dd_mm_yyyy">Enter your date of birth (dd/mm/yyyy)</string>
+    <string name="enter_your_country">Enter your country</string>
+    <string name="data_sharing">Data Sharing</string>
+    <string name="write_something_here">Write something here...</string>
+    <string name="potholes_detected">Potholes Detected</string>
+    <string name="distance_traveled">Distance Traveled</string>
+    <string name="falls">Falls</string>
+    <string name="have_a_nice_day">Have a nice day</string>
+    <string name="hello">Hello,</string>
 
 </resources>

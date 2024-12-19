@@ -1,5 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:background="#FFFFFF"
     android:clipChildren="false"
     android:clipToPadding="false"
@@ -49,32 +51,39 @@
                         android:paddingTop="11dp"
                         android:paddingBottom="183dp">
 
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/term_bar"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:layout_marginTop="30dp">
 
+                            <!-- Nút Back -->
                             <ImageView
                                 android:id="@+id/btn_back"
                                 android:layout_width="38dp"
                                 android:layout_height="38dp"
-                                android:layout_marginEnd="38dp"
                                 android:scaleType="fitXY"
-                                android:src="@drawable/right_arrow" />
+                                android:src="@drawable/right_arrow"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
 
+                            <!-- Tiêu Đề -->
                             <TextView
-                                android:id="@+id/rx8qble9wfip"
-                                android:layout_width="match_parent"
+                                android:id="@+id/title_terms"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:textStyle="bold"
                                 android:text="@string/terms_amp_policies2"
                                 android:textColor="#0D1B34"
-                                android:textSize="24sp" />
-                        </LinearLayout>
+                                android:textSize="24sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </LinearLayout>
                 </RelativeLayout>
                 <LinearLayout

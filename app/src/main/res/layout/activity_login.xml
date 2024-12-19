@@ -1,11 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
     android:background="#FFFFFF">
 
+    <!-- Language Selector -->
+    <LinearLayout
+        android:id="@+id/language_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/dialog_frame"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <!-- VI Button -->
+        <LinearLayout
+            android:id="@+id/vi_button"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/text_vi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VI"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- EN Button -->
+        <LinearLayout
+            android:id="@+id/en_button"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/dialog_frame"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/text_en"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EN"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
 
     <!-- Motorcycle Illustration -->
     <ImageView
@@ -13,6 +67,8 @@
         android:layout_width="match_parent"
         android:layout_height="286dp"
         android:adjustViewBounds="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/language_selector"
         android:src="@drawable/motorcycle_illustration"
         android:layout_marginTop="20dp"/>
 
@@ -142,7 +198,6 @@
         android:layout_centerHorizontal="true">
 
         <TextView
-
             android:id="@+id/tvHave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

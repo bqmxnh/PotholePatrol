@@ -1,17 +1,23 @@
 package com.example.potholepatrol.Activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.credentials.CredentialManager;
 
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -37,37 +44,41 @@ import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.LoginResponse;
 import com.example.potholepatrol.model.LoginRequest;
 
+import java.util.Locale;
+
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String WEB_CLIENT_ID = "185818297216-sbdq7a4kdr2fk9ui32mut9h9h0jhhrig.apps.googleusercontent.com";
-
-    private CredentialManager credentialManager;
-    private GoogleSignInClient mGoogleSignInClient;
 
     private TextInputLayout tilEmail, tilPassword;
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin, btnGoogle;
-    private TextView tvForgot, tvCreate, statusText;
+    private TextView tvForgot, tvCreate;
+    private View viButton, enButton;
+    private TextView viText, enText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Khởi tạo các view
+        // Initialize views
         initViews();
 
-        // Cấu hình Google Sign-In
-        setupGoogleSignIn();
+        // Setup language selector
+        setupLanguageButtons();
 
-        // Thiết lập Credential Manager
-        credentialManager = CredentialManager.create(this);
-
-        // Thiết lập các sự kiện click
+        // Setup other click listeners
         setupClickListeners();
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
+    }
+
+
 
     private void initViews() {
         tilEmail = findViewById(R.id.tilEmail);
@@ -78,15 +89,100 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogle = findViewById(R.id.btnGoogle);
         tvForgot = findViewById(R.id.tvForgot);
         tvCreate = findViewById(R.id.tvCreate);
-        //statusText = findViewById(R.id.statusText);
+
+        // Language selector views
+        viButton = findViewById(R.id.vi_button);
+        enButton = findViewById(R.id.en_button);
+        viText = findViewById(R.id.text_vi);
+        enText = findViewById(R.id.text_en);
     }
 
-    private void setupGoogleSignIn() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(WEB_CLIENT_ID)
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    private void setupLanguageButtons() {
+        // Set click listeners for language buttons
+        viButton.setOnClickListener(v -> {
+            showLanguageDialog("vi");
+        });
+
+        enButton.setOnClickListener(v -> {
+            showLanguageDialog("en");
+        });
+
+        // Set initial state
+        String currentLang = getCurrentLanguage();
+        updateLanguageUI(currentLang.equals("vi"));
+    }
+
+    private void showLanguageDialog(String languageCode) {
+        try {
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_language, null);
+            TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
+            TextView dialogMessage = dialogView.findViewById(R.id.dialog_message);
+            Button btnYes = dialogView.findViewById(R.id.btnYes);
+            Button btnNo = dialogView.findViewById(R.id.btnNo);
+
+            dialogTitle.setText(getString(R.string.language_change_title));
+            dialogMessage.setText(getString(R.string.language_change_message));
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialogView);
+            AlertDialog dialog = builder.create();
+
+            btnYes.setOnClickListener(v -> {
+                dialog.dismiss();
+                setNewLocale(languageCode);
+                updateLanguageUI(languageCode.equals("vi"));
+            });
+
+            btnNo.setOnClickListener(v -> {
+                dialog.dismiss();
+                // Khôi phục UI về trạng thái trước đó
+                String currentLang = getCurrentLanguage();
+                updateLanguageUI(currentLang.equals("vi"));
+            });
+
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+
+            dialog.show();
+        } catch (Exception e) {
+            Log.e(TAG, "Error showing language dialog: " + e.getMessage());
+        }
+    }
+
+    private void setNewLocale(String languageCode) {
+        // Save language preference
+        SharedPreferences settings = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        settings.edit().putString("language", languageCode).apply();
+
+        // Update locale for entire app
+        App.setLocale(this);
+
+        // Restart activity
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+        // Apply animation
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    private void updateLanguageUI(boolean isVietnamese) {
+        if (isVietnamese) {
+            viText.setTextColor(getResources().getColor(android.R.color.white));
+            enText.setTextColor(getResources().getColor(android.R.color.black));
+            viButton.setBackgroundResource(R.drawable.btn_frame);
+            enButton.setBackgroundResource(R.drawable.dialog_frame);
+        } else {
+            viText.setTextColor(getResources().getColor(android.R.color.black));
+            enText.setTextColor(getResources().getColor(android.R.color.white));
+            viButton.setBackgroundResource(R.drawable.dialog_frame);
+            enButton.setBackgroundResource(R.drawable.btn_frame);
+        }
+    }
+
+    private String getCurrentLanguage() {
+        SharedPreferences settings = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        return settings.getString("language", "en");
     }
 
     private void setupClickListeners() {

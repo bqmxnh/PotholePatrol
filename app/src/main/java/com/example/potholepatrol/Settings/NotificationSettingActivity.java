@@ -1,6 +1,7 @@
 package com.example.potholepatrol.Settings;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 
 public class NotificationSettingActivity extends AppCompatActivity {
@@ -59,6 +61,11 @@ public class NotificationSettingActivity extends AppCompatActivity {
 
         // Save button handler
         btnSave.setOnClickListener(v -> savePreference());
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
     private void selectPreference(String preference) {
