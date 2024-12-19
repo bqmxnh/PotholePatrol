@@ -110,19 +110,10 @@ public class PrivacySettingActivity extends AppCompatActivity {
             layoutParams.copyFrom(window.getAttributes());
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            // Get status bar height
-            int statusBarHeight = 0;
-            int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-            if (resourceId > 0) {
-                statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-            }
 
-            // Add extra padding (8dp)
-            int extraPadding = (int) (8 * getResources().getDisplayMetrics().density);
-            // Set position and background
             layoutParams.gravity = Gravity.TOP;
             layoutParams.dimAmount = 0.5f;
-            layoutParams.y = statusBarHeight + extraPadding;
+            layoutParams.y = 0;
             window.setAttributes(layoutParams);
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }

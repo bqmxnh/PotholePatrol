@@ -15,8 +15,7 @@
         android:layout_alignParentEnd="true"
         android:background="@drawable/dialog_frame"
         android:padding="10dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
+        android:orientation="horizontal">
 
         <!-- VI Button -->
         <LinearLayout
@@ -70,7 +69,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/language_selector"
         android:src="@drawable/motorcycle_illustration"
-        android:layout_marginTop="20dp"/>
+        />
 
     <!-- Sign In Text -->
     <TextView
