@@ -1,14 +1,22 @@
 package com.example.potholepatrol.Activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -107,15 +115,10 @@ public class AddPotholeActivity extends AppCompatActivity {
     private void updateConfirmButtonState() {
         boolean isDataSharingEnabled = sharedPreferences.getBoolean(KEY_DATA_SHARING, false);
         confirmButton.setEnabled(isDataSharingEnabled);
-
-        // Optionally update the button's appearance
         confirmButton.setAlpha(isDataSharingEnabled ? 1.0f : 0.5f);
 
-        // Show a message if data sharing is disabled
         if (!isDataSharingEnabled) {
-            Toast.makeText(this,
-                    "Please enable data sharing in Privacy Settings to report potholes",
-                    Toast.LENGTH_LONG).show();
+            showStatusDialog(false, "Please enable data sharing in Privacy Settings to report potholes");
         }
     }
 
@@ -252,11 +255,8 @@ public class AddPotholeActivity extends AppCompatActivity {
     };
 
     private void submitPotholeReport() {
-        // First check if data sharing is enabled
         if (!sharedPreferences.getBoolean(KEY_DATA_SHARING, false)) {
-            Toast.makeText(this,
-                    "Data sharing must be enabled to report potholes",
-                    Toast.LENGTH_SHORT).show();
+            showStatusDialog(false, "Data sharing must be enabled to report potholes");
             return;
         }
 
@@ -291,47 +291,84 @@ public class AddPotholeActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(AddPotholeActivity.this,
-                                    "Pothole reported successfully", Toast.LENGTH_SHORT).show();
-                            finish();
+                            showStatusDialog(true, "Pothole reported successfully");
                         } else {
-                            Toast.makeText(AddPotholeActivity.this,
-                                    "Failed to report pothole", Toast.LENGTH_SHORT).show();
+                            showStatusDialog(false, "Failed to report pothole");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(AddPotholeActivity.this,
-                                "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        showStatusDialog(false, "Error: " + t.getMessage());
                     }
                 });
     }
 
     private boolean validateInput() {
+        String message = null;
         if (locationEdit.getText().toString().trim().isEmpty()) {
-            Toast.makeText(this, "Please enter location", Toast.LENGTH_SHORT).show();
-            return false;
+            message = "Please enter location";
+        } else if (selectedDimension.isEmpty()) {
+            message = "Please select dimension";
+        } else if (selectedDepth.isEmpty()) {
+            message = "Please select depth";
+        } else if (selectedShape.isEmpty()) {
+            message = "Please select shape";
+        } else if (selectedSeverity.isEmpty()) {
+            message = "Please select severity level";
         }
-        if (selectedDimension.isEmpty()) {
-            Toast.makeText(this, "Please select dimension", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (selectedDepth.isEmpty()) {
-            Toast.makeText(this, "Please select depth", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (selectedShape.isEmpty()) {
-            Toast.makeText(this, "Please select shape", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (selectedSeverity.isEmpty()) {
-            Toast.makeText(this, "Please select severity level", Toast.LENGTH_SHORT).show();
+
+        if (message != null) {
+            showStatusDialog(false, message);
             return false;
         }
         return true;
     }
+    private void showStatusDialog(boolean isSuccess, String message) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_status);
 
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(window.getAttributes());
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+// Get status bar height
+            int statusBarHeight = 0;
+            int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+            }
+
+            // Add extra padding (8dp)
+            int extraPadding = (int) (8 * getResources().getDisplayMetrics().density);
+            layoutParams.gravity = Gravity.TOP;
+            layoutParams.dimAmount = 0.5f;
+            layoutParams.y = statusBarHeight + extraPadding;
+            window.setAttributes(layoutParams);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        ImageView ivStatus = dialog.findViewById(R.id.ivStatus);
+        TextView tvStatus = dialog.findViewById(R.id.tvLoginStatus);
+        TextView tvStatusMessage = dialog.findViewById(R.id.tvStatusMessage);
+
+        ivStatus.setImageResource(isSuccess ? R.mipmap.tick : R.mipmap.error);
+        tvStatus.setText("Pothole Report");
+        tvStatusMessage.setText(message);
+
+        dialog.show();
+
+        new Handler().postDelayed(() -> {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+                if (isSuccess && message.equals("Pothole reported successfully")) {
+                    finish();
+                }
+            }
+        }, 2000);
+    }
     private String getStoredToken() {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         return sharedPreferences.getString("accessToken", ""); // Retrieve the stored access token

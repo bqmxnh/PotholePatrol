@@ -1,14 +1,18 @@
 package com.example.potholepatrol.Settings;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,47 +23,53 @@ public class PersonalizationSettingActivity extends AppCompatActivity {
     private Button btnSave;
     private ImageView btnBack;
     private SharedPreferences sharedPreferences;
-    private String selectedSensitivity = "medium"; // Giá trị mặc định
+    private String selectedSensitivity = "medium"; // Default value
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_setting_personalization);
-        // Xử lý Status Bar
+
         setupStatusBar();
-        // Ánh xạ các nút
+        initializeViews();
+        setupListeners();
+        loadSavedSensitivity();
+    }
+
+    private void initializeViews() {
         btnLow = findViewById(R.id.btn_low);
         btnMedium = findViewById(R.id.btn_medium);
         btnHigh = findViewById(R.id.btn_high);
         btnSave = findViewById(R.id.btn_save);
         btnBack = findViewById(R.id.ic_back);
-
-        // SharedPreferences lưu trữ sensitivity
         sharedPreferences = getSharedPreferences("SettingsPrefs", MODE_PRIVATE);
+    }
 
-        // Load sensitivity đã lưu
-        loadSavedSensitivity();
+    private void setupListeners() {
+        btnLow.setOnClickListener(v -> {
+            selectSensitivity("low");
+            showStatusDialog(true, "Low sensitivity selected");
+        });
 
-        // Xử lý click cho từng nút
-        btnLow.setOnClickListener(v -> selectSensitivity("low"));
-        btnMedium.setOnClickListener(v -> selectSensitivity("medium"));
-        btnHigh.setOnClickListener(v -> selectSensitivity("high"));
+        btnMedium.setOnClickListener(v -> {
+            selectSensitivity("medium");
+            showStatusDialog(true, "Medium sensitivity selected");
+        });
 
-        // Xử lý nút Save
+        btnHigh.setOnClickListener(v -> {
+            selectSensitivity("high");
+            showStatusDialog(true, "High sensitivity selected");
+        });
+
         btnSave.setOnClickListener(v -> saveSensitivity());
-
-        // Xử lý nút Back
         btnBack.setOnClickListener(v -> onBackPressed());
     }
 
     private void setupStatusBar() {
         Window window = getWindow();
-
-        // Làm trong suốt status bar và kích hoạt full-screen mode
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        window.setStatusBarColor(Color.TRANSPARENT);
         window.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         );
@@ -75,11 +85,57 @@ public class PersonalizationSettingActivity extends AppCompatActivity {
         editor.putString("detection_sensitivity", selectedSensitivity);
         editor.apply();
 
-        // Hiển thị thông báo
-        Toast.makeText(this, "Sensitivity saved: " + selectedSensitivity, Toast.LENGTH_SHORT).show();
+        showStatusDialog(true, "Detection sensitivity saved: " +
+                selectedSensitivity.substring(0, 1).toUpperCase() + selectedSensitivity.substring(1));
+    }
 
-        // Thoát màn hình cài đặt sau khi lưu
-        finish();
+    private void showStatusDialog(boolean isSuccess, String message) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_status);
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(window.getAttributes());
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+            // Get status bar height
+            int statusBarHeight = 0;
+            int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+            }
+
+            // Add extra padding (8dp)
+            int extraPadding = (int) (8 * getResources().getDisplayMetrics().density);
+
+            layoutParams.gravity = Gravity.TOP;
+            layoutParams.dimAmount = 0.5f;
+            layoutParams.y = statusBarHeight + extraPadding;
+
+            window.setAttributes(layoutParams);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        ImageView ivStatus = dialog.findViewById(R.id.ivStatus);
+        TextView tvStatus = dialog.findViewById(R.id.tvLoginStatus);
+        TextView tvStatusMessage = dialog.findViewById(R.id.tvStatusMessage);
+
+        ivStatus.setImageResource(isSuccess ? R.mipmap.tick : R.mipmap.error);
+        tvStatus.setText("Detection Settings");
+        tvStatusMessage.setText(message);
+
+        dialog.show();
+
+        new Handler().postDelayed(() -> {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+                if (message.startsWith("Detection sensitivity saved")) {
+                    finish();
+                }
+            }
+        }, 2000);
     }
 
     private void loadSavedSensitivity() {
@@ -88,24 +144,32 @@ public class PersonalizationSettingActivity extends AppCompatActivity {
     }
 
     private void updateButtonState(String sensitivity) {
-        // Reset màu
         resetButtonStyles();
+        TextView selectedButton = btnMedium; // default
+
         switch (sensitivity) {
             case "low":
-                btnLow.setBackgroundResource(R.drawable.selected_button_background);
+                selectedButton = btnLow;
                 break;
             case "medium":
-                btnMedium.setBackgroundResource(R.drawable.selected_button_background);
+                selectedButton = btnMedium;
                 break;
             case "high":
-                btnHigh.setBackgroundResource(R.drawable.selected_button_background);
+                selectedButton = btnHigh;
                 break;
         }
+
+        selectedButton.setBackgroundResource(R.drawable.selected_button_background);
+        selectedButton.setTextColor(getResources().getColor(R.color.white));
     }
 
     private void resetButtonStyles() {
         btnLow.setBackgroundResource(R.drawable.setting_frame);
         btnMedium.setBackgroundResource(R.drawable.setting_frame);
         btnHigh.setBackgroundResource(R.drawable.setting_frame);
+
+        btnLow.setTextColor(getResources().getColor(R.color.black));
+        btnMedium.setTextColor(getResources().getColor(R.color.black));
+        btnHigh.setTextColor(getResources().getColor(R.color.black));
     }
 }
