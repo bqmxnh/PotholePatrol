@@ -120,6 +120,20 @@ public class FragmentDashboard extends Fragment {
                     Log.d("FragmentDashboard", "Total: " + stats.getData().getTotal());
                     Log.d("FragmentDashboard", "Falls: " + stats.getData().getFalls());
 
+
+                    DashboardStatsResponse.BySeverity severity = stats.getData().getBySeverity();
+                    Log.d("FragmentDashboard", "Low Severity: " + (severity.getLow() == 0 ? "N/A" : severity.getLow()));
+                    Log.d("FragmentDashboard", "Medium Severity: " + (severity.getMedium() == 0 ? "N/A" : severity.getMedium()));
+                    Log.d("FragmentDashboard", "High Severity: " + (severity.getHigh() == 0 ? "N/A" : severity.getHigh()));
+
+                    // Lưu vào SharedPreferences
+                    SharedPreferences sharedPreferences = getContext().getSharedPreferences("DashboardStats", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("LowSeverity", severity.getLow());
+                    editor.putInt("MediumSeverity", severity.getMedium());
+                    editor.putInt("HighSeverity", severity.getHigh());
+                    editor.apply();
+
                     textPotholes.setText(String.valueOf(stats.getData().getTotal()));
                     textFalls.setText(String.valueOf(stats.getData().getFalls()));
                     double distance = stats.getData().getDistanceTraveled();
@@ -128,6 +142,7 @@ public class FragmentDashboard extends Fragment {
                     Log.e("FragmentDashboard", "Failed to load dashboard stats. Code: " + response.code());
                 }
             }
+
 
             @Override
             public void onFailure(Call<DashboardStatsResponse> call, Throwable t) {

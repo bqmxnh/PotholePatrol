@@ -200,7 +200,15 @@
                     android:text="@string/distribution_of_potholes_nby_severity_level"
                     android:textColor="#000000"
                     android:textSize="20sp" />
+
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="40dp" />
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

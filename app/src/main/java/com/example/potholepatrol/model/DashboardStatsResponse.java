@@ -6,7 +6,7 @@ public class DashboardStatsResponse {
     private String status;
     private Data data;
 
-    // Getters and setters
+
     public String getStatus() {
         return status;
     }
@@ -26,8 +26,9 @@ public class DashboardStatsResponse {
     public static class Data {
         private int total;
         private int falls;
+        private BySeverity bySeverity;
 
-        @SerializedName("distance_traveled")  // Mapping JSON field 'distance_traveled' to Java field 'distanceTraveled'
+        @SerializedName("distance_traveled")
         private double distanceTraveled;
 
         public int getTotal() {
@@ -46,6 +47,14 @@ public class DashboardStatsResponse {
             this.falls = falls;
         }
 
+        public BySeverity getBySeverity() {
+            return bySeverity;
+        }
+
+        public void setBySeverity(BySeverity bySeverity) {
+            this.bySeverity = bySeverity;
+        }
+
         public double getDistanceTraveled() {
             return distanceTraveled;
         }
@@ -54,4 +63,35 @@ public class DashboardStatsResponse {
             this.distanceTraveled = distanceTraveled;
         }
     }
+
+    public static class BySeverity {
+        private int High;
+        private int Medium;
+        private int Low;
+
+        public int getHigh() {
+            return High;
+        }
+
+        public void setHigh(int high) {
+            High = high;
+        }
+
+        public int getMedium() {
+            return Medium;
+        }
+
+        public void setMedium(int medium) {
+            Medium = medium;
+        }
+
+        public int getLow() {
+            return Low;
+        }
+
+        public void setLow(int low) {
+            Low = low;
+        }
+    }
 }
+
