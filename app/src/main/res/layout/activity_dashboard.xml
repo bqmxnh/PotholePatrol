@@ -73,22 +73,22 @@
                 android:id="@+id/welcome_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginHorizontal="39dp"
-                android:orientation="horizontal">
+                android:layout_marginBottom="16dp"
+                android:layout_marginHorizontal="30dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
+                <!-- Text Container -->
                 <LinearLayout
                     android:id="@+id/welcome_text_container"
-                    android:layout_width="108dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/text_hello"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
                         android:text="Hello,"
                         android:textColor="#8696BB"
                         android:textSize="16sp" />
@@ -97,45 +97,54 @@
                         android:id="@+id/text_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="4dp"
                         android:text="Hi James"
                         android:textColor="#0D1B34"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/text_quotes"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Have a nice day"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/text_quotes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Have a nice day"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/icon_heart"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="4dp"
+                            android:src="@mipmap/ic_heart" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/icon_heart"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginTop="46dp"
-                    android:scaleType="fitXY"
-                    android:src="@mipmap/ic_heart" />
-
-                <!-- Space between title and user image -->
-                <LinearLayout
-                    android:id="@+id/space_between_welcome_and_image"
+                <!-- Spacer -->
+                <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical" />
+                    android:layout_weight="1" />
 
+                <!-- User Avatar -->
                 <ImageView
                     android:id="@+id/icon_user_image"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginTop="4dp"
-                    android:scaleType="fitXY"
-                    android:src="@mipmap/ic_user" />
+                    android:layout_marginEnd="8dp"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_profile"
+                    android:padding="8dp" />
             </LinearLayout>
+
+
 
             <!-- Potholes Detected Section -->
             <LinearLayout

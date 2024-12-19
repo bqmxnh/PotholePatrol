@@ -37,6 +37,7 @@ import com.example.potholepatrol.Settings.TermSettingActivity;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.Activity.LoginActivity;
+import com.example.potholepatrol.model.UserProfileResponse;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -45,6 +46,7 @@ import java.util.Map;
 public class FragmentSetting extends Fragment {
     private int originalStatusBarColor;
     private int originalSystemUiVisibility;
+    private TextView textUserName, textUserEmail;
 
     @Nullable
     @Override
@@ -63,6 +65,12 @@ public class FragmentSetting extends Fragment {
 
         View view = inflater.inflate(R.layout.activity_setting, container, false);
 
+        // Initialize TextViews for user info
+        textUserName = view.findViewById(R.id.text_user_name);
+        textUserEmail = view.findViewById(R.id.text_user_email);
+
+        // Load user profile information
+        loadUserProfile();
         // Setup language buttons
         setupLanguageButtons(view);
 
@@ -70,6 +78,40 @@ public class FragmentSetting extends Fragment {
         setupSettingOptions(view);
 
         return view;
+    }
+    private String getAccessToken() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("accessToken", ""); // Trả về token hoặc chuỗi rỗng nếu không có
+    }
+
+    private void loadUserProfile() {
+        String token = "Bearer " + getAccessToken();
+
+        AuthService authService = ApiClient.getClient().create(AuthService.class);
+        authService.getUserProfile(token).enqueue(new Callback<UserProfileResponse>() {
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserProfileResponse profile = response.body();
+
+                    // Hiển thị tên và email hoặc hiển thị thông báo cập nhật
+                    String name = profile.getUsername() != null ? profile.getUsername() : "Please update your name";
+                    String email = profile.getEmail() != null ? profile.getEmail() : "Please update your email";
+
+                    textUserName.setText(name);
+                    textUserEmail.setText(email);
+                } else {
+                    Log.e(TAG, "Failed to load user profile. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+                textUserName.setText("Please update your name");
+                textUserEmail.setText("Please update your email");
+                Log.e(TAG, "Error loading user profile: " + t.getMessage());
+            }
+        });
     }
 
     private void setupLanguageButtons(View view) {
@@ -293,4 +335,5 @@ public class FragmentSetting extends Fragment {
         editor.clear();
         editor.apply();
     }
+
 }

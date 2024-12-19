@@ -122,7 +122,7 @@
                     android:layout_height="61dp"
                     android:layout_marginEnd="13dp"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/ic_user" />
+                    android:src="@mipmap/ic_profile" />
 
                 <LinearLayout
                     android:id="@+id/user_info_details"
