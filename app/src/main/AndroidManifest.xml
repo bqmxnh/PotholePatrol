@@ -51,6 +51,8 @@
 
         <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Dashboard.ActivityDashboardChart" android:exported="false" />
+        <activity android:name=".Dashboard.ActivityDashboardNotification" android:exported="false" />
+
 
         <activity
             android:name=".Settings.EditSettingActivity"

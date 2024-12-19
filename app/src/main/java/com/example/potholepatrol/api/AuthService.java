@@ -1,5 +1,8 @@
 package com.example.potholepatrol.api;
 
+import com.example.potholepatrol.model.DeleteNotificationRequest;
+import com.example.potholepatrol.model.NotificationRequest;
+import com.example.potholepatrol.model.NotificationResponse;
 import com.example.potholepatrol.model.DashboardStatsResponse;
 import com.example.potholepatrol.model.DistanceTraveledUpdateRequest;
 import com.example.potholepatrol.model.DistanceTraveledUpdateResponse;
@@ -20,7 +23,6 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -89,7 +91,26 @@ public interface AuthService {
             @Header("Authorization") String token,
             @Body DistanceTraveledUpdateRequest request);
 
+    @GET("notification/getUserNotifications")
+    Call<NotificationResponse> getUserNotifications(@Header("Authorization") String token);
 
+    @POST("notification/create")
+    Call<NotificationResponse> createNotification(
+            @Header("Authorization") String token,
+            @Body NotificationRequest request);
+
+    @Headers("Content-Type: application/json")
+    @PATCH("notification/markAsRead")
+    Call<Void> markAsRead(
+            @Header("Authorization") String token,
+            @Body Map<String, String> notificationIds  // Document that this should contain notificationIds
+    );
+
+    @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
+    Call<Void> deleteNotification(
+            @Header("Authorization") String token,
+            @Body DeleteNotificationRequest request
+    );
 
 
 }

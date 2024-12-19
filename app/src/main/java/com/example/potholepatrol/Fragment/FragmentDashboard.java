@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.potholepatrol.Activity.AddPotholeActivity;
 import com.example.potholepatrol.Dashboard.ActivityDashboardChart;
+import com.example.potholepatrol.Dashboard.ActivityDashboardNotification;
 import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
@@ -52,6 +55,20 @@ public class FragmentDashboard extends Fragment {
         textPotholes = view.findViewById(R.id.text_potholes_data);
         textDistance = view.findViewById(R.id.text_distance_data);
         textFalls = view.findViewById(R.id.text_falls_data);
+
+        // Initialize views
+        ImageView iconReport = view.findViewById(R.id.icon_report);
+        ImageView iconNotification = view.findViewById(R.id.icon_notification);
+
+        iconReport.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), AddPotholeActivity.class);
+            startActivity(intent);
+        });
+
+        iconNotification.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), ActivityDashboardNotification.class);
+            startActivity(intent);
+        });
 
         // Initialize button chart and set click listener
         View btnChart = view.findViewById(R.id.btn_chart);
