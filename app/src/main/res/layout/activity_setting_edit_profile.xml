@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,289 +8,271 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/edit_profile"
+    <!-- Fixed top section with background and profile image -->
+    <RelativeLayout
+        android:id="@+id/edit_profile_top_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#F5F5F5"
-        android:clipToPadding="false"
-        android:paddingTop="2dp"
-        android:paddingHorizontal="1dp">
+        android:layout_height="263dp">
+
+        <ImageView
+            android:id="@+id/background_blur"
+            android:layout_width="match_parent"
+            android:layout_height="263dp"
+            android:src="@drawable/image_4"
+            android:scaleType="fitXY" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="11dp"
+            android:paddingBottom="1dp">
 
-            <RelativeLayout
-                android:id="@+id/edit_profile_top_container"
+            <LinearLayout
+                android:id="@+id/edit_profile_title_container"
                 android:layout_width="match_parent"
-                android:layout_height="263dp"
-                android:layout_marginBottom="31dp">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginHorizontal="24dp"
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/background_blur"
+                    android:id="@+id/ic_back"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="87dp"
+                    android:src="@drawable/right_arrow"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:id="@+id/tile_edit_profile"
                     android:layout_width="match_parent"
-                    android:layout_height="263dp"
-                    android:src="@drawable/image_4"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/edit_profile2"
+                    android:textColor="#0D1B34"
+                    android:textStyle="bold"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/image_edit_profile_container"
+                android:layout_width="match_parent"
+                android:layout_height="167dp"
+                android:layout_marginHorizontal="118dp">
+
+                <ImageView
+                    android:id="@+id/image_edit_profile"
+                    android:layout_width="167dp"
+                    android:layout_height="167dp"
+                    android:src="@mipmap/ic_user"
                     android:scaleType="fitXY" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingTop="11dp"
-                    android:paddingBottom="1dp">
+                    android:paddingHorizontal="2dp"
+                    android:orientation="vertical">
 
-
-
-                    <LinearLayout
-                        android:id="@+id/edit_profile_title_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginHorizontal="24dp"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/ic_back"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:layout_marginEnd="87dp"
-                            android:src="@drawable/right_arrow"
-                            android:scaleType="fitXY" />
-
-                        <TextView
-                            android:id="@+id/tile_edit_profile"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/edit_profile2"
-                            android:textColor="#0D1B34"
-                            android:textSize="24sp" />
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/image_edit_profile_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="167dp"
-                        android:layout_marginHorizontal="118dp">
-
-                        <ImageView
-                            android:id="@+id/image_edit_profile"
-                            android:layout_width="match_parent"
-                            android:layout_height="167dp"
-                            android:src="@mipmap/ic_user"
-                            android:scaleType="fitXY" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:paddingHorizontal="2dp"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:id="@+id/ic_camera"
-                                android:layout_width="25dp"
-                                android:layout_height="22dp"
-                                android:layout_marginTop="130dp"
-                                android:src="@mipmap/ic_camera"
-                                android:scaleType="fitXY" />
-                        </LinearLayout>
-                    </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/ic_camera"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginTop="130dp"
+                        android:src="@mipmap/ic_camera"
+                        android:scaleType="fitXY" />
                 </LinearLayout>
             </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/edit_profile_container"
+    <!-- Scrollable form section -->
+    <ScrollView
+        android:id="@+id/form_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F5F5F5"
+        android:scrollbarThumbVertical="@android:color/darker_gray"
+        android:scrollbarSize="4dp"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="16dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:id="@+id/edit_profile_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="27dp"
+            android:paddingBottom="107dp"
+            android:paddingHorizontal="35dp"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/name"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/edit_text_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="27dp"
-                android:paddingBottom="107dp"
-                android:paddingHorizontal="35dp"
-                android:orientation="vertical">
+                android:background="@drawable/setting_frame"
+                android:elevation="5dp"
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginHorizontal="5dp"
+                android:hint="Enter your name"
+                android:textColor="#534C4C"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/title_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:text="Email"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/edit_text_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_frame"
+                android:elevation="5dp"
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginHorizontal="5dp"
+                android:hint="Enter your email"
+                android:textColor="#534C4C"
+                android:textSize="14sp"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                android:id="@+id/title_old_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Old Password"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/edit_text_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_frame"
+                android:elevation="5dp"
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginHorizontal="5dp"
+                android:hint="Enter your old password"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/title_new_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:text="New password"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/edit_text_new_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_frame"
+                android:elevation="5dp"
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginHorizontal="5dp"
+                android:hint="Enter your new password"
+                android:textColor="#534C4C"
+                android:textSize="14sp"
+                android:inputType="textEmailAddress" />
+            <TextView
+                android:id="@+id/title_date_of_birth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:text="@string/date_of_birth"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/edit_text_date_of_birth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_frame"
+                android:elevation="5dp"
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginHorizontal="5dp"
+                android:hint="Enter your date of birth (dd/mm/yyyy)"
+                android:textColor="#534C4C"
+                android:textSize="14sp"
+                android:inputType="date" />
+
+            <TextView
+                android:id="@+id/title_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="9dp"
+                android:text="@string/country_region"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/edit_text_country"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_frame"
+                android:elevation="5dp"
+                android:paddingVertical="16dp"
+                android:paddingHorizontal="15dp"
+                android:layout_marginBottom="18dp"
+                android:layout_marginHorizontal="5dp"
+                android:hint="Enter your country"
+                android:textColor="#534C4C"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/btn_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:background="@drawable/btn_frame"
+                app:cornerRadius="15dp"
+                android:paddingVertical="10dp"
+                android:orientation="vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="5dp">
 
                 <TextView
-                    android:id="@+id/title_name"
+                    android:id="@+id/title_confirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/name"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:id="@+id/name_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/search_frame"
-                    android:paddingVertical="16dp"
-                    android:paddingHorizontal="15dp"
-                    android:layout_marginBottom="18dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/title_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="James"
-                        android:textColor="#534C4C"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/title_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="9dp"
-                    android:text="Email"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:id="@+id/email_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/search_frame"
-                    android:paddingVertical="16dp"
-                    android:paddingHorizontal="14dp"
-                    android:layout_marginBottom="19dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/title_user_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="james@gmail.com"
-                        android:textColor="#534C4C"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/title_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/password"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:id="@+id/password_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/search_frame"
-                    android:paddingVertical="16dp"
-                    android:paddingHorizontal="15dp"
-                    android:layout_marginBottom="18dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/title_user_password"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="************"
-                        android:textColor="#000000"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/title_date_of_birth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="9dp"
-                    android:text="@string/date_of_birth"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:id="@+id/date_of_birth_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/search_frame"
-                    android:paddingVertical="16dp"
-                    android:paddingHorizontal="15dp"
-                    android:layout_marginBottom="18dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/title_user_date_of_birth"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="01/01/2004"
-                        android:textColor="#534C4C"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:id="@+id/ic_show_date"
-                        android:layout_width="16dp"
-                        android:layout_height="9dp"
-                        android:src="@mipmap/ic_show"
-                        android:scaleType="fitXY" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/title_country"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="9dp"
-                    android:text="@string/country_region"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <LinearLayout
-                    android:id="@+id/country_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/search_frame"
-                    android:paddingVertical="16dp"
-                    android:paddingHorizontal="15dp"
-                    android:layout_marginBottom="18dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/title_user_country"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="Vietnam"
-                        android:textColor="#534C4C"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:id="@+id/ic_show_country"
-                        android:layout_width="16dp"
-                        android:layout_height="9dp"
-                        android:src="@mipmap/ic_show"
-                        android:scaleType="fitXY" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/btn_confirm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:background="@drawable/btn_frame"
-                    android:paddingVertical="17dp"
-                    android:elevation="20dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/title_confirm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/confirm3"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                    android:text="@string/confirm3"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

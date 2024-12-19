@@ -139,7 +139,7 @@
     <string name="describe_your_problem">Describe your problem</string>
     <string name="write_something">Write something!</string>
     <string name="terms_amp_policies2"><![CDATA[Terms & Policies]]></string>
-    <string name="privacy22">By using Pothole Patrol,  you agree to the following:   1. Services: Users can report potholes with photos and GPS location to relevant authorities.   2. User Responsibilities: Do not submit false information or illegal content.   3. Personal Data: We collect personal info, location, and media solely for processing reports. Data may be shared with municipal services.   4. Liability: We are not responsible for delays or unresolved reports.   5. Updates: Terms may change, and continued use implies acceptance.</string>
+    <string name="privacy22">By using Pothole Patrol, you agree to the following:\n\n1. Services: Users can report potholes with photos and GPS location to relevant authorities.\n\n2. User Responsibilities: Do not submit false information or illegal content.\n\n3. Personal Data: We collect personal info, location, and media solely for processing reports. Data may be shared with municipal services.\n\n4. Liability: We are not responsible for delays or unresolved reports.\n\n5. Updates: Terms may change, and continued use implies acceptance.</string>
     <string name="get_started">Get Started</string>
     <string name="dashboard2">Dashboard</string>
     <string name="map2">Map</string>

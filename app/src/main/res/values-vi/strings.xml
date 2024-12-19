@@ -137,7 +137,7 @@
     <string name="describe_your_problem">Mô tả sự cố của bạn</string>
     <string name="write_something">Viết gì đó!</string>
     <string name="terms_amp_policies2"><![CDATA[Điều khoản & Hỗ trợ]]></string>
-    <string name="privacy22">Bằng cách sử dụng Pothole Patrol, bạn đồng ý với những điều sau: 1. Dịch vụ: Người dùng có thể báo cáo ổ gà có ảnh và vị trí GPS cho các cơ quan có liên quan.   2. Trách nhiệm của người dùng: Không gửi thông tin sai lệch hoặc nội dung bất hợp pháp.   3. Dữ liệu cá nhân: Chúng tôi thu thập thông tin cá nhân, vị trí và phương tiện chỉ để xử lý báo cáo. Dữ liệu có thể được chia sẻ với các dịch vụ thành phố.   4. Trách nhiệm pháp lý: Chúng tôi không chịu trách nhiệm về sự chậm trễ hoặc các báo cáo chưa được giải quyết.   5. Cập nhật: Điều khoản có thể thay đổi và tiếp tục sử dụng có nghĩa là chấp nhận.</string>
+    <string name="privacy22">Bằng cách sử dụng Pothole Patrol, bạn đồng ý với những điều sau:\n\n1. Dịch vụ: Người dùng có thể báo cáo ổ gà có ảnh và vị trí GPS cho các cơ quan có liên quan.\n\n2. Trách nhiệm của người dùng: Không gửi thông tin sai lệch hoặc nội dung bất hợp pháp.\n\n3. Dữ liệu cá nhân: Chúng tôi thu thập thông tin cá nhân, vị trí và phương tiện chỉ để xử lý báo cáo. Dữ liệu có thể được chia sẻ với các dịch vụ thành phố.\n\n4. Trách nhiệm pháp lý: Chúng tôi không chịu trách nhiệm về sự chậm trễ hoặc các báo cáo chưa được giải quyết.\n\n5. Cập nhật: Điều khoản có thể thay đổi và tiếp tục sử dụng có nghĩa là chấp nhận.</string>
     <string name="get_started">Bắt đầu</string>
     <string name="dashboard2">Màn hình chính</string>
     <string name="map2">Bản đồ</string>

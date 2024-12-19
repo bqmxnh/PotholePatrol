@@ -20,7 +20,8 @@
         <ImageView
             android:id="@+id/user_info_background"
             android:layout_width="match_parent"
-            android:layout_height="250dp"            android:src="@drawable/image_4"
+            android:layout_height="250dp"
+            android:src="@drawable/image_4"
             android:scaleType="fitXY" />
 
         <LinearLayout
@@ -156,10 +157,12 @@
 
     <!-- Content Section -->
     <ScrollView
+        android:id="@+id/content_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:layout_marginTop="-20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
