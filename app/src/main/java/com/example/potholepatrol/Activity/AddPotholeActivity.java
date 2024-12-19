@@ -30,6 +30,10 @@ public class AddPotholeActivity extends AppCompatActivity {
     private Switch damageSwitch;
     private AppCompatButton confirmButton;
     private ImageButton backButton;
+    private SharedPreferences sharedPreferences;
+    private static final String PRIVACY_PREFS = "PrivacySettings";
+    private static final String KEY_DATA_SHARING = "isSharingOn";
+
 
     // Dimension buttons
     private TextView compactBtn, averageBtn, largeBtn;
@@ -59,10 +63,14 @@ public class AddPotholeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pothole_report);
 
+        sharedPreferences = getSharedPreferences(PRIVACY_PREFS, MODE_PRIVATE);
+
         initializeViews();
         setupClickListeners();
         setupLocationServices();
+        updateConfirmButtonState();
     }
+
 
 
     private void initializeViews() {
@@ -91,6 +99,24 @@ public class AddPotholeActivity extends AppCompatActivity {
         lowBtn = findViewById(R.id.btn_low);
         mediumBtn = findViewById(R.id.btn_medium);
         highBtn = findViewById(R.id.btn_high);
+
+        confirmButton.setEnabled(false);
+
+    }
+
+    private void updateConfirmButtonState() {
+        boolean isDataSharingEnabled = sharedPreferences.getBoolean(KEY_DATA_SHARING, false);
+        confirmButton.setEnabled(isDataSharingEnabled);
+
+        // Optionally update the button's appearance
+        confirmButton.setAlpha(isDataSharingEnabled ? 1.0f : 0.5f);
+
+        // Show a message if data sharing is disabled
+        if (!isDataSharingEnabled) {
+            Toast.makeText(this,
+                    "Please enable data sharing in Privacy Settings to report potholes",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setupClickListeners() {
@@ -226,6 +252,14 @@ public class AddPotholeActivity extends AppCompatActivity {
     };
 
     private void submitPotholeReport() {
+        // First check if data sharing is enabled
+        if (!sharedPreferences.getBoolean(KEY_DATA_SHARING, false)) {
+            Toast.makeText(this,
+                    "Data sharing must be enabled to report potholes",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!validateInput()) {
             return;
         }
@@ -302,5 +336,9 @@ public class AddPotholeActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         return sharedPreferences.getString("accessToken", ""); // Retrieve the stored access token
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateConfirmButtonState();
+    }
 }
