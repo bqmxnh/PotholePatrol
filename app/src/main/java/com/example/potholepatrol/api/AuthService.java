@@ -1,6 +1,8 @@
 package com.example.potholepatrol.api;
 
 import com.example.potholepatrol.model.DashboardStatsResponse;
+import com.example.potholepatrol.model.DistanceTraveledUpdateRequest;
+import com.example.potholepatrol.model.DistanceTraveledUpdateResponse;
 import com.example.potholepatrol.model.ForgetPasswordRequest;
 import com.example.potholepatrol.model.ForgetPasswordResponse;
 import com.example.potholepatrol.model.LoginRequest;
@@ -81,6 +83,11 @@ public interface AuthService {
 
     @GET("dashboard/stats")
     Call<DashboardStatsResponse> getDashboardStats(@Header("Authorization") String token);
+
+    @PATCH("user/updateDistance")
+    Call<DistanceTraveledUpdateResponse> updateDistanceTraveled(
+            @Header("Authorization") String token,
+            @Body DistanceTraveledUpdateRequest request);
 
 
 

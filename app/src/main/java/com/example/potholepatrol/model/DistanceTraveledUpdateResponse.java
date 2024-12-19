@@ -1,12 +1,9 @@
 package com.example.potholepatrol.model;
 
-import com.google.gson.annotations.SerializedName;
-
-public class DashboardStatsResponse {
+public class DistanceTraveledUpdateResponse {
     private String status;
     private Data data;
 
-    // Getters and setters
     public String getStatus() {
         return status;
     }
@@ -26,9 +23,7 @@ public class DashboardStatsResponse {
     public static class Data {
         private int total;
         private int falls;
-
-        @SerializedName("distance_traveled")  // Mapping JSON field 'distance_traveled' to Java field 'distanceTraveled'
-        private double distanceTraveled;
+        private double distance_traveled;
 
         public int getTotal() {
             return total;
@@ -47,11 +42,12 @@ public class DashboardStatsResponse {
         }
 
         public double getDistanceTraveled() {
-            return distanceTraveled;
+            return distance_traveled;
         }
 
         public void setDistanceTraveled(double distanceTraveled) {
-            this.distanceTraveled = distanceTraveled;
+            this.distance_traveled = distanceTraveled;
         }
     }
 }
+

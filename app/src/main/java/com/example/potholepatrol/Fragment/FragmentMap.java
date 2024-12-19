@@ -36,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.potholepatrol.Activity.AddPotholeActivity;
-import com.example.potholepatrol.Language.App;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationCallback;
@@ -163,11 +162,6 @@ public class FragmentMap extends Fragment implements LocationListener {
                 break;
         }
 
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(App.wrap(context));
     }
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {

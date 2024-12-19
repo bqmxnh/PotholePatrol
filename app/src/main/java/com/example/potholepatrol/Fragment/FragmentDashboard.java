@@ -22,6 +22,7 @@ import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.DashboardStatsResponse;
 import com.example.potholepatrol.model.UserProfileResponse;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -104,10 +105,16 @@ public class FragmentDashboard extends Fragment {
             public void onResponse(Call<DashboardStatsResponse> call, Response<DashboardStatsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     DashboardStatsResponse stats = response.body();
+                    String rawResponse = new Gson().toJson(response.body());
+                    Log.d("FragmentDashboard", "Raw JSON Response: " + rawResponse);
+                    Log.d("FragmentDashboard", "Distance Traveled: " + stats.getData().getDistanceTraveled());
+                    Log.d("FragmentDashboard", "Total: " + stats.getData().getTotal());
+                    Log.d("FragmentDashboard", "Falls: " + stats.getData().getFalls());
 
                     textPotholes.setText(String.valueOf(stats.getData().getTotal()));
                     textFalls.setText(String.valueOf(stats.getData().getFalls()));
-                    textDistance.setText(stats.getData().getDistanceTraveled() + " km");
+                    double distance = stats.getData().getDistanceTraveled();
+                    textDistance.setText(String.format("%.1f km", distance));
                 } else {
                     Log.e("FragmentDashboard", "Failed to load dashboard stats. Code: " + response.code());
                 }
