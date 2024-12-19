@@ -1,5 +1,6 @@
 package com.example.potholepatrol.api;
 
+import com.example.potholepatrol.model.DashboardStatsResponse;
 import com.example.potholepatrol.model.ForgetPasswordRequest;
 import com.example.potholepatrol.model.ForgetPasswordResponse;
 import com.example.potholepatrol.model.LoginRequest;
@@ -77,6 +78,9 @@ public interface AuthService {
             @Header("Authorization") String token,
             @Body Map<String, Object> fields
     );
+
+    @GET("dashboard/stats")
+    Call<DashboardStatsResponse> getDashboardStats(@Header("Authorization") String token);
 
 
 

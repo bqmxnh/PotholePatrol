@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
+import com.example.potholepatrol.model.DashboardStatsResponse;
 import com.example.potholepatrol.model.UserProfileResponse;
 
 import retrofit2.Call;
@@ -27,7 +28,7 @@ import retrofit2.Response;
 
 public class FragmentDashboard extends Fragment {
 
-    private TextView textUsername;
+    private TextView textUsername, textPotholes, textDistance, textFalls;
 
     @Nullable
     @Override
@@ -42,13 +43,18 @@ public class FragmentDashboard extends Fragment {
         window.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.status_bar_dashboard));
         window.setNavigationBarColor(ContextCompat.getColor(requireContext(), R.color.status_bar_dashboard));
 
-        // Initialize TextView for username
+        // Initialize views
         textUsername = view.findViewById(R.id.text_username);
+        textPotholes = view.findViewById(R.id.text_potholes_data);
+        textDistance = view.findViewById(R.id.text_distance_data);
+        textFalls = view.findViewById(R.id.text_falls_data);
 
-        // Load user profile
+        // Load data
         loadUserProfile();
+        loadDashboardStats();
 
         return view;
+
     }
 
     private String getAccessToken() {
@@ -82,4 +88,30 @@ public class FragmentDashboard extends Fragment {
             }
         });
     }
+
+    private void loadDashboardStats() {
+        String token = "Bearer " + getAccessToken();
+
+        AuthService authService = ApiClient.getClient().create(AuthService.class);
+        authService.getDashboardStats(token).enqueue(new Callback<DashboardStatsResponse>() {
+            @Override
+            public void onResponse(Call<DashboardStatsResponse> call, Response<DashboardStatsResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    DashboardStatsResponse stats = response.body();
+
+                    textPotholes.setText(String.valueOf(stats.getData().getTotal()));
+                    textFalls.setText(String.valueOf(stats.getData().getFalls()));
+                    textDistance.setText(stats.getData().getDistanceTraveled() + " km");
+                } else {
+                    Log.e("FragmentDashboard", "Failed to load dashboard stats. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DashboardStatsResponse> call, Throwable t) {
+                Log.e("FragmentDashboard", "Error loading dashboard stats: " + t.getMessage());
+            }
+        });
+    }
+
 }
