@@ -1288,7 +1288,6 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     // Cải thiện dialog hiển thị khi đến nơi
-    // Cải thiện dialog hiển thị khi đến nơi
     private void showArrivedDialog() {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_arrived);
