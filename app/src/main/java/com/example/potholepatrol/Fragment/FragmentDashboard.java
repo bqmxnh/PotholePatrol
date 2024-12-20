@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,7 @@ import com.example.potholepatrol.model.StatisticsData;
 import com.example.potholepatrol.model.UserProfileResponse;
 import com.google.gson.Gson;
 
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,6 +49,7 @@ import retrofit2.Response;
 public class FragmentDashboard extends Fragment {
 
     private TextView textUsername, textPotholes, textDistance, textFalls;
+    public List<StatisticsData> data;
 
     @Nullable
     @Override
@@ -81,14 +84,13 @@ public class FragmentDashboard extends Fragment {
             startActivity(intent);
         });
 
-        // Initialize button chart and set click listener
+
         View btnChart = view.findViewById(R.id.btn_chart);
         btnChart.setOnClickListener(v -> {
-            // Start ActivityDashboardChart
             Intent intent = new Intent(requireContext(), ActivityDashboardChart.class);
             startActivity(intent);
         });
-        // Load data
+
         loadUserProfile();
         loadDashboardStats();
        loadDailyChart();
@@ -200,18 +202,41 @@ public class FragmentDashboard extends Fragment {
         Log.d("DailyChart", "startDate: " + startDate);
         Log.d("DailyChart", "endDate: " + endDate);
 
-        // Khởi tạo service và gọi API
         AuthService authService = ApiClient.getClient().create(AuthService.class);
 
-        // Gọi API với các tham số query (startDate và endDate)
-        authService.getDailyChart(token, startDate, endDate).enqueue(new Callback<DailyChartResponse>() {
+        DailyChartRequest requestBody = new DailyChartRequest(startDate, endDate);
+
+        authService.getDailyChart(token, requestBody).enqueue(new Callback<DailyChartResponse>() {
             @Override
             public void onResponse(Call<DailyChartResponse> call, Response<DailyChartResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     DailyChartResponse chartResponse = response.body();
                     Log.d("DailyChart", "Request URL: " + call.request().url().toString());
                     Log.d("DailyChart", "Raw JSON Response: " + new Gson().toJson(response.body()));
-                    // Xử lý dữ liệu ở đây
+                    data = chartResponse.getData();
+
+                    SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    if (data != null && !data.isEmpty()) {
+                        int count = 1;
+                        for (StatisticsData stat : data) {
+                            if (count > 5) break;
+
+                            // Save only the date and total values
+                            String chartKey = "DailyChart" + count;
+                            String chartValue = "Date: " + stat.getDate() + ", Total: " + stat.getTotal();
+
+                            editor.putString(chartKey, chartValue);
+                            Log.d("DailyChartSave", "Saved " + chartKey + ": " + chartValue);
+                            count++;
+                        }
+
+                        // Apply changes asynchronously
+                        editor.apply();
+                    } else {
+                        Log.e("DailyChartSave", "No data available to save.");
+                    }
                 } else {
                     Log.e("DailyChart", "Failed to load daily chart. Code: " + response.code());
                     if (response.errorBody() != null) {
@@ -225,21 +250,23 @@ public class FragmentDashboard extends Fragment {
                 }
             }
 
+
             @Override
             public void onFailure(Call<DailyChartResponse> call, Throwable t) {
                 Log.e("DailyChart", "Error: " + t.getMessage());
             }
         });
-
     }
 
 
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+

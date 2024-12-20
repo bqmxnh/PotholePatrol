@@ -1,23 +1,63 @@
 package com.example.potholepatrol.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class StatisticsData {
-
-    @SerializedName("date")
+public class StatisticsData implements Parcelable {
     private String date;
-
-    @SerializedName("total")
     private int total;
-
-    @SerializedName("Low")
     private int low;
-
-    @SerializedName("Medium")
     private int medium;
-
-    @SerializedName("High")
     private int high;
+
+
+    public StatisticsData(String date, int total, int low, int medium, int high) {
+        this.date = date;
+        this.total = total;
+        this.low = low;
+        this.medium = medium;
+        this.high = high;
+    }
+
+    public StatisticsData(String date, int total) {
+        this.date = date;
+        this.total = total;
+    }
+
+
+    protected StatisticsData(Parcel in) {
+        date = in.readString();
+        total = in.readInt();
+        low = in.readInt();
+        medium = in.readInt();
+        high = in.readInt();
+    }
+
+    public static final Creator<StatisticsData> CREATOR = new Creator<StatisticsData>() {
+        @Override
+        public StatisticsData createFromParcel(Parcel in) {
+            return new StatisticsData(in);
+        }
+
+        @Override
+        public StatisticsData[] newArray(int size) {
+            return new StatisticsData[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(date);
+        dest.writeInt(total);
+        dest.writeInt(low);
+        dest.writeInt(medium);
+        dest.writeInt(high);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
 
     public String getDate() {

@@ -1,5 +1,6 @@
 package com.example.potholepatrol.api;
 
+import com.example.potholepatrol.model.DailyChartRequest;
 import com.example.potholepatrol.model.DailyChartResponse;
 import com.example.potholepatrol.model.DeleteNotificationRequest;
 import com.example.potholepatrol.model.NotificationRequest;
@@ -114,12 +115,12 @@ public interface AuthService {
             @Body DeleteNotificationRequest request
     );
 
-    @GET("your-endpoint")
+    @POST("dashboard/dailyChart")
     Call<DailyChartResponse> getDailyChart(
             @Header("Authorization") String token,
-            @Query("startDate") String startDate,
-            @Query("endDate") String endDate
+            @Body DailyChartRequest body
     );
+
 
 
 
