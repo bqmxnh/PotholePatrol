@@ -29,12 +29,14 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,8 +89,10 @@ import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
@@ -111,7 +115,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     private boolean isNavigating = false;
     private List<Pothole> potholes = new ArrayList<>();
     private View navigationInfoPanel;
-    private View zoomControls;
+    private View mapControls;
     private View locationButton;
     private ImageView btnBackNavigation;
     private TextView textEstimatedTime;
@@ -125,6 +129,10 @@ public class FragmentMap extends Fragment implements LocationListener {
     private Dialog shakeDialog = null;
     private MediaPlayer mediaPlayer;
     private SharedPreferences settingsPrefs;
+    private ImageView buttonFilter;
+    private List<Pothole> filteredPotholes = new ArrayList<>();
+    private Dialog filterDialog;
+    private boolean isInfoWindowClosing = false;
 
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
@@ -287,7 +295,7 @@ public class FragmentMap extends Fragment implements LocationListener {
         View rootView = inflater.inflate(R.layout.activity_map, container, false);
         // Initialize views
         navigationInfoPanel = rootView.findViewById(R.id.navigation_info_panel);
-        zoomControls = rootView.findViewById(R.id.zoom_controls);
+        mapControls = rootView.findViewById(R.id.map_controls);
         locationButton = rootView.findViewById(R.id.location_button);
         textEstimatedTime = rootView.findViewById(R.id.text_estimated_time);
         textDistance = rootView.findViewById(R.id.text_distance);
@@ -467,12 +475,12 @@ public class FragmentMap extends Fragment implements LocationListener {
     public void setNavigationMode(boolean showNavigation) {
         if (showNavigation) {
             navigationInfoPanel.setVisibility(View.VISIBLE);
-            zoomControls.setVisibility(View.GONE);
+            mapControls.setVisibility(View.GONE);
             locationButton.setVisibility(View.GONE);
             btnBackNavigation.setVisibility(View.VISIBLE);
         } else {
             navigationInfoPanel.setVisibility(View.GONE);
-            zoomControls.setVisibility(View.VISIBLE);
+            mapControls.setVisibility(View.VISIBLE);
             locationButton.setVisibility(View.VISIBLE);
             if (btnBackNavigation != null) {
                 btnBackNavigation.setVisibility(View.GONE);
@@ -598,6 +606,122 @@ public class FragmentMap extends Fragment implements LocationListener {
                 mapView.getController().zoomOut();
             }
         });
+        buttonFilter = rootView.findViewById(R.id.button_filter);
+        buttonFilter.setOnClickListener(v -> showFilterDialog());
+    }
+
+    private void showFilterDialog() {
+        filterDialog = new Dialog(requireContext());
+        filterDialog.setContentView(R.layout.dialog_filter_potholes);
+        filterDialog.setCancelable(true);
+
+        if (filterDialog.getWindow() != null) {
+            filterDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        Spinner severitySpinner = filterDialog.findViewById(R.id.spinner_severity);
+        Spinner timeSpinner = filterDialog.findViewById(R.id.spinner_time);
+        Button btnApply = filterDialog.findViewById(R.id.btn_apply_filter);
+        Button btnReset = filterDialog.findViewById(R.id.btn_reset_filter);
+
+        // Setup severity spinner
+        ArrayAdapter<CharSequence> severityAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.severity_levels,
+                android.R.layout.simple_spinner_item
+        );
+        severityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        severitySpinner.setAdapter(severityAdapter);
+
+        // Setup time spinner
+        ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.time_filters,
+                android.R.layout.simple_spinner_item
+        );
+        timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        timeSpinner.setAdapter(timeAdapter);
+
+        btnApply.setOnClickListener(v -> {
+            String selectedSeverity = severitySpinner.getSelectedItem().toString();
+            String selectedTime = timeSpinner.getSelectedItem().toString();
+            applyFilters(selectedSeverity, selectedTime);
+            filterDialog.dismiss();
+        });
+
+        btnReset.setOnClickListener(v -> {
+            resetFilters();
+            filterDialog.dismiss();
+        });
+
+        filterDialog.show();
+    }
+
+    private void applyFilters(String severity, String timeFilter) {
+        filteredPotholes = new ArrayList<>();
+        long currentTime = System.currentTimeMillis();
+        long filterTimeMillis = getFilterTimeMillis(timeFilter);
+
+        for (Pothole pothole : potholes) {
+            boolean matchesSeverity = severity.equals("All") ||
+                    pothole.getSeverity().getLevel().equalsIgnoreCase(severity);
+
+            long potholeTime = parseDateTime(pothole.getCreatedAt());
+            boolean matchesTime = timeFilter.equals("All Time") ||
+                    (currentTime - potholeTime <= filterTimeMillis);
+
+            if (matchesSeverity && matchesTime) {
+                filteredPotholes.add(pothole);
+            }
+        }
+
+        displayPotholes(filteredPotholes);
+    }
+
+    // Helper method to get filter time in milliseconds
+    private long getFilterTimeMillis(String timeFilter) {
+        switch (timeFilter) {
+            case "Last 24 Hours":
+                return 24 * 60 * 60 * 1000L;
+            case "Last 7 Days":
+                return 7 * 24 * 60 * 60 * 1000L;
+            case "Last 30 Days":
+                return 30L * 24 * 60 * 60 * 1000L;
+            default:
+                return Long.MAX_VALUE;
+        }
+    }
+
+    // Helper method to parse datetime string
+    private long parseDateTime(String dateTime) {
+        try {
+            // Parse the datetime string "2024-12-15T07:11:02.755Z"
+            String[] parts = dateTime.split("T");
+            String[] dateParts = parts[0].split("-");
+            String[] timeParts = parts[1].split(":");
+
+            int year = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]) - 1; // Month is 0-based
+            int day = Integer.parseInt(dateParts[2]);
+            int hour = Integer.parseInt(timeParts[0]);
+            int minute = Integer.parseInt(timeParts[1]);
+            int second = (int) Float.parseFloat(timeParts[2].split("Z")[0]);
+
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.set(year, month, day, hour, minute, second);
+
+            return calendar.getTimeInMillis();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    // Method to reset filters
+    private void resetFilters() {
+        filteredPotholes.clear();
+        filteredPotholes.addAll(potholes);
+        displayPotholes(potholes);
     }
 
     // Kiểm tra tile có trong vùng cho phép
@@ -798,25 +922,82 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Hiển thị thông tin chi tiết ổ gà
     private void showPotholeDetails(Pothole pothole, Marker marker) {
+        // Create API client
+        OkHttpClient client = new OkHttpClient();
+
+        // Create JSON request body
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("userId", pothole.getReportedBy());
+
+            // Create request
+            Request request = new Request.Builder()
+                    .url(BASE_URL + "/user/getUser")
+                    .post(RequestBody.create(
+                            MediaType.parse("application/json"),
+                            requestBody.toString()))
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build();
+
+            // Make async API call
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e(TAG, "Failed to get user details", e);
+                    // Show UI with "Unknown User" on failure
+                    requireActivity().runOnUiThread(() ->
+                            updatePotholeDetailsUI(pothole, marker, "Unknown User"));
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    String username = "Unknown User";
+                    if (response.isSuccessful() && response.body() != null) {
+                        try {
+                            String jsonData = response.body().string();
+                            JSONObject jsonObject = new JSONObject(jsonData);
+                            username = jsonObject.getString("username");
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Error parsing user data", e);
+                        }
+                    }
+                    final String finalUsername = username;
+                    requireActivity().runOnUiThread(() ->
+                            updatePotholeDetailsUI(pothole, marker, finalUsername));
+                }
+            });
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating request body", e);
+            updatePotholeDetailsUI(pothole, marker, "Unknown User");
+        }
+    }
+
+    private void updatePotholeDetailsUI(Pothole pothole, Marker marker, String username) {
+        // Close any open info windows
         for (Object overlay : mapView.getOverlays()) {
             if (overlay instanceof Marker) {
                 ((Marker) overlay).closeInfoWindow();
             }
         }
 
+        // Inflate and setup the custom info window
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.map_pothole_click, null);
 
         TextView titleAddress = dialogView.findViewById(R.id.title_address);
         TextView titleAddressDetails = dialogView.findViewById(R.id.title_address_details);
         ImageView closeIcon = dialogView.findViewById(R.id.ic_close);
 
-        titleAddress.setText("Pothole Information");
-        titleAddressDetails.setText(String.format(
-                "Severity: %s\nDimension: %s\nDepth: %s",
+        titleAddress.setText(pothole.getLocation().getAddress());
+
+        // Format details with username
+        String details = String.format(
+                "Reported by: %s\nSeverity: %s\nDimension: %s\nDepth: %s",
+                username,
                 pothole.getSeverity().getLevel(),
                 pothole.getDescription().getDimension(),
                 pothole.getDescription().getDepth()
-        ));
+        );
+        titleAddressDetails.setText(details);
 
         ViewOverlayInfoWindow infoWindow = new ViewOverlayInfoWindow(dialogView, mapView);
         marker.setInfoWindow(infoWindow);
@@ -832,49 +1013,46 @@ public class FragmentMap extends Fragment implements LocationListener {
         MapEventsReceiver mapEventsReceiver = new MapEventsReceiver() {
             @Override
             public boolean singleTapConfirmedHelper(GeoPoint p) {
-                // Kiểm tra nếu đang trong chế độ navigation thì không cho click
-                if (isNavigating) {
+                // Kiểm tra nếu đang trong chế độ navigation hoặc đang đóng info window
+                if (isNavigating || isInfoWindowClosing) {
                     return true; // Chặn sự kiện click
                 }
 
-                // Lưu tọa độ vào SharedPreferences
-                SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                // Lấy tọa độ từ GeoPoint
-                String clickedLat = String.valueOf(p.getLatitude());
-                String clickedLon = String.valueOf(p.getLongitude());
-
-                editor.putString("lat", clickedLat);
-                editor.putString("lon", clickedLon);
-
-                // Thêm flag chỉ định vẽ route
-                editor.putBoolean("shouldDrawRoute", true);
-                editor.apply();
-
-                // Xóa marker cũ nếu tồn tại
-                if (currentMarker != null) {
-                    mapView.getOverlays().remove(currentMarker);
+                // Kiểm tra xem có info window nào đang mở không
+                boolean isInfoWindowOpen = false;
+                for (Object overlay : mapView.getOverlays()) {
+                    if (overlay instanceof Marker && ((Marker) overlay).isInfoWindowShown()) {
+                        isInfoWindowOpen = true;
+                        ((Marker) overlay).closeInfoWindow();
+                        return true; // Chặn sự kiện click nếu đang đóng info window
+                    }
                 }
 
-                // Tạo marker mới tại vị trí đã click
-                Marker newMarker = createMarker(p, R.drawable.marker_blue);
+                // Nếu không có info window đang mở, xử lý click bình thường
+                if (!isInfoWindowOpen) {
+                    // Lưu tọa độ vào SharedPreferences
+                    SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
 
-                // Cập nhật marker hiện tại
-                currentMarker = newMarker;
+                    String clickedLat = String.valueOf(p.getLatitude());
+                    String clickedLon = String.valueOf(p.getLongitude());
 
-                // Thêm marker mới vào mapView
-                mapView.getOverlays().add(currentMarker);
+                    editor.putString("lat", clickedLat);
+                    editor.putString("lon", clickedLon);
+                    editor.putBoolean("shouldDrawRoute", true);
+                    editor.apply();
 
-                // Vẽ route giữa vị trí hiện tại và vị trí mới click
-                drawRouteBetweenPoints(currentLat, currentLon, p.getLatitude(), p.getLongitude());
+                    // Xử lý marker và route
+                    if (currentMarker != null) {
+                        mapView.getOverlays().remove(currentMarker);
+                    }
 
-                // Làm mới bản đồ
-                mapView.invalidate();
+                    currentMarker = createMarker(p, R.drawable.marker_blue);
+                    mapView.getOverlays().add(currentMarker);
+                    drawRouteBetweenPoints(currentLat, currentLon, p.getLatitude(), p.getLongitude());
+                    mapView.invalidate();
+                }
 
-                // Hiển thị thông báo tọa độ
-               // Toast.makeText(requireContext(), "Clicked at: " + clickedLat + ", " + clickedLon, Toast.LENGTH_SHORT).show();
-                Log.d("MapClick", "Clicked at: " + clickedLat + ", " + clickedLon);
                 return true;
             }
 
@@ -884,7 +1062,6 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         };
 
-        // Thêm sự kiện vào MapView
         MapEventsOverlay eventsOverlay = new MapEventsOverlay(mapEventsReceiver);
         mapView.getOverlays().add(eventsOverlay);
     }

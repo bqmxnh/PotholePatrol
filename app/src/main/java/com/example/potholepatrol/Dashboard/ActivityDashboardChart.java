@@ -65,6 +65,10 @@ public class ActivityDashboardChart extends AppCompatActivity {
         setupClickListeners();
         updateSeverityDataFromSharedPreferences();
     }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
+    }
 
     private void setupClickListeners() {
         backButton.setOnClickListener(v -> finish());

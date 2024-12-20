@@ -1,6 +1,7 @@
 package com.example.potholepatrol.Dashboard;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.potholepatrol.Adapter.NotificationAdapter;
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
@@ -67,6 +69,10 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
 
         // Load notifications
         loadNotifications();
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
     private String getAuthToken() {

@@ -243,5 +243,6 @@
     <string name="have_a_nice_day">Have a nice day</string>
     <string name="hello">Hello,</string>
     <string name="data_statistics_chart">Data statistics chart</string>
+    <string name="potholes_reported_per_day">Potholes reported per day</string>
 
 </resources>

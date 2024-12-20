@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="severity_levels">
+        <item>All</item>
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="time_filters">
+        <item>All Time</item>
+        <item>Last 24 Hours</item>
+        <item>Last 7 Days</item>
+        <item>Last 30 Days</item>
+    </string-array></resources>

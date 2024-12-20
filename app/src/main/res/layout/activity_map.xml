@@ -150,36 +150,64 @@
 
         <!-- Zoom controls section -->
         <LinearLayout
-            android:id="@+id/zoom_controls"
+            android:id="@+id/map_controls"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/zoom"
-            android:elevation="10dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="15dp">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/button_zoom_in"
+            <!-- Filter Button -->
+            <LinearLayout
+                android:id="@+id/filter_control"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="12dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_zoomin" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="0dp"
+                android:background="@drawable/zoom"
+                android:gravity="center"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="15dp">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="12dp"
-                android:background="#B5B8BF" />
+                <ImageView
+                    android:id="@+id/button_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_filter" />
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/button_zoom_out"
+            <!-- Zoom Controls -->
+            <LinearLayout
+                android:id="@+id/zoom_controls"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="12dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_zoomout" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/zoom"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="15dp">
+
+                <ImageView
+                    android:id="@+id/button_zoom_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="12dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_zoomin" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="#B5B8BF" />
+
+                <ImageView
+                    android:id="@+id/button_zoom_out"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_zoomout" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Spacer -->
