@@ -1,5 +1,6 @@
 package com.example.potholepatrol.api;
 
+import com.example.potholepatrol.model.DailyChartResponse;
 import com.example.potholepatrol.model.DeleteNotificationRequest;
 import com.example.potholepatrol.model.NotificationRequest;
 import com.example.potholepatrol.model.NotificationResponse;
@@ -29,6 +30,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.HTTP;
+import retrofit2.http.Query;
 
 
 public interface AuthService {
@@ -103,7 +105,7 @@ public interface AuthService {
     @PATCH("notification/markAsRead")
     Call<Void> markAsRead(
             @Header("Authorization") String token,
-            @Body Map<String, String> notificationIds  // Document that this should contain notificationIds
+            @Body Map<String, String> notificationIds
     );
 
     @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
@@ -111,6 +113,19 @@ public interface AuthService {
             @Header("Authorization") String token,
             @Body DeleteNotificationRequest request
     );
+
+    @GET("your-endpoint")
+    Call<DailyChartResponse> getDailyChart(
+            @Header("Authorization") String token,
+            @Query("startDate") String startDate,
+            @Query("endDate") String endDate
+    );
+
+
+
+
+
+
 
 
 }
