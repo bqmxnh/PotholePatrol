@@ -13,6 +13,14 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -25,7 +33,10 @@ import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
+import com.example.potholepatrol.model.DailyChartRequest;
+import com.example.potholepatrol.model.DailyChartResponse;
 import com.example.potholepatrol.model.DashboardStatsResponse;
+import com.example.potholepatrol.model.StatisticsData;
 import com.example.potholepatrol.model.UserProfileResponse;
 import com.google.gson.Gson;
 
@@ -80,6 +91,8 @@ public class FragmentDashboard extends Fragment {
         // Load data
         loadUserProfile();
         loadDashboardStats();
+       loadDailyChart();
+
 
         return view;
 
@@ -139,9 +152,7 @@ public class FragmentDashboard extends Fragment {
 
 
                     DashboardStatsResponse.BySeverity severity = stats.getData().getBySeverity();
-                    Log.d("FragmentDashboard", "Low Severity: " + (severity.getLow() == 0 ? "N/A" : severity.getLow()));
-                    Log.d("FragmentDashboard", "Medium Severity: " + (severity.getMedium() == 0 ? "N/A" : severity.getMedium()));
-                    Log.d("FragmentDashboard", "High Severity: " + (severity.getHigh() == 0 ? "N/A" : severity.getHigh()));
+
 
                     // Lưu vào SharedPreferences
                     SharedPreferences sharedPreferences = getContext().getSharedPreferences("DashboardStats", Context.MODE_PRIVATE);
@@ -160,12 +171,75 @@ public class FragmentDashboard extends Fragment {
                 }
             }
 
-
             @Override
             public void onFailure(Call<DashboardStatsResponse> call, Throwable t) {
                 Log.e("FragmentDashboard", "Error loading dashboard stats: " + t.getMessage());
             }
         });
     }
+
+    private String[] getLastWeekDates() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+
+        String endDate = dateFormat.format(calendar.getTime());
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        String startDate = dateFormat.format(calendar.getTime());
+        return new String[]{startDate, endDate};
+    }
+
+    private void loadDailyChart() {
+        // Lấy token từ phương thức getAccessToken() (có thể là Bearer token)
+        String token = "Bearer " + getAccessToken();
+
+        // Lấy ngày bắt đầu và kết thúc từ phương thức getLastWeekDates()
+        String[] dates = getLastWeekDates();
+        String startDate = dates[0];
+        String endDate = dates[1];
+
+        Log.d("DailyChart", "startDate: " + startDate);
+        Log.d("DailyChart", "endDate: " + endDate);
+
+        // Khởi tạo service và gọi API
+        AuthService authService = ApiClient.getClient().create(AuthService.class);
+
+        // Gọi API với các tham số query (startDate và endDate)
+        authService.getDailyChart(token, startDate, endDate).enqueue(new Callback<DailyChartResponse>() {
+            @Override
+            public void onResponse(Call<DailyChartResponse> call, Response<DailyChartResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    DailyChartResponse chartResponse = response.body();
+                    Log.d("DailyChart", "Request URL: " + call.request().url().toString());
+                    Log.d("DailyChart", "Raw JSON Response: " + new Gson().toJson(response.body()));
+                    // Xử lý dữ liệu ở đây
+                } else {
+                    Log.e("DailyChart", "Failed to load daily chart. Code: " + response.code());
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Log.e("DailyChart", "Error Body: " + errorBody);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DailyChartResponse> call, Throwable t) {
+                Log.e("DailyChart", "Error: " + t.getMessage());
+            }
+        });
+
+    }
+
+
+
+
+
+
+
+
+
 
 }

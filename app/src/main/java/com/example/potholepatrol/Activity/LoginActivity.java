@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -57,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvForgot, tvCreate;
     private View viButton, enButton;
     private TextView viText, enText;
+    private CheckBox cbRemember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogle = findViewById(R.id.btnGoogle);
         tvForgot = findViewById(R.id.tvForgot);
         tvCreate = findViewById(R.id.tvCreate);
+        cbRemember = findViewById(R.id.cbRemember);
 
         // Language selector views
         viButton = findViewById(R.id.vi_button);
@@ -198,6 +201,14 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("email", email); // Lưu email
+            editor.putString("password", password); // Lưu password
+            editor.putBoolean("remember_me", cbRemember.isChecked());
+            editor.apply();
+
+            editor.apply();
             // Gọi hàm loginWithApi với email và password
             loginWithApi(email, password);
         });
