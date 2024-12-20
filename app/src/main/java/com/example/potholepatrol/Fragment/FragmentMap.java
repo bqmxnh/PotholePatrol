@@ -19,6 +19,9 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -120,6 +123,8 @@ public class FragmentMap extends Fragment implements LocationListener {
     private long lastUpdate = 0;
     private static final int MIN_TIME_BETWEEN_SHAKES = 1000; // Thời gian tối thiểu giữa các lần phát hiện (ms)
     private Dialog shakeDialog = null;
+    private MediaPlayer mediaPlayer;
+    private SharedPreferences settingsPrefs;
 
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
@@ -138,6 +143,17 @@ public class FragmentMap extends Fragment implements LocationListener {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         startRealTimeLocationUpdates();
 
+        // Khởi tạo MediaPlayer
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            mediaPlayer = MediaPlayer.create(getContext(), notification);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Khởi tạo SharedPreferences
+        settingsPrefs = requireActivity().getSharedPreferences("SettingsPrefs", Context.MODE_PRIVATE);
+
         // Khởi tạo sensor manager
         sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
@@ -147,21 +163,19 @@ public class FragmentMap extends Fragment implements LocationListener {
             }
         }
 
-        SharedPreferences settingsPrefs = requireActivity().getSharedPreferences("SettingsPrefs", Context.MODE_PRIVATE);
+        // Cài đặt độ nhạy
         String sensitivity = settingsPrefs.getString("detection_sensitivity", "medium");
-
         switch (sensitivity) {
             case "low":
-                SHAKE_THRESHOLD = 20.0f; // Ít nhạy hơn
+                SHAKE_THRESHOLD = 20.0f;
                 break;
             case "medium":
-                SHAKE_THRESHOLD = 16.0f; // Mặc định
+                SHAKE_THRESHOLD = 16.0f;
                 break;
             case "high":
-                SHAKE_THRESHOLD = 12.0f; // Nhạy hơn
+                SHAKE_THRESHOLD = 12.0f;
                 break;
         }
-
     }
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
@@ -202,9 +216,29 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Xử lý khi phát hiện rung lắc
     private void onShakeDetected() {
-        // Chỉ hiện dialog nếu chưa có dialog nào đang hiển thị
         if (shakeDialog == null || !shakeDialog.isShowing()) {
-            requireActivity().runOnUiThread(() -> showShakeDetectionDialog());
+            requireActivity().runOnUiThread(() -> {
+                showShakeDetectionDialog();
+
+                // Lấy preference thông báo
+                String alertPreference = settingsPrefs.getString("alert_preference", "Sound");
+
+                // Xử lý âm thanh và rung theo preference
+                if ("Sound".equals(alertPreference)) {
+                    // Phát âm thanh
+                    if (mediaPlayer != null) {
+                        mediaPlayer.start();
+                    }
+                } else if ("Vibrate".equals(alertPreference)) {
+                    // Chỉ rung
+                    if (getContext() != null) {
+                        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                        if (vibrator != null && vibrator.hasVibrator()) {
+                            vibrator.vibrate(300);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -1254,6 +1288,7 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     // Cải thiện dialog hiển thị khi đến nơi
+    // Cải thiện dialog hiển thị khi đến nơi
     private void showArrivedDialog() {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_arrived);
@@ -1265,11 +1300,29 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         Button btnOk = dialog.findViewById(R.id.btn_ok_arrived);
 
-        // Thêm hiệu ứng rung nhẹ khi hiển thị dialog
-        if (getContext() != null) {
-            Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrator != null && vibrator.hasVibrator()) {
-                vibrator.vibrate(500);
+        // Lấy preference thông báo
+        String alertPreference = settingsPrefs.getString("alert_preference", "Sound");
+
+        // Xử lý thông báo theo preference
+        if ("Sound".equals(alertPreference)) {
+            // Phát âm thanh
+            try {
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                MediaPlayer arrivedMediaPlayer = MediaPlayer.create(getContext(), notification);
+                arrivedMediaPlayer.setOnCompletionListener(MediaPlayer::release);
+                arrivedMediaPlayer.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if ("Vibrate".equals(alertPreference)) {
+            // Chỉ rung
+            if (getContext() != null) {
+                Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                if (vibrator != null && vibrator.hasVibrator()) {
+                    // Tạo mẫu rung đặc biệt cho thông báo đến nơi
+                    long[] pattern = {0, 300, 200, 300, 200, 300}; // Rung 3 lần
+                    vibrator.vibrate(pattern, -1);
+                }
             }
         }
 
@@ -1397,6 +1450,10 @@ public class FragmentMap extends Fragment implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
 
         // Reset navigation mode
         setNavigationMode(false);
