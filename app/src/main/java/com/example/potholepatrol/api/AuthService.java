@@ -17,6 +17,7 @@ import com.example.potholepatrol.model.NewPasswordResponse;
 import com.example.potholepatrol.model.PotholeRequest;
 import com.example.potholepatrol.model.RegisterRequest;
 import com.example.potholepatrol.model.RegisterResponse;
+import com.example.potholepatrol.model.ReportRequest;
 import com.example.potholepatrol.model.UserProfileResponse;
 import com.example.potholepatrol.model.VerifyOTPRequest;
 import com.example.potholepatrol.model.VerifyOTPResponse;
@@ -119,6 +120,13 @@ public interface AuthService {
     Call<DailyChartResponse> getDailyChart(
             @Header("Authorization") String token,
             @Body DailyChartRequest body
+    );
+
+    @Headers("Content-Type: application/json")
+    @POST("user/sendReport")
+    Call<Void> sendReport(
+            @Header("Authorization") String token,
+            @Body ReportRequest reportRequest
     );
 
 
