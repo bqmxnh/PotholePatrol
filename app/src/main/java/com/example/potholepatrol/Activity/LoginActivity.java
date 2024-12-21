@@ -17,9 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import retrofit2.Callback;
@@ -32,6 +34,8 @@ import androidx.credentials.CredentialManager;
 
 
 import com.example.potholepatrol.Language.App;
+import com.example.potholepatrol.Language.LanguageItem;
+import com.example.potholepatrol.Language.LanguageSpinnerAdapter;
 import com.example.potholepatrol.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -45,6 +49,8 @@ import com.example.potholepatrol.api.AuthService;
 import com.example.potholepatrol.model.LoginResponse;
 import com.example.potholepatrol.model.LoginRequest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -59,7 +65,8 @@ public class LoginActivity extends AppCompatActivity {
     private View viButton, enButton;
     private TextView viText, enText;
     private CheckBox cbRemember;
-
+    private Spinner languageSpinner;
+    private List<LanguageItem> languageItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +75,8 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize views
         initViews();
 
-        // Setup language selector
-        setupLanguageButtons();
+        // Setup language spinner
+        setupLanguageSpinner();
 
         // Setup other click listeners
         setupClickListeners();
@@ -93,27 +100,45 @@ public class LoginActivity extends AppCompatActivity {
         tvCreate = findViewById(R.id.tvCreate);
         cbRemember = findViewById(R.id.cbRemember);
 
-        // Language selector views
-        viButton = findViewById(R.id.vi_button);
-        enButton = findViewById(R.id.en_button);
-        viText = findViewById(R.id.text_vi);
-        enText = findViewById(R.id.text_en);
+        languageSpinner = findViewById(R.id.languageSpinner);
+
     }
 
-    private void setupLanguageButtons() {
-        // Set click listeners for language buttons
-        viButton.setOnClickListener(v -> {
-            showLanguageDialog("vi");
-        });
+    private void setupLanguageSpinner() {
+        languageItems = new ArrayList<>();
+        languageItems.add(new LanguageItem(R.drawable.flag_en, "English", "en"));
+        languageItems.add(new LanguageItem(R.drawable.flag_vi, "Tiếng Việt", "vi"));
+        languageItems.add(new LanguageItem(R.drawable.flag_ja, "日本語", "ja"));
 
-        enButton.setOnClickListener(v -> {
-            showLanguageDialog("en");
-        });
+        LanguageSpinnerAdapter adapter = new LanguageSpinnerAdapter(this, languageItems);
+        languageSpinner.setAdapter(adapter);
 
-        // Set initial state
+        // Set initial selection based on saved language
         String currentLang = getCurrentLanguage();
-        updateLanguageUI(currentLang.equals("vi"));
+        for (int i = 0; i < languageItems.size(); i++) {
+            if (languageItems.get(i).getLanguageCode().equals(currentLang)) {
+                languageSpinner.setSelection(i);
+                break;
+            }
+        }
+
+        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                LanguageItem selectedItem = (LanguageItem) parent.getItemAtPosition(position);
+                String newLanguage = selectedItem.getLanguageCode();
+                if (!newLanguage.equals(getCurrentLanguage())) {
+                    showLanguageDialog(newLanguage);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
+
+
 
     private void showLanguageDialog(String languageCode) {
         try {
@@ -133,14 +158,18 @@ public class LoginActivity extends AppCompatActivity {
             btnYes.setOnClickListener(v -> {
                 dialog.dismiss();
                 setNewLocale(languageCode);
-                updateLanguageUI(languageCode.equals("vi"));
             });
 
             btnNo.setOnClickListener(v -> {
                 dialog.dismiss();
-                // Khôi phục UI về trạng thái trước đó
+                // Restore previous selection in spinner
                 String currentLang = getCurrentLanguage();
-                updateLanguageUI(currentLang.equals("vi"));
+                for (int i = 0; i < languageItems.size(); i++) {
+                    if (languageItems.get(i).getLanguageCode().equals(currentLang)) {
+                        languageSpinner.setSelection(i, false);  // false to prevent triggering onItemSelected
+                        break;
+                    }
+                }
             });
 
             if (dialog.getWindow() != null) {
@@ -159,13 +188,18 @@ public class LoginActivity extends AppCompatActivity {
         settings.edit().putString("language", languageCode).apply();
 
         // Update locale for entire app
-        App.setLocale(this);
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        Resources resources = getResources();
+        Configuration config = new Configuration(resources.getConfiguration());
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
 
         // Restart activity
         Intent intent = getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         finish();
         startActivity(intent);
-        // Apply animation
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 

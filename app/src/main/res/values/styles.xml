@@ -25,5 +25,9 @@
 		<item name="android:windowSoftInputMode">adjustResize</item>
 		<item name="android:windowBackground">@android:color/transparent</item>
 	</style>
+	<style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+		<item name="android:background">@android:color/transparent</item>
+		<item name="android:dropDownVerticalOffset">8dp</item>
+	</style>
 
 </resources>

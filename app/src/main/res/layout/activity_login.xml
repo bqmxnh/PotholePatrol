@@ -6,59 +6,19 @@
     android:padding="24dp"
     android:background="#FFFFFF">
 
-    <!-- Language Selector -->
-    <LinearLayout
-        android:id="@+id/language_selector"
+    <Spinner
+        android:id="@+id/languageSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/dialog_frame"
-        android:padding="10dp"
-        android:orientation="horizontal">
-
-        <!-- VI Button -->
-        <LinearLayout
-            android:id="@+id/vi_button"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground">
-
-            <TextView
-                android:id="@+id/text_vi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="VI"
-                android:textColor="#000000"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- EN Button -->
-        <LinearLayout
-            android:id="@+id/en_button"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="4dp"
-            android:background="@drawable/dialog_frame"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground">
-
-            <TextView
-                android:id="@+id/text_en"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="EN"
-                android:textColor="#000000"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:minWidth="140dp"
+        android:popupBackground="@drawable/search_frame"
+        android:background="@drawable/search_frame"
+        android:dropDownWidth="140dp"
+        android:spinnerMode="dropdown"/>
 
     <!-- Motorcycle Illustration -->
     <ImageView
@@ -67,7 +27,7 @@
         android:layout_height="286dp"
         android:adjustViewBounds="true"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/language_selector"
+        android:layout_below="@id/languageSpinner"
         android:src="@drawable/motorcycle_illustration"
         />
 
