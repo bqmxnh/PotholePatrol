@@ -108,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         languageItems = new ArrayList<>();
         languageItems.add(new LanguageItem(R.drawable.flag_en, "English", "en"));
         languageItems.add(new LanguageItem(R.drawable.flag_vi, "Tiếng Việt", "vi"));
+        languageItems.add(new LanguageItem(R.drawable.flag_ko, "한국어", "ko"));
         languageItems.add(new LanguageItem(R.drawable.flag_ja, "日本語", "ja"));
 
         LanguageSpinnerAdapter adapter = new LanguageSpinnerAdapter(this, languageItems);
