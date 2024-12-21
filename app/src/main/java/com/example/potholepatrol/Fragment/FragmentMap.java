@@ -62,6 +62,10 @@ import com.example.potholepatrol.UICustom.ViewOverlayInfoWindow;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.example.potholepatrol.api.ApiClient;
+import com.example.potholepatrol.api.AuthService;
+import com.example.potholepatrol.model.DistanceTraveledUpdateResponse;
+import com.example.potholepatrol.model.DistanceTraveledUpdateRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,6 +137,8 @@ public class FragmentMap extends Fragment implements LocationListener {
     private List<Pothole> filteredPotholes = new ArrayList<>();
     private Dialog filterDialog;
     private boolean isInfoWindowClosing = false;
+    private double distanceCalcute;
+    private double distanceTraveled;
 
     final double MIN_LAT = 10.8593387269177;
     final double MAX_LAT = 10.89728831078;
@@ -363,6 +369,8 @@ public class FragmentMap extends Fragment implements LocationListener {
                     Log.d("stop", "Button stop navigation clicked");
 
                     stopUpdatingRoute();
+                    double result = Math.round((distanceCalcute - distanceTraveled) * 10.0) / 10.0;
+                    updateDistanceTraveled(distanceCalcute-distanceTraveled);
 
                     SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
                     String latString = preferences.getString("lat", null);
@@ -419,6 +427,8 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Thêm method để thoát khỏi chế độ navigation
     private void exitNavigationMode() {
+        double result = Math.round((distanceCalcute - distanceTraveled) * 10.0) / 10.0;
+        updateDistanceTraveled(result);
         // Dừng navigation nếu đang chạy
         if (isNavigating) {
             isNavigating = false;
@@ -1166,6 +1176,8 @@ public class FragmentMap extends Fragment implements LocationListener {
                             if (shortestRoute != null) {
                                 String geometry = shortestRoute.getString("geometry");
                                 double distance = shortestRoute.getDouble("distance");
+                                double distanceconver = Math.round((distance / 1000) * 10.0) / 10.0;
+                                distanceCalcute = distanceconver;
                                 double duration = shortestRoute.getDouble("duration");
                                 List<GeoPoint> points = decodePolyline(geometry);
 
@@ -1264,7 +1276,8 @@ public class FragmentMap extends Fragment implements LocationListener {
                             for (int i = 0; i < routes.length(); i++) {
                                 JSONObject route = routes.getJSONObject(i);
                                 double distance = route.getDouble("distance");
-
+                                double distanceConver = Math.round((distance / 1000) * 10.0) / 10.0;
+                                distanceTraveled = distanceConver;
                                 // Nếu tìm thấy tuyến đường ngắn hơn, cập nhật
                                 if (distance < minDistance) {
                                     minDistance = distance;
@@ -1583,6 +1596,35 @@ public class FragmentMap extends Fragment implements LocationListener {
     private void stopUpdatingRoute() {
         handler.removeCallbacks(updateRouteRunnable);
         isRouteUpdating = false;
+    }
+
+    private String getAccessToken() {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("accessToken", ""); // Trả về token hoặc chuỗi rỗng nếu không có
+    }
+    // Hàm cập gọi API cập nhật quãng đường đã đi
+    private void updateDistanceTraveled(double distance) {
+        String token = "Bearer " + getAccessToken();
+        Log.d("DistanceUpdate", "Token: " + token);
+        Log.d("DistanceUpdate", "Distance: " + distance);
+        // Create the request body with the distance value
+        DistanceTraveledUpdateRequest request = new DistanceTraveledUpdateRequest(distance);
+        // Get the API service
+        AuthService authService = ApiClient.getClient().create(AuthService.class);
+        // Make the PATCH request
+        authService.updateDistanceTraveled(token, request).enqueue(new retrofit2.Callback<DistanceTraveledUpdateResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<DistanceTraveledUpdateResponse> call, retrofit2.Response<DistanceTraveledUpdateResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                } else {
+                    Log.e("DistanceUpdate", "Failed to update distance. Code: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(retrofit2.Call<DistanceTraveledUpdateResponse> call, Throwable t) {
+                Log.e("DistanceUpdate", "Error updating distance: " + t.getMessage());
+            }
+        });
     }
 
     // 10. XỬ LÝ VÒNG ĐỜI FRAGMENT

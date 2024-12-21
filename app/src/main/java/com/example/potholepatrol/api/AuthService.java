@@ -21,6 +21,8 @@ import com.example.potholepatrol.model.ReportRequest;
 import com.example.potholepatrol.model.UserProfileResponse;
 import com.example.potholepatrol.model.VerifyOTPRequest;
 import com.example.potholepatrol.model.VerifyOTPResponse;
+import com.example.potholepatrol.model.DistanceTraveledUpdateRequest;
+import com.example.potholepatrol.model.DistanceTraveledUpdateResponse;
 
 import java.util.Map;
 
@@ -128,6 +130,10 @@ public interface AuthService {
             @Header("Authorization") String token,
             @Body ReportRequest reportRequest
     );
+
+
+
+
 
 
 

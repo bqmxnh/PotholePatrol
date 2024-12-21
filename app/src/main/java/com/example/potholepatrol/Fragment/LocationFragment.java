@@ -174,7 +174,7 @@ public class LocationFragment extends Fragment {
 
                     if (!results.isEmpty()) {
                         locationList.clear();
-                        int maxResults = Math.min(5, results.size());
+                        int maxResults = Math.min(10, results.size());
                         locationList.addAll(results.subList(0, maxResults));
                         locationAdapter.notifyDataSetChanged();
                     } else {
