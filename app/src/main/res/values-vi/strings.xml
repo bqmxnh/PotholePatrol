@@ -146,6 +146,7 @@
     <string name="you_have_arrived_safely">Bạn đã đến nơi an toàn!</string>
     <string name="ok">OK</string>
     <string name="be_careful">Cẩn thận!</string>
+    <string name="warning_pothole_detected_nearby">Cảnh báo: Phát hiện ổ gà ở gần!</string>
     <string name="stop">Dừng lại</string>
     <string name="route_to_this_location">Dẫn đường đến điểm đã chọn?</string>
     <string name="location_name">Tên địa điểm</string>

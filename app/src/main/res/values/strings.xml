@@ -22,7 +22,7 @@
     <string name="low">Low</string>
     <string name="medium">Medium</string>
     <string name="high">High</string>
-    <string name="distribution_of_potholes_nby_severity_level">Distribution of Potholes  by Severity Level</string>
+    <string name="distribution_of_potholes_nby_severity_level">Distribution of Potholes by Severity Level</string>
     <string name="notification">Notification</string>
     <string name="clear_all">Clear all</string>
     <string name="warning">Warning!!!</string>
@@ -148,8 +148,8 @@
     <string name="you_have_arrived_safely">You have arrived safely!</string>
     <string name="ok">OK</string>
     <string name="be_careful">Be careful</string>
-    <string name="warning_pothole_detected_nearby" translatable="false">Warning: Pothole detected nearby!</string>
 
+    <string name="warning_pothole_detected_nearby">Warning: Pothole detected nearby!</string>
     <string name="stop">Stop</string>
     <string name="route_to_this_location">Route to this location?</string>
     <string name="location_name">Location Name</string>
