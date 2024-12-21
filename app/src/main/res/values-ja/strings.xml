@@ -243,6 +243,12 @@
     <string name="hello">こんにちは,</string>
     <string name="data_statistics_chart">データ統計チャート</string>
     <string name="potholes_reported_per_day">1日あたりの報告された穴</string>
+    <string name="filter_potholes">"フィルターポットホール "</string>
+    <string name="time_period">"期間 "</string>
+    <string name="reset">リセット</string>
+    <string name="apply">適用する</string>
+    <string name="change_language">"言語を変更する "</string>
+    <string name="are_you_sure_you_want_to_change_the_language_the_app_will_restart_to_apply_changes">言語を変更してもよろしいですか?変更を適用するためにアプリが再起動されます。</string>
 
 </resources>
 

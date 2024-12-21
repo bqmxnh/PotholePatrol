@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Filter Potholes"
+        android:text="@string/filter_potholes"
         android:textAlignment="center"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Severity"
+        android:text="@string/severity_level"
         android:textSize="16sp"
         android:layout_marginBottom="8dp"/>
 
@@ -31,7 +31,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Time Period"
+        android:text="@string/time_period"
         android:textSize="16sp"
         android:layout_marginBottom="8dp"/>
 
@@ -51,7 +51,7 @@
             android:id="@+id/btn_reset_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reset"
+            android:text="@string/reset"
             android:backgroundTint="#800020"
             android:layout_marginEnd="8dp"/>
 
@@ -60,6 +60,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#AFC7B1"
-            android:text="Apply"/>
+            android:text="@string/apply"/>
     </LinearLayout>
 </LinearLayout>

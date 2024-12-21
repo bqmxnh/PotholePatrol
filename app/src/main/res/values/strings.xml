@@ -244,5 +244,12 @@
     <string name="hello">Hello,</string>
     <string name="data_statistics_chart">Data statistics chart</string>
     <string name="potholes_reported_per_day">Potholes reported per day</string>
+    <string name="filter_potholes">Filter Potholes</string>
+    <string name="time_period">Time Period</string>
+    <string name="reset">Reset</string>
+    <string name="apply">Apply</string>
+    <string name="change_language">Change Language</string>
+    <string name="are_you_sure_you_want_to_change_the_language_the_app_will_restart_to_apply_changes">Are you sure you want to change the language? The app will restart to apply changes.</string>
+    <string name="login_successful">Successful</string>
 
 </resources>
