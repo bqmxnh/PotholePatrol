@@ -250,6 +250,7 @@
     <string name="apply">Apply</string>
     <string name="change_language">Change Language</string>
     <string name="are_you_sure_you_want_to_change_the_language_the_app_will_restart_to_apply_changes">Are you sure you want to change the language? The app will restart to apply changes.</string>
-    <string name="login_successful">Successful</string>
+    <string name="login_successful" translatable="false">Successful</string>
+    <string name="actions">Actions</string>
 
 </resources>

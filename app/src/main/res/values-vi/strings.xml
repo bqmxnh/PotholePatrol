@@ -247,4 +247,5 @@
     <string name="apply">Áp dụng</string>
     <string name="change_language">Thay đổi ngôn ngữ</string>
     <string name="are_you_sure_you_want_to_change_the_language_the_app_will_restart_to_apply_changes">"Bạn có chắc chắn muốn thay đổi ngôn ngữ? Ứng dụng sẽ khởi động lại để áp dụng các thay đổi. "</string>
+    <string name="actions">Hành động</string>
 </resources>
