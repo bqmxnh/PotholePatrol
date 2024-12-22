@@ -182,42 +182,17 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         }
     }
 
-    private void notifyNewNotifications(List<NotificationItem> unreadNotifications) {
-        if (!unreadNotifications.isEmpty()) {
-            createNotificationChannel();
+    private void notifyNewNotifications(NotificationItem notification) {
+        String preference = getNotificationPreference();
 
-            Intent intent = new Intent(this, ActivityDashboardNotification.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-            // Tạo InboxStyle
-            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
-                    .setBigContentTitle("You have new notifications:");
-
-            for (NotificationItem item : unreadNotifications) {
-                inboxStyle.addLine(item.getTitle() + ": " + item.getMessage());
-            }
-
-            // Xây dựng thông báo
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_notification)
-                    .setContentTitle("Pothole Patrol")
-                    .setContentText("You have " + unreadNotifications.size() + " new notifications")
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setStyle(inboxStyle)
-                    .setGroup("PotholeNotifications")
-                    .setGroupSummary(true)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL); 
-
-            // Gửi thông báo
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(NOTIFICATION_ID, builder.build());
+        if ("Sound".equals(preference)) {
+            playNotificationSound();
+            vibrateDevice();
+            showPostNotification(notification.getTitle(), notification.getMessage());
+        } else if ("Vibrate".equals(preference)) {
+            vibrateDevice();
         }
     }
-
-
 
 
     private void loadNotifications() {
@@ -242,8 +217,13 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
                         }
                     }
 
+
                     if (!unreadNotifications.isEmpty()) {
-                        notifyNewNotifications(unreadNotifications);
+                        notifyNewNotifications(unreadNotifications.get(0));
+                        // Hiển thị số lượng thông báo chưa đọc
+                        String title = "Unread Notifications";
+                        String message = "You have " + unreadNotifications.size() + " unread notifications";
+                        showPostNotification(title, message);
                     }
 
                     notificationsList.clear();
@@ -253,6 +233,7 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
                     showStatusDialog(false, "Failed to load notifications");
                 }
             }
+
 
             @Override
             public void onFailure(Call<NotificationResponse> call, Throwable t) {
@@ -368,3 +349,5 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         });
     }
 }
+
+
