@@ -248,5 +248,6 @@
     <string name="apply">적용하다</string>
     <string name="change_language">언어 변경</string>
     <string name="are_you_sure_you_want_to_change_the_language_the_app_will_restart_to_apply_changes">언어를 변경하시겠습니까? 변경 사항을 적용하기 위해 앱이 다시 시작됩니다.</string>
+    <string name="actions">작업</string>
 
 </resources>
