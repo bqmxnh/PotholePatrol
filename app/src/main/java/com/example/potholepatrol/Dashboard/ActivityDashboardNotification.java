@@ -1,7 +1,11 @@
 package com.example.potholepatrol.Dashboard;
 
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,20 +17,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.potholepatrol.Adapter.NotificationAdapter;
-import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
@@ -45,6 +47,9 @@ import retrofit2.Response;
 
 public class ActivityDashboardNotification extends AppCompatActivity implements NotificationAdapter.OnNotificationActionListener {
 
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "pothole_patrol_channel";
+
     private ListView listViewNotifications;
     private NotificationAdapter adapter;
     private List<NotificationItem> notificationsList;
@@ -57,34 +62,44 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard_notification);
 
+        initializeViews();
+        setupStatusBar();
+        setupNotificationList();
+        startPeriodicChecking();
+    }
+
+    private void initializeViews() {
         ImageView icBack = findViewById(R.id.ic_back);
         icBack.setOnClickListener(v -> finish());
 
         TextView clearAll = findViewById(R.id.clear_all);
         clearAll.setOnClickListener(v -> clearAllNotifications());
+    }
 
+    private void setupStatusBar() {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
+    }
 
+    private void setupNotificationList() {
         authService = ApiClient.getClient().create(AuthService.class);
         listViewNotifications = findViewById(R.id.list_notifications);
         notificationsList = new ArrayList<>();
         adapter = new NotificationAdapter(this, notificationsList, this);
         listViewNotifications.setAdapter(adapter);
-
-        // Load notifications initially
         loadNotifications();
+    }
 
-        // Set up periodic notification checking
+    private void startPeriodicChecking() {
         handler = new Handler();
         notificationChecker = new Runnable() {
             @Override
             public void run() {
                 loadNotifications();
-                handler.postDelayed(this, 60000); // Repeat every 60 seconds
+                handler.postDelayed(this, 60000); // Check every minute
             }
         };
         handler.post(notificationChecker);
@@ -104,6 +119,50 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         return token.isEmpty() ? "" : "Bearer " + token;
     }
 
+    private String getNotificationPreference() {
+        SharedPreferences sharedPreferences = getSharedPreferences("SettingsPrefs", MODE_PRIVATE);
+        return sharedPreferences.getString("alert_preference", "Sound"); // Default to "Sound"
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Pothole Patrol";
+            String description = "Notifications from Pothole Patrol";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void showPostNotification(String title, String message) {
+        String preference = getNotificationPreference();
+
+        // Only show post notification if preference is "Sound"
+        if ("Sound".equals(preference)) {
+            createNotificationChannel();
+
+            Intent intent = new Intent(this, ActivityDashboardNotification.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                    PendingIntent.FLAG_IMMUTABLE);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_notification)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
+    }
+
     private void playNotificationSound() {
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
@@ -113,31 +172,52 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
     private void vibrateDevice() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null && vibrator.hasVibrator()) {
-            VibrationEffect effect = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                effect = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                VibrationEffect effect = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
                 vibrator.vibrate(effect);
+            } else {
+                // For older Android versions
+                vibrator.vibrate(500);
             }
         }
     }
 
-    private void notifyNewNotifications() {
-        String preference = getNotificationPreference();
+    private void notifyNewNotifications(List<NotificationItem> unreadNotifications) {
+        if (!unreadNotifications.isEmpty()) {
+            createNotificationChannel();
 
-        if ("Sound".equals(preference)) {
-            playNotificationSound();
-            vibrateDevice();
-        } else if ("Vibrate".equals(preference)) {
-            vibrateDevice();
+            Intent intent = new Intent(this, ActivityDashboardNotification.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+            // Tạo InboxStyle
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
+                    .setBigContentTitle("You have new notifications:");
+
+            for (NotificationItem item : unreadNotifications) {
+                inboxStyle.addLine(item.getTitle() + ": " + item.getMessage());
+            }
+
+            // Xây dựng thông báo
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_notification)
+                    .setContentTitle("Pothole Patrol")
+                    .setContentText("You have " + unreadNotifications.size() + " new notifications")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setStyle(inboxStyle)
+                    .setGroup("PotholeNotifications")
+                    .setGroupSummary(true)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL); 
+
+            // Gửi thông báo
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
         }
     }
 
-    private String getNotificationPreference() {
-        SharedPreferences sharedPreferences = getSharedPreferences("SettingsPrefs", MODE_PRIVATE);
-        return sharedPreferences.getString("alert_preference", "Sound"); // Default to "Sound"
-    }
+
 
 
     private void loadNotifications() {
@@ -154,9 +234,18 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
             public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     List<NotificationItem> newNotifications = response.body().getData();
-                    if (newNotifications.size() > notificationsList.size()) {
-                        notifyNewNotifications(); // Notify user of new notifications
+                    List<NotificationItem> unreadNotifications = new ArrayList<>();
+
+                    for (NotificationItem item : newNotifications) {
+                        if (!item.isRead()) {
+                            unreadNotifications.add(item);
+                        }
                     }
+
+                    if (!unreadNotifications.isEmpty()) {
+                        notifyNewNotifications(unreadNotifications);
+                    }
+
                     notificationsList.clear();
                     notificationsList.addAll(newNotifications);
                     adapter.notifyDataSetChanged();
@@ -198,7 +287,6 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         tvStatusMessage.setText(message);
 
         dialog.show();
-
         new Handler().postDelayed(dialog::dismiss, 2000);
     }
 
