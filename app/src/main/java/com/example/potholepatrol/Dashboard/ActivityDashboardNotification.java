@@ -29,6 +29,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.potholepatrol.Adapter.NotificationAdapter;
+import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
@@ -82,6 +83,10 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(App.wrap(newBase));
     }
 
     private void setupNotificationList() {
