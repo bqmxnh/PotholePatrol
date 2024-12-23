@@ -1,35 +1,24 @@
 package com.example.potholepatrol.Dashboard;
 
 import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.potholepatrol.Adapter.NotificationAdapter;
-import com.example.potholepatrol.Language.App;
 import com.example.potholepatrol.R;
 import com.example.potholepatrol.api.ApiClient;
 import com.example.potholepatrol.api.AuthService;
@@ -37,6 +26,7 @@ import com.example.potholepatrol.model.DeleteNotificationRequest;
 import com.example.potholepatrol.model.NotificationItem;
 import com.example.potholepatrol.model.NotificationResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,74 +38,35 @@ import retrofit2.Response;
 
 public class ActivityDashboardNotification extends AppCompatActivity implements NotificationAdapter.OnNotificationActionListener {
 
-    private static final int NOTIFICATION_ID = 1;
-    private static final String CHANNEL_ID = "pothole_patrol_channel";
-
     private ListView listViewNotifications;
     private NotificationAdapter adapter;
     private List<NotificationItem> notificationsList;
     private AuthService authService;
-    private Handler handler;
-    private Runnable notificationChecker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard_notification);
-
-        initializeViews();
-        setupStatusBar();
-        setupNotificationList();
-        startPeriodicChecking();
-    }
-
-    private void initializeViews() {
         ImageView icBack = findViewById(R.id.ic_back);
         icBack.setOnClickListener(v -> finish());
-
         TextView clearAll = findViewById(R.id.clear_all);
         clearAll.setOnClickListener(v -> clearAllNotifications());
-    }
-
-    private void setupStatusBar() {
+        // Status bar and navigation bar configuration
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
-    }
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(App.wrap(newBase));
-    }
 
-    private void setupNotificationList() {
+        // Initialize services and views
         authService = ApiClient.getClient().create(AuthService.class);
         listViewNotifications = findViewById(R.id.list_notifications);
         notificationsList = new ArrayList<>();
         adapter = new NotificationAdapter(this, notificationsList, this);
         listViewNotifications.setAdapter(adapter);
+
+        // Load notifications
         loadNotifications();
-    }
-
-    private void startPeriodicChecking() {
-        handler = new Handler();
-        notificationChecker = new Runnable() {
-            @Override
-            public void run() {
-                loadNotifications();
-                handler.postDelayed(this, 60000);
-            }
-        };
-        handler.post(notificationChecker);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (handler != null && notificationChecker != null) {
-            handler.removeCallbacks(notificationChecker);
-        }
     }
 
     private String getAuthToken() {
@@ -123,134 +74,9 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         String token = sharedPreferences.getString("accessToken", "");
         return token.isEmpty() ? "" : "Bearer " + token;
     }
-
-    private String getNotificationPreference() {
-        SharedPreferences sharedPreferences = getSharedPreferences("SettingsPrefs", MODE_PRIVATE);
-        return sharedPreferences.getString("alert_preference", "Sound"); // Default to "Sound"
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Pothole Patrol";
-            String description = "Notifications from Pothole Patrol";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    private void showPostNotification(String title, String message) {
-        String preference = getNotificationPreference();
-
-        if ("Sound".equals(preference)) {
-            createNotificationChannel();
-
-            Intent intent = new Intent(this, ActivityDashboardNotification.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                    PendingIntent.FLAG_IMMUTABLE);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_notification)
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent);
-
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(NOTIFICATION_ID, builder.build());
-        }
-    }
-
-    private void playNotificationSound() {
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        ringtone.play();
-    }
-
-    private void vibrateDevice() {
-        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if (vibrator != null && vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                VibrationEffect effect = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
-                vibrator.vibrate(effect);
-            } else {
-                vibrator.vibrate(500);
-            }
-        }
-    }
-
-    private void notifyNewNotifications(NotificationItem notification) {
-        String preference = getNotificationPreference();
-
-        if ("Sound".equals(preference)) {
-            playNotificationSound();
-            vibrateDevice();
-            showPostNotification(notification.getTitle(), notification.getMessage());
-        } else if ("Vibrate".equals(preference)) {
-            vibrateDevice();
-        }
-    }
-
-
-    private void loadNotifications() {
-        String authToken = getAuthToken();
-
-        if (authToken.isEmpty()) {
-            showStatusDialog(false, "Access token not found. Please log in.");
-            return;
-        }
-
-        Call<NotificationResponse> call = authService.getUserNotifications(authToken);
-        call.enqueue(new Callback<NotificationResponse>() {
-            @Override
-            public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    List<NotificationItem> newNotifications = response.body().getData();
-                    List<NotificationItem> unreadNotifications = new ArrayList<>();
-
-                    for (NotificationItem item : newNotifications) {
-                        if (!item.isRead()) {
-                            unreadNotifications.add(item);
-                        }
-                    }
-
-
-                    if (!unreadNotifications.isEmpty()) {
-                        notifyNewNotifications(unreadNotifications.get(0));
-                        // Hiển thị số lượng thông báo chưa đọc
-                        String title = "Unread Notifications";
-                        String message = "You have " + unreadNotifications.size() + " unread notifications";
-                        showPostNotification(title, message);
-                    }
-
-                    notificationsList.clear();
-                    notificationsList.addAll(newNotifications);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    showStatusDialog(false, "Failed to load notifications");
-                }
-            }
-
-
-            @Override
-            public void onFailure(Call<NotificationResponse> call, Throwable t) {
-                showStatusDialog(false, "Error: " + t.getMessage());
-            }
-        });
-    }
-
     private void showStatusDialog(boolean isSuccess, String message) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
-
-        // Cho phép dialog đóng khi nhấn ra ngoài
-        dialog.setCancelable(true);
 
         Window window = dialog.getWindow();
         if (window != null) {
@@ -258,6 +84,7 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
             layoutParams.copyFrom(window.getAttributes());
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
             layoutParams.gravity = Gravity.TOP;
             layoutParams.dimAmount = 0.5f;
             layoutParams.y = 0;
@@ -273,14 +100,8 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         tvStatus.setText("Notification");
         tvStatusMessage.setText(message);
 
-        dialog.setOnDismissListener(dialogInterface -> {
-            if (isSuccess) {
-            }
-        });
-
         dialog.show();
 
-        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
@@ -288,6 +109,33 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         }, 2000);
     }
 
+    private void loadNotifications() {
+        String authToken = getAuthToken();
+
+        if (authToken.isEmpty()) {
+            showStatusDialog(false, "Access token not found. Please log in.");
+            return;
+        }
+
+        Call<NotificationResponse> call = authService.getUserNotifications(authToken);
+        call.enqueue(new Callback<NotificationResponse>() {
+            @Override
+            public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    notificationsList.clear();
+                    notificationsList.addAll(response.body().getData());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    showStatusDialog(false, "Failed to load notifications");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NotificationResponse> call, Throwable t) {
+                showStatusDialog(false, "Error: " + t.getMessage());
+            }
+        });
+    }
 
     @Override
     public void onMarkAsReadClicked(NotificationItem notification) {
@@ -315,6 +163,7 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
             }
         });
     }
+
 
     @Override
     public void onDeleteClicked(NotificationItem notification) {
@@ -367,5 +216,3 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         });
     }
 }
-
-

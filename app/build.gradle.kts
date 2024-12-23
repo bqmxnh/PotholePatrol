@@ -54,6 +54,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation ("androidx.work:work-runtime:2.8.1")
 
 
 
