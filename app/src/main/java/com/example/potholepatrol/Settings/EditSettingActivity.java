@@ -238,6 +238,9 @@ public class EditSettingActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         Window window = dialog.getWindow();
         if (window != null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -260,15 +263,21 @@ public class EditSettingActivity extends AppCompatActivity {
         tvStatus.setText("Profile Update");
         tvStatusMessage.setText(message);
 
+        // Lắng nghe sự kiện khi dialog bị đóng
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (isSuccess) {
+                finish();
+            }
+        });
+
         dialog.show();
 
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (isSuccess) {
-                    finish();
-                }
             }
         }, 2000);
     }
+
 }

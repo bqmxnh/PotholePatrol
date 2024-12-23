@@ -36,7 +36,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Làm cho status bar và thanh điều hướng có màu trắng
         Window window = getWindow();
         window.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -48,10 +47,8 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
-        // Tìm ImageView biểu tượng
         ImageView logoIcon = findViewById(R.id.logoIcon);
 
-        // Tải và áp dụng các hoạt ảnh
         Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         Animation zoomIn = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
         logoIcon.startAnimation(fadeIn);
@@ -67,13 +64,11 @@ public class SplashActivity extends AppCompatActivity {
 
         else
         {
-            // Hiển thị Splash Screen trong 2 giây (2000ms)
             new Handler().postDelayed(() -> {
-                // Chuyển đến WelcomeActivity
                 Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                 startActivity(intent);
-                finish(); // Đóng SplashActivity để không quay lại
-            }, 2000); // Thời gian chờ 2000ms (2 giây)
+                finish();
+            }, 2000);
         }
     }
     @Override
@@ -122,6 +117,9 @@ public class SplashActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         Window window = dialog.getWindow();
         if (window != null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -129,13 +127,10 @@ public class SplashActivity extends AppCompatActivity {
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-
-            // Set position and background
             layoutParams.gravity = Gravity.TOP;
             layoutParams.dimAmount = 0.5f;
             layoutParams.y = 0;
             window.setAttributes(layoutParams);
-            // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
@@ -147,18 +142,23 @@ public class SplashActivity extends AppCompatActivity {
         tvLoginStatus.setText("Login");
         tvStatusMessage.setText(isSuccess ? "Successful" : message);
 
+        // Lắng nghe sự kiện khi dialog bị đóng
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (isSuccess) {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         dialog.show();
 
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (isSuccess) {
-                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    finish();
-                }
             }
         }, 2000);
     }
+
 }

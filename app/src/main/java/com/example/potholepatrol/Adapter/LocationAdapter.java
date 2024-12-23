@@ -36,7 +36,6 @@ public class LocationAdapter extends ArrayAdapter<NominatimResult> {
         TextView tvLocationAddress = listItem.findViewById(R.id.tvLocationAddress);
         ImageView ivGoIcon = listItem.findViewById(R.id.ivGoIcon);
 
-        // Split the display_name into name and address
         String[] parts = currentLocation.getDisplay_name().split(",", 2);
         String name = parts[0].trim();
         String address = parts.length > 1 ? parts[1].trim() : "";

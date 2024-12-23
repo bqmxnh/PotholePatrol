@@ -71,14 +71,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        // Initialize views
         initViews();
-
-        // Setup language spinner
         setupLanguageSpinner();
-
-        // Setup other click listeners
         setupClickListeners();
     }
 
@@ -163,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
 
             btnNo.setOnClickListener(v -> {
                 dialog.dismiss();
-                // Restore previous selection in spinner
                 String currentLang = getCurrentLanguage();
                 for (int i = 0; i < languageItems.size(); i++) {
                     if (languageItems.get(i).getLanguageCode().equals(currentLang)) {
@@ -184,19 +177,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setNewLocale(String languageCode) {
-        // Save language preference
         SharedPreferences settings = getSharedPreferences("Settings", Context.MODE_PRIVATE);
         settings.edit().putString("language", languageCode).apply();
-
-        // Update locale for entire app
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
         Resources resources = getResources();
         Configuration config = new Configuration(resources.getConfiguration());
         config.setLocale(locale);
         resources.updateConfiguration(config, resources.getDisplayMetrics());
-
-        // Restart activity
         Intent intent = getIntent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         finish();
@@ -204,19 +192,6 @@ public class LoginActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    private void updateLanguageUI(boolean isVietnamese) {
-        if (isVietnamese) {
-            viText.setTextColor(getResources().getColor(android.R.color.white));
-            enText.setTextColor(getResources().getColor(android.R.color.black));
-            viButton.setBackgroundResource(R.drawable.btn_frame);
-            enButton.setBackgroundResource(R.drawable.dialog_frame);
-        } else {
-            viText.setTextColor(getResources().getColor(android.R.color.black));
-            enText.setTextColor(getResources().getColor(android.R.color.white));
-            viButton.setBackgroundResource(R.drawable.dialog_frame);
-            enButton.setBackgroundResource(R.drawable.btn_frame);
-        }
-    }
 
     private String getCurrentLanguage() {
         SharedPreferences settings = getSharedPreferences("Settings", Context.MODE_PRIVATE);
@@ -273,6 +248,9 @@ public class LoginActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         // Set dialog window attributes
         Window window = dialog.getWindow();
         if (window != null) {
@@ -282,13 +260,11 @@ public class LoginActivity extends AppCompatActivity {
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-
             // Set position and background
             layoutParams.gravity = Gravity.TOP;
             layoutParams.dimAmount = 0.5f;
             layoutParams.y = 0;
             window.setAttributes(layoutParams);
-           // window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
@@ -300,19 +276,25 @@ public class LoginActivity extends AppCompatActivity {
         tvLoginStatus.setText("Login");
         tvStatusMessage.setText(isSuccess ? "Successful" : message);
 
+        // Lắng nghe sự kiện khi dialog bị đóng
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (isSuccess) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         dialog.show();
 
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (isSuccess) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
             }
         }, 2000);
     }
+
 
     private void loginWithApi(String email, String password) {
         AuthService authService = ApiClient.getClient().create(AuthService.class);

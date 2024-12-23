@@ -25,7 +25,7 @@ public class NotificationSettingActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private TextView soundOption, vibrateOption;
     private Button btnSave;
-    private String selectedPreference = "Sound"; // Default preference
+    private String selectedPreference = "Sound";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,32 +34,25 @@ public class NotificationSettingActivity extends AppCompatActivity {
 
         setupStatusBar();
 
-        // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("SettingsPrefs", MODE_PRIVATE);
 
-        // Initialize views
         ImageView btnBack = findViewById(R.id.btn_back);
         soundOption = findViewById(R.id.btn_sound);
         vibrateOption = findViewById(R.id.btn_vibrate);
         btnSave = findViewById(R.id.btn_save);
 
-        // Load saved preference
         loadSavedPreference();
 
-        // Back button handler
         btnBack.setOnClickListener(v -> finish());
 
-        // Sound option handler
         soundOption.setOnClickListener(v -> {
             selectPreference("Sound");
         });
 
-        // Vibrate option handler
         vibrateOption.setOnClickListener(v -> {
             selectPreference("Vibrate");
         });
 
-        // Save button handler
         btnSave.setOnClickListener(v -> savePreference());
     }
 
@@ -85,13 +78,15 @@ public class NotificationSettingActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         Window window = dialog.getWindow();
         if (window != null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
             layoutParams.copyFrom(window.getAttributes());
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
 
             layoutParams.gravity = Gravity.TOP;
             layoutParams.dimAmount = 0.5f;
@@ -109,17 +104,23 @@ public class NotificationSettingActivity extends AppCompatActivity {
         tvStatus.setText("Notification Settings");
         tvStatusMessage.setText(message);
 
+        // Lắng nghe sự kiện khi dialog bị đóng
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (message.startsWith("Notification preference saved")) {
+                finish();
+            }
+        });
+
         dialog.show();
 
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (message.startsWith("Notification preference saved")) {
-                    finish();
-                }
             }
         }, 2000);
     }
+
 
     private void loadSavedPreference() {
         selectedPreference = sharedPreferences.getString("alert_preference", "Sound");
@@ -127,13 +128,11 @@ public class NotificationSettingActivity extends AppCompatActivity {
     }
 
     private void updateButtonState() {
-        // Reset styles
         soundOption.setBackgroundResource(R.drawable.setting_frame);
         vibrateOption.setBackgroundResource(R.drawable.setting_frame);
         soundOption.setTextColor(getResources().getColor(R.color.black));
         vibrateOption.setTextColor(getResources().getColor(R.color.black));
 
-        // Highlight selected option
         if ("Sound".equals(selectedPreference)) {
             soundOption.setBackgroundResource(R.drawable.selected_button_background);
             soundOption.setTextColor(getResources().getColor(R.color.white));

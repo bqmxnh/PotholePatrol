@@ -52,14 +52,12 @@ public class ActivityDashboardChart extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard_chart);
         ArrayList<StatisticsData> data = getIntent().getParcelableArrayListExtra("data");
 
-        // Cấu hình thanh trạng thái và thanh điều hướng
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
         window.setNavigationBarColor(ContextCompat.getColor(this, R.color.status_bar_dashboard));
 
-        // Ánh xạ các thành phần giao diện
         backButton = findViewById(R.id.ic_back);
         lowNumberText = findViewById(R.id.low_number);
         mediumNumberText = findViewById(R.id.medium_number);
@@ -67,7 +65,6 @@ public class ActivityDashboardChart extends AppCompatActivity {
         pieChart = findViewById(R.id.pieChart);
         barChart = findViewById(R.id.barChart);
 
-        // Kiểm tra PieChart
         if (pieChart == null) {
             Log.e(TAG, "PieChart not found in layout.");
             return;
@@ -91,7 +88,6 @@ public class ActivityDashboardChart extends AppCompatActivity {
     }
 
     private void updateSeverityDataFromSharedPreferences() {
-        // Lấy dữ liệu từ SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("DashboardStats", MODE_PRIVATE);
         int lowSeverity = sharedPreferences.getInt("LowSeverity", 0);
         int mediumSeverity = sharedPreferences.getInt("MediumSeverity", 0);
@@ -99,12 +95,10 @@ public class ActivityDashboardChart extends AppCompatActivity {
 
 
 
-        // Gán giá trị vào các TextView tương ứng
         lowNumberText.setText(String.valueOf(lowSeverity));
         mediumNumberText.setText(String.valueOf(mediumSeverity));
         highNumberText.setText(String.valueOf(highSeverity));
 
-        // Vẽ biểu đồ hình tròn
         drawPieChart(lowSeverity, mediumSeverity, highSeverity);
         List<StatisticsData> chartData = getChartData();
         renderBarChart(chartData);
@@ -209,12 +203,11 @@ public class ActivityDashboardChart extends AppCompatActivity {
         List<BarEntry> entries = new ArrayList<>();
         List<String> labels = new ArrayList<>();
 
-        // Loop through the data to create BarEntry and labels for the X-axis
         for (int i = 0; i < data.size(); i++) {
             StatisticsData stat = data.get(i);
             Log.d("BarChart", "Date: " + stat.getDate() + ", Total: " + stat.getTotal());  // Debug log
-            entries.add(new BarEntry(i, stat.getTotal())); // i is the X-axis position
-            labels.add(stat.getDate()); // Add the date to labels for X-axis
+            entries.add(new BarEntry(i, stat.getTotal()));
+            labels.add(stat.getDate());
         }
 
         BarDataSet barDataSet = new BarDataSet(entries, "Total");

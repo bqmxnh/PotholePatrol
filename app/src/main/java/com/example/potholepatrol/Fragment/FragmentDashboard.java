@@ -54,23 +54,19 @@ public class FragmentDashboard extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate layout for FragmentDashboard
         View view = inflater.inflate(R.layout.activity_dashboard, container, false);
 
-        // Change the color of the status bar
         Window window = requireActivity().getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.status_bar_dashboard));
         window.setNavigationBarColor(ContextCompat.getColor(requireContext(), R.color.status_bar_dashboard));
 
-        // Initialize views
         textUsername = view.findViewById(R.id.text_username);
         textPotholes = view.findViewById(R.id.text_potholes_data);
         textDistance = view.findViewById(R.id.text_distance_data);
         textFalls = view.findViewById(R.id.text_falls_data);
 
-        // Initialize views
         ImageView iconReport = view.findViewById(R.id.icon_report);
         ImageView iconNotification = view.findViewById(R.id.icon_notification);
 
@@ -191,10 +187,8 @@ public class FragmentDashboard extends Fragment {
     }
 
     private void loadDailyChart() {
-        // Lấy token từ phương thức getAccessToken() (có thể là Bearer token)
         String token = "Bearer " + getAccessToken();
 
-        // Lấy ngày bắt đầu và kết thúc từ phương thức getLastWeekDates()
         String[] dates = getLastWeekDates();
         String startDate = dates[0];
         String endDate = dates[1];
@@ -223,7 +217,6 @@ public class FragmentDashboard extends Fragment {
                         for (StatisticsData stat : data) {
                             if (count > 5) break;
 
-                            // Save only the date and total values
                             String chartKey = "DailyChart" + count;
                             String chartValue = "Date: " + stat.getDate() + ", Total: " + stat.getTotal();
 
@@ -232,7 +225,6 @@ public class FragmentDashboard extends Fragment {
                             count++;
                         }
 
-                        // Apply changes asynchronously
                         editor.apply();
                     } else {
                         Log.e("DailyChartSave", "No data available to save.");

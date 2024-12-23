@@ -24,7 +24,7 @@ public class LanguageSpinnerAdapter extends ArrayAdapter<LanguageItem> {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         View view = createItemView(position, convertView, parent);
-        view.setBackgroundColor(Color.TRANSPARENT); // Make each item background transparent
+        view.setBackgroundColor(Color.TRANSPARENT);
         return view;
     }
 

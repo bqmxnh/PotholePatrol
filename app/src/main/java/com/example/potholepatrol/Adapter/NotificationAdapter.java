@@ -54,7 +54,6 @@ public class NotificationAdapter extends ArrayAdapter<NotificationItem> {
         message.setText(notification.getMessage());
         time.setText(formatTime(notification.getCreatedAt()));
 
-        // Set button states and listeners
         deleteButton.setOnClickListener(v -> {
             if (actionListener != null) {
                 actionListener.onDeleteClicked(notification);
@@ -67,7 +66,6 @@ public class NotificationAdapter extends ArrayAdapter<NotificationItem> {
             }
         });
 
-        // Update UI based on read status
         if (notification.isRead()) {
             markAsReadButton.setImageResource(R.mipmap.ic_mark_as_read_done);
             convertView.setAlpha(0.7f);

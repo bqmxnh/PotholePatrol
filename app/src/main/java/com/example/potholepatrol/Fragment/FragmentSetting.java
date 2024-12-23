@@ -49,11 +49,9 @@ public class FragmentSetting extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Window window = requireActivity().getWindow();
 
-        // Save original status bar color and system UI visibility
         originalStatusBarColor = window.getStatusBarColor();
         originalSystemUiVisibility = window.getDecorView().getSystemUiVisibility();
 
-        // Make status bar transparent and set full-screen mode
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(android.graphics.Color.TRANSPARENT);
@@ -61,14 +59,11 @@ public class FragmentSetting extends Fragment {
 
         View view = inflater.inflate(R.layout.activity_setting, container, false);
 
-        // Initialize TextViews for user info
         textUserName = view.findViewById(R.id.text_user_name);
         textUserEmail = view.findViewById(R.id.text_user_email);
 
-        // Load user profile information
         loadUserProfile();
 
-        // Setting up navigation for all setting options
         setupSettingOptions(view);
 
         return view;
@@ -109,49 +104,42 @@ public class FragmentSetting extends Fragment {
     }
 
     private void setupSettingOptions(View view) {
-        // Edit Profile Option
         View editOption = view.findViewById(R.id.option_edit_profile);
         editOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditSettingActivity.class);
             startActivity(intent);
         });
 
-        // Personalization Option
         View personalizationOption = view.findViewById(R.id.option_personalization);
         personalizationOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), PersonalizationSettingActivity.class);
             startActivity(intent);
         });
 
-        // Notification Option
         View notificationOption = view.findViewById(R.id.option_notifications);
         notificationOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), NotificationSettingActivity.class);
             startActivity(intent);
         });
 
-        // Privacy Option
         View privacyOption = view.findViewById(R.id.option_privacy);
         privacyOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), PrivacySettingActivity.class);
             startActivity(intent);
         });
 
-        // Report Problem Option
         View reportOption = view.findViewById(R.id.option_report_problem);
         reportOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ReportSettingActivity.class);
             startActivity(intent);
         });
 
-        // Terms and Policies Option
         View termOption = view.findViewById(R.id.option_terms_policies);
         termOption.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), TermSettingActivity.class);
             startActivity(intent);
         });
 
-        // Logout Option
         View logoutFrame = view.findViewById(R.id.option_logout);
         logoutFrame.setOnClickListener(v -> showLogoutDialog());
     }

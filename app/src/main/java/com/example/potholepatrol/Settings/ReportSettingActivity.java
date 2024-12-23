@@ -110,6 +110,9 @@ public class ReportSettingActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         // Set dialog window attributes
         Window window = dialog.getWindow();
         if (window != null) {
@@ -126,28 +129,31 @@ public class ReportSettingActivity extends AppCompatActivity {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Initialize dialog views
         ImageView ivStatus = dialog.findViewById(R.id.ivStatus);
         TextView tvStatus = dialog.findViewById(R.id.tvLoginStatus);
         TextView tvStatusMessage = dialog.findViewById(R.id.tvStatusMessage);
 
-        // Set dialog content
         ivStatus.setImageResource(isSuccess ? R.mipmap.tick : R.mipmap.error);
         tvStatus.setText("Privacy Settings");
         tvStatusMessage.setText(message);
 
+        // Lắng nghe sự kiện khi dialog bị đóng
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (isSuccess) {
+                finish(); // Kết thúc hoạt động nếu thành công
+            }
+        });
+
         dialog.show();
 
-        // Auto dismiss after 2 seconds and finish activity if success
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (isSuccess) {
-                    finish();
-                }
             }
         }, 2000);
     }
+
 
     private void setupStatusBar() {
         Window window = getWindow();

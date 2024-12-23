@@ -73,6 +73,7 @@ public interface AuthService {
     @POST("auth/google")
     Call<LoginResponse> googleSignIn(@Body Map<String, String> body);
 
+    // Add pothole
     @Headers("Content-Type: application/json")
     @POST("map/addPothole")
     Call<Void> addPothole(
@@ -80,23 +81,28 @@ public interface AuthService {
             @Body PotholeRequest potholeRequest
     );
 
+    // Get profile
     @GET("user/me")
     Call<UserProfileResponse> getUserProfile(@Header("Authorization") String token);
 
+    // Update profile
     @PATCH("user/settings")
     Call<Map<String, Object>> updateUserProfile(
             @Header("Authorization") String token,
             @Body Map<String, Object> fields
     );
 
+    // Dashboard
     @GET("dashboard/stats")
     Call<DashboardStatsResponse> getDashboardStats(@Header("Authorization") String token);
 
+    // Update distance
     @PATCH("user/updateDistance")
     Call<DistanceTraveledUpdateResponse> updateDistanceTraveled(
             @Header("Authorization") String token,
             @Body DistanceTraveledUpdateRequest request);
 
+    // Notification
     @GET("notification/getUserNotifications")
     Call<NotificationResponse> getUserNotifications(@Header("Authorization") String token);
 
@@ -105,6 +111,7 @@ public interface AuthService {
             @Header("Authorization") String token,
             @Body NotificationRequest request);
 
+    // Mark as read
     @Headers("Content-Type: application/json")
     @PATCH("notification/markAsRead")
     Call<Void> markAsRead(
@@ -112,35 +119,25 @@ public interface AuthService {
             @Body Map<String, String> notificationIds
     );
 
+    // Delete notification
     @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
     Call<Void> deleteNotification(
             @Header("Authorization") String token,
             @Body DeleteNotificationRequest request
     );
 
+    // Chart
     @POST("dashboard/dailyChart")
     Call<DailyChartResponse> getDailyChart(
             @Header("Authorization") String token,
             @Body DailyChartRequest body
     );
 
+    // App report
     @Headers("Content-Type: application/json")
     @POST("user/sendReport")
     Call<Void> sendReport(
             @Header("Authorization") String token,
             @Body ReportRequest reportRequest
     );
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

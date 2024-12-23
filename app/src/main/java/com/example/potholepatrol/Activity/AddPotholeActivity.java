@@ -44,27 +44,21 @@ public class AddPotholeActivity extends AppCompatActivity {
     private static final String KEY_DATA_SHARING = "isSharingOn";
 
 
-    // Dimension buttons
     private TextView compactBtn, averageBtn, largeBtn;
     private String selectedDimension = "";
 
-    // Depth buttons
     private TextView shallowBtn, noticeableBtn, deepBtn;
     private String selectedDepth = "";
 
-    // Shape buttons
     private TextView uniformBtn, unevenBtn, jaggedBtn;
     private String selectedShape = "";
 
-    // Severity buttons
     private TextView lowBtn, mediumBtn, highBtn;
     private String selectedSeverity = "";
 
-    // Location coordinates
     private double latitude = 0.0;
     private double longitude = 0.0;
 
-    // LocationManager and LocationListener
     private LocationManager locationManager;
 
     @Override
@@ -93,22 +87,18 @@ public class AddPotholeActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.btn_confirm);
         backButton = findViewById(R.id.btn_back);
 
-        // Initialize dimension buttons
         compactBtn = findViewById(R.id.btn_compact);
         averageBtn = findViewById(R.id.btn_average);
         largeBtn = findViewById(R.id.btn_large);
 
-        // Initialize depth buttons
         shallowBtn = findViewById(R.id.btn_shallow);
         noticeableBtn = findViewById(R.id.btn_noticeable);
         deepBtn = findViewById(R.id.btn_deep);
 
-        // Initialize shape buttons
         uniformBtn = findViewById(R.id.btn_uniform);
         unevenBtn = findViewById(R.id.btn_uneven);
         jaggedBtn = findViewById(R.id.btn_jagged);
 
-        // Initialize severity buttons
         lowBtn = findViewById(R.id.btn_low);
         mediumBtn = findViewById(R.id.btn_medium);
         highBtn = findViewById(R.id.btn_high);
@@ -129,20 +119,10 @@ public class AddPotholeActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         backButton.setOnClickListener(v -> finish());
-
-        // Set up dimension button listeners
         setupDimensionButtons();
-
-        // Set up depth button listeners
         setupDepthButtons();
-
-        // Set up shape button listeners
         setupShapeButtons();
-
-        // Set up severity button listeners
         setupSeverityButtons();
-
-        // Confirm button listener
         confirmButton.setOnClickListener(v -> submitPotholeReport());
     }
 
@@ -241,11 +221,8 @@ public class AddPotholeActivity extends AppCompatActivity {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            // Update the coordinates
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-
-            // Display the coordinates in the TextView
             gpsText.setText(String.format("GPS: %.6f, %.6f", latitude, longitude));
         }
 
@@ -289,7 +266,6 @@ public class AddPotholeActivity extends AppCompatActivity {
 
         PotholeRequest potholeRequest = new PotholeRequest(location, description, severity);
 
-        // Make the API call
         AuthService authService = ApiClient.getClient().create(AuthService.class);
         authService.addPothole("Bearer " + getStoredToken(), potholeRequest)
                 .enqueue(new Callback<Void>() {
@@ -329,9 +305,14 @@ public class AddPotholeActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
     private void showStatusDialog(boolean isSuccess, String message) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
+
+        // Cho phép dialog đóng khi người dùng nhấn ra ngoài
+        dialog.setCancelable(true);
 
         Window window = dialog.getWindow();
         if (window != null) {
@@ -355,17 +336,23 @@ public class AddPotholeActivity extends AppCompatActivity {
         tvStatus.setText("Pothole Report");
         tvStatusMessage.setText(message);
 
+        // Lắng nghe sự kiện đóng dialog
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (isSuccess && message.equals("Pothole reported successfully")) {
+                finish();
+            }
+        });
+
         dialog.show();
 
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (isSuccess && message.equals("Pothole reported successfully")) {
-                    finish();
-                }
             }
         }, 2000);
     }
+
     private String getStoredToken() {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         return sharedPreferences.getString("accessToken", ""); // Retrieve the stored access token

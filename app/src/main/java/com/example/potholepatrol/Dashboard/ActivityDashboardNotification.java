@@ -99,7 +99,7 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
             @Override
             public void run() {
                 loadNotifications();
-                handler.postDelayed(this, 60000); // Check every minute
+                handler.postDelayed(this, 60000);
             }
         };
         handler.post(notificationChecker);
@@ -140,7 +140,6 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
     private void showPostNotification(String title, String message) {
         String preference = getNotificationPreference();
 
-        // Only show post notification if preference is "Sound"
         if ("Sound".equals(preference)) {
             createNotificationChannel();
 
@@ -176,7 +175,6 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
                 VibrationEffect effect = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
                 vibrator.vibrate(effect);
             } else {
-                // For older Android versions
                 vibrator.vibrate(500);
             }
         }
@@ -246,6 +244,9 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         Window window = dialog.getWindow();
         if (window != null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -267,9 +268,21 @@ public class ActivityDashboardNotification extends AppCompatActivity implements 
         tvStatus.setText("Notification");
         tvStatusMessage.setText(message);
 
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (isSuccess) {
+            }
+        });
+
         dialog.show();
-        new Handler().postDelayed(dialog::dismiss, 2000);
+
+        // Tự động đóng sau 2 giây
+        new Handler().postDelayed(() -> {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }, 2000);
     }
+
 
     @Override
     public void onMarkAsReadClicked(NotificationItem notification) {

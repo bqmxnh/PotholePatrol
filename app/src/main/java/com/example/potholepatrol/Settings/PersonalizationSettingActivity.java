@@ -25,7 +25,7 @@ public class PersonalizationSettingActivity extends AppCompatActivity {
     private Button btnSave;
     private ImageView btnBack;
     private SharedPreferences sharedPreferences;
-    private String selectedSensitivity = "medium"; // Default value
+    private String selectedSensitivity = "medium";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +95,9 @@ public class PersonalizationSettingActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_status);
 
+        // Cho phép dialog đóng khi nhấn ra ngoài
+        dialog.setCancelable(true);
+
         Window window = dialog.getWindow();
         if (window != null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
@@ -118,17 +121,23 @@ public class PersonalizationSettingActivity extends AppCompatActivity {
         tvStatus.setText("Detection Settings");
         tvStatusMessage.setText(message);
 
+        // Lắng nghe sự kiện khi dialog bị đóng
+        dialog.setOnDismissListener(dialogInterface -> {
+            if (message.startsWith("Detection sensitivity saved")) {
+                finish();
+            }
+        });
+
         dialog.show();
 
+        // Tự động đóng sau 2 giây
         new Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                if (message.startsWith("Detection sensitivity saved")) {
-                    finish();
-                }
             }
         }, 2000);
     }
+
 
     @Override
     protected void attachBaseContext(Context newBase) {

@@ -39,7 +39,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Liên kết các view với biến
         etUsername = findViewById(R.id.etUsernamee);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -58,12 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         btnBack = findViewById(R.id.btnBack);
 
-        // Thiết lập sự kiện cho nút Back
         btnBack.setOnClickListener(v -> {
-            finish(); //quay lại màn login
+            finish();
         });
 
-        // Thiết lập sự kiện cho nút Sign Up
         btnSignUp.setOnClickListener(v -> {
             String username = etUsername.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
@@ -96,30 +93,24 @@ public class RegisterActivity extends AppCompatActivity {
         super.attachBaseContext(App.wrap(newBase));
     }
     private void registerWithApi(String username, String email, String password) {
-        // Khởi tạo AuthService từ ApiClient
         AuthService authService = ApiClient.getClient().create(AuthService.class);
 
-        // Tạo đối tượng RegisterRequest để chứa username, email và password
         RegisterRequest registerRequest = new RegisterRequest(username, email, password);
 
-        // Gọi API đăng kí
         authService.register(registerRequest).enqueue(new retrofit2.Callback<RegisterResponse>() {
             @Override
 
             public void onResponse(retrofit2.Call<RegisterResponse> call, retrofit2.Response<RegisterResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Xử lý khi đăng ký thành công
                     RegisterResponse registerResponse = response.body();
                     String message = registerResponse.getMessage();
 
                     Log.d(TAG, "Registration successful: " + message);
                     Toast.makeText(RegisterActivity.this, "Register Successfully", Toast.LENGTH_SHORT).show();
-                    // Chuyển đến màn hình đăng nhập sau khi đăng ký thành công
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    // Kiểm tra nếu mã lỗi là 409 (email đã được sử dụng)
                     if (response.code() == 409) {
                         Log.e(TAG, "Registration failed: Email is already in use");
                         Toast.makeText(RegisterActivity.this, "Email is already in use.", Toast.LENGTH_SHORT).show();
@@ -135,7 +126,6 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFailure(@NonNull retrofit2.Call<RegisterResponse> call, @NonNull Throwable t) {
                 Log.e(TAG, "API call failed: " + t.getMessage());
 
-                // Hiển thị lỗi khi gọi API thất bại
                 Toast.makeText(RegisterActivity.this, "Registration failed. Please check your network connection.", Toast.LENGTH_SHORT).show();
             }
         });

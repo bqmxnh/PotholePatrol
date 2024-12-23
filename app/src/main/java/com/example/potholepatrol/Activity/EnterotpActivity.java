@@ -27,9 +27,8 @@ public class EnterotpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enterotp);
 
-        // Handle Back Button Action
         findViewById(R.id.btnBack).setOnClickListener(v -> {
-            finish();  // Go back to the previous screen
+            finish();
         });
 
 
@@ -46,7 +45,6 @@ public class EnterotpActivity extends AppCompatActivity {
             Log.d("ResetPassword", "Email: " + email);
             Log.d("ResetPassword", "OTP: " + otp);
 
-            // call the API
             resetPasswordWithApi(email, otp);
 
         });
@@ -106,13 +104,10 @@ public class EnterotpActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            // Khi nhập một ký tự, tự động chuyển qua trường kế tiếp
             if (editable.length() == 1 && nextEditText != null) {
                 nextEditText.requestFocus();
             }
-            // Khi xóa ký tự
             else if (editable.length() == 0) {
-                // Nếu đang ở ô đầu tiên thì không di chuyển
                 if (currentEditText.getId() != R.id.otp1) {
                     EditText previousEditText = findViewById(getPreviousEditTextId());
                     previousEditText.requestFocus();
@@ -142,7 +137,6 @@ public class EnterotpActivity extends AppCompatActivity {
 
         VerifyOTPRequest verifyOTPRequest = new VerifyOTPRequest(email, otp);
 
-        // gọi API
         authService.verifyOTP(verifyOTPRequest).enqueue(new retrofit2.Callback<VerifyOTPResponse>() {
             @Override
             public void onResponse(retrofit2.Call<VerifyOTPResponse> call, retrofit2.Response<VerifyOTPResponse> response) {

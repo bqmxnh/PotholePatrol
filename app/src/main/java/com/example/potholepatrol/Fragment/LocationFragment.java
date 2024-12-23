@@ -50,16 +50,13 @@ public class LocationFragment extends Fragment {
     private List<NominatimResult> locationList;
 
     public LocationFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_location, container, false);
 
-        // Bind the UI elements to the views
         btnBack = rootView.findViewById(R.id.btnBack);
         tvTitle = rootView.findViewById(R.id.tvTitle);
         ivCurrentLocation = rootView.findViewById(R.id.ivCurrentLocation);
@@ -73,12 +70,10 @@ public class LocationFragment extends Fragment {
         btnSearch = rootView.findViewById(R.id.btnSearch);
         lvLocationResults = rootView.findViewById(R.id.lvLocationResults);
 
-        // Khởi tạo adapter mới
         locationList = new ArrayList<>();
         locationAdapter = new LocationAdapter(getContext(), locationList);
         lvLocationResults.setAdapter(locationAdapter);
 
-        // Back button event
         btnBack.setOnClickListener(v -> {
             if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getActivity().getSupportFragmentManager().popBackStack();
@@ -87,11 +82,10 @@ public class LocationFragment extends Fragment {
             }
         });
 
-        // Search button event
         btnSearch.setOnClickListener(v -> {
             String query = etSearch.getText().toString().trim();
             if (!query.isEmpty()) {
-                searchLocation(query);  // Call the search function
+                searchLocation(query);
             } else {
                 Toast.makeText(getContext(), "Please enter a location", Toast.LENGTH_SHORT).show();  // Show message if no input
             }
@@ -99,21 +93,17 @@ public class LocationFragment extends Fragment {
 
 
 
-        // ListView item click event
         lvLocationResults.setOnItemClickListener((parent, view, position, id) -> {
             NominatimResult selectedResult = locationList.get(position); // Lấy địa điểm được chọn
 
-            // Tạo dialog với layout tùy chỉnh
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_route_confirmation, null);
             builder.setView(dialogView);
 
             AlertDialog dialog = builder.create();
-            // Loại bỏ viền vuông mặc định
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             }
-            // Gán dữ liệu vào layout
             TextView tvTitle = dialogView.findViewById(R.id.tvTitle);
             TextView tvLocationName = dialogView.findViewById(R.id.tvLocationName);
             Button btnYes = dialogView.findViewById(R.id.btnYes);
@@ -122,16 +112,12 @@ public class LocationFragment extends Fragment {
             tvTitle.setText("Route to this location?");
             tvLocationName.setText(selectedResult.getDisplay_name());
 
-            // Xử lý nút Yes
             btnYes.setOnClickListener(v -> {
-                // Lưu dữ liệu vào SharedPreferences
                 SharedPreferences preferences = getContext().getSharedPreferences("LocationPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("lat", selectedResult.getLat());
                 editor.putString("lon", selectedResult.getLon());
-                // Thêm flag để chỉ định rằng nên vẽ route
                 editor.putBoolean("shouldDrawRoute", true);
-                // Thêm flag mới để chỉ định rằng nên hiện navigation panel
                 editor.putBoolean("showNavigationPanel", true);
                 editor.apply();
 
@@ -139,10 +125,8 @@ public class LocationFragment extends Fragment {
                 getActivity().getSupportFragmentManager().popBackStack();
             });
 
-            // Xử lý nút No
             btnNo.setOnClickListener(v -> dialog.dismiss());
 
-            // Hiển thị dialog
             dialog.show();
         });
 
@@ -155,7 +139,6 @@ public class LocationFragment extends Fragment {
         super.onAttach(App.wrap(context));
     }
 
-    // Search location function
     private void searchLocation(String query) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://nominatim.openstreetmap.org/")
@@ -223,7 +206,6 @@ public class LocationFragment extends Fragment {
             return Double.parseDouble(lon);
         }
     }
-
 }
 
 

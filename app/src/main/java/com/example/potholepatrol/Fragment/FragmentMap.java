@@ -101,7 +101,6 @@ import okhttp3.Response;
 
 
 public class FragmentMap extends Fragment implements LocationListener {
-    // 1. KHAI BÁO BIẾN
     private static final String TAG = "FragmentMap";
     private static final String BASE_URL = "http://47.129.31.47:3000";
     private static final int PERMISSION_REQUEST_CODE = 1;
@@ -149,7 +148,6 @@ public class FragmentMap extends Fragment implements LocationListener {
     private double currentLat = 0.0;
     private double currentLon = 0.0;
 
-    // 2. KHỞI TẠO FRAGMENT VÀ THIẾT LẬP BAN ĐẦU
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -299,16 +297,13 @@ public class FragmentMap extends Fragment implements LocationListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_map, container, false);
-        // Initialize views
         navigationInfoPanel = rootView.findViewById(R.id.navigation_info_panel);
         mapControls = rootView.findViewById(R.id.map_controls);
         locationButton = rootView.findViewById(R.id.location_button);
         textEstimatedTime = rootView.findViewById(R.id.text_estimated_time);
         textDistance = rootView.findViewById(R.id.text_distance);
-        // Initially hide navigation panel
         setNavigationMode(false);
 
-        // Get access token from SharedPreferences
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         accessToken = sharedPreferences.getString("accessToken", "");
 
@@ -319,7 +314,6 @@ public class FragmentMap extends Fragment implements LocationListener {
             requireActivity().finish();
             return rootView;
         }
-        // Initialize osmdroid configuration
         Context ctx = requireContext().getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         Configuration.getInstance().setUserAgentValue(ctx.getPackageName());
@@ -337,32 +331,27 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
                 requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, locationFragment) // Use the correct container ID
+                        .replace(R.id.fragment_container, locationFragment)
                         .addToBackStack(null)
                         .commit();
             }
         });
 
-        // Initialize the new navigation button
         btnStartNavigation = rootView.findViewById(R.id.btn_start_navigation);
         btnStartNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isNavigating) {
-                    // Start navigation
                     isNavigating = true;
                     isRouteUpdating = true;
                     btnStartNavigation.setText("Stop");
 
-                    // Start updating the route by posting the updateRouteRunnable to the handler
                     handler.post(updateRouteRunnable);
                     Log.d("Navigation", "Starting navigation...");
 
-                    // Optional: Log or update anything else when starting the navigation
                     Log.d("negative", "Button start navigation clicked");
 
                 } else {
-                    // Stop navigation
                     isNavigating = false;
                     btnStartNavigation.setText("Navigate");
 
@@ -500,7 +489,6 @@ public class FragmentMap extends Fragment implements LocationListener {
 
 
 
-    // 3. THIẾT LẬP QUYỀN TRUY CẬP
     // Yêu cầu các quyền cần thiết
     private void requestPermissions() {
         String[] permissions = {
@@ -549,7 +537,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         }
     }
 
-    // 4. THIẾT LẬP BẢN ĐỒ VÀ CÁC THÀNH PHẦN
     // Khởi tạo tile source
     // Cấu hình bản đồ
     // Tải dữ liệu ổ gà
@@ -643,7 +630,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         severityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         severitySpinner.setAdapter(severityAdapter);
 
-        // Setup time spinner
         ArrayAdapter<CharSequence> timeAdapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 R.array.time_filters,
@@ -702,10 +688,9 @@ public class FragmentMap extends Fragment implements LocationListener {
         }
     }
 
-    // Helper method to parse datetime string
     private long parseDateTime(String dateTime) {
         try {
-            // Parse the datetime string "2024-12-15T07:11:02.755Z"
+            // Parse string "2024-12-15T07:11:02.755Z"
             String[] parts = dateTime.split("T");
             String[] dateParts = parts[0].split("-");
             String[] timeParts = parts[1].split(":");
@@ -727,7 +712,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         }
     }
 
-    // Method to reset filters
     private void resetFilters() {
         filteredPotholes.clear();
         filteredPotholes.addAll(potholes);
@@ -758,7 +742,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         return x / Math.pow(2.0, z) * 360.0 - 180;
     }
 
-    // 5. XỬ LÝ VỊ TRÍ NGƯỜI DÙNG
     // Thiết lập location manager và overlay
     private void setupLocation() {
         locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
@@ -864,7 +847,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         mapView.getController().animateTo(myPosition);
     }
 
-    // 6. XỬ LÝ DỮ LIỆU Ổ GÀ
     // Tải danh sách ổ gà từ server
     private void loadPotholes() {
         OkHttpClient client = new OkHttpClient();
@@ -932,15 +914,11 @@ public class FragmentMap extends Fragment implements LocationListener {
 
     // Hiển thị thông tin chi tiết ổ gà
     private void showPotholeDetails(Pothole pothole, Marker marker) {
-        // Create API client
         OkHttpClient client = new OkHttpClient();
-
-        // Create JSON request body
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("userId", pothole.getReportedBy());
 
-            // Create request
             Request request = new Request.Builder()
                     .url(BASE_URL + "/user/getUser")
                     .post(RequestBody.create(
@@ -949,7 +927,6 @@ public class FragmentMap extends Fragment implements LocationListener {
                     .addHeader("Authorization", "Bearer " + accessToken)
                     .build();
 
-            // Make async API call
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -983,14 +960,12 @@ public class FragmentMap extends Fragment implements LocationListener {
     }
 
     private void updatePotholeDetailsUI(Pothole pothole, Marker marker, String username) {
-        // Close any open info windows
         for (Object overlay : mapView.getOverlays()) {
             if (overlay instanceof Marker) {
                 ((Marker) overlay).closeInfoWindow();
             }
         }
 
-        // Inflate and setup the custom info window
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.map_pothole_click, null);
 
         TextView titleAddress = dialogView.findViewById(R.id.title_address);
@@ -999,7 +974,6 @@ public class FragmentMap extends Fragment implements LocationListener {
 
         titleAddress.setText(pothole.getLocation().getAddress());
 
-        // Format details with username
         String details = String.format(
                 "Reported by: %s\nSeverity: %s\nDimension: %s\nDepth: %s",
                 username,
@@ -1017,7 +991,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         closeIcon.setOnClickListener(v -> marker.closeInfoWindow());
     }
 
-    // 7. XỬ LÝ TƯƠNG TÁC BẢN ĐỒ
     // Thêm listener xử lý click trên bản đồ
     private void addMapClickListener() {
         MapEventsReceiver mapEventsReceiver = new MapEventsReceiver() {
@@ -1085,7 +1058,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         return marker;
     }
 
-    // 8. XỬ LÝ TUYẾN ĐƯỜNG
     // Kiểm tra và vẽ tuyến đường
     private void checkAndDrawRoute() {
         // Lấy giá trị lat và lon từ SharedPreferences
@@ -1390,7 +1362,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         return new BoundingBox(maxLat, maxLon, minLat, minLon);
     }
 
-    // 9. XỬ LÝ ĐIỀU HƯỚNG THỜI GIAN THỰC
     // Cập nhật tuyến đường liên tục
     private Runnable updateRouteRunnable = new Runnable() {
         @Override
@@ -1627,7 +1598,6 @@ public class FragmentMap extends Fragment implements LocationListener {
         });
     }
 
-    // 10. XỬ LÝ VÒNG ĐỜI FRAGMENT
     // Khởi động lại các tính năng khi Fragment active
     // Cập nhật onResume() để đăng ký sensor listener
     @Override
