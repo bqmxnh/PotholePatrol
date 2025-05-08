@@ -27,7 +27,7 @@
 - **Biểu đồ:** Thư viện MPAndroidChart để tạo biểu đồ dữ liệu.
 ## Tính năng chính
 **1. Xác thực người dùng**
-- Hỗ trợ đa ngôn ngữ: Tiếng Anh, Tiếng Việt, Hàn Quốc, Nhật Bản.
+- Hỗ trợ đa ngôn ngữ: Tiếng Anh, Tiếng Việt, Tiếng Hàn, Tiếng Nhật.
 - Các màn hình xác thực: Đăng nhập, Đăng ký, Khôi phục mật khẩu.
 
 **2. Dashboard**
