@@ -10,6 +10,9 @@
 - Allow users to manually report potholes and view detailed information.
 ## Interface Design Overview
 ![Cover](https://github.com/user-attachments/assets/60a1cb9e-829c-4802-bb1f-64bfe4b782e7)
+![Intro video](https://github.com/user-attachments/assets/980da3af-e6a2-4ccc-81fd-794dd47f174f)
+
+
 
 ## Technologies Used
 ### Back-end
